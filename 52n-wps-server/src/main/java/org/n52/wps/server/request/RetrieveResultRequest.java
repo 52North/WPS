@@ -38,10 +38,9 @@ import org.n52.wps.server.response.Response;
 import org.n52.wps.server.response.RetrieveResultResponse;
 
 /**
- * If the server is too busy or the computation is too long,
- * the client can retrieve the result at a later time.
- * This class represents a Request to obtain the result.
- * The respons might be the result, be also could contain a
+ * If the server is too busy or the computation is too long, the client can
+ * retrieve the result at a later time. This class represents a Request to
+ * obtain the result. The respons might be the result, be also could contain a
  * message that the result is not available yet.
  */
 public class RetrieveResultRequest extends Request {
@@ -50,19 +49,24 @@ public class RetrieveResultRequest extends Request {
 
     /**
      * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
-     * @param ciMap The Map which holds the client input.
-     * @throws ExceptionReport if an exception occurred during construction
+     * 
+     * @param ciMap
+     *            The Map which holds the client input.
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
-    public RetrieveResultRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
+    public RetrieveResultRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
     }
 
     /**
      * Actually serves the Request.
-     * @throws ExceptionReport if an exception occurred during construction
+     * 
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
     public Response call() throws ExceptionReport {
-        if(validate()){
+        if (validate()) {
             return new RetrieveResultResponse(this);
         }
         return null;
@@ -70,17 +74,21 @@ public class RetrieveResultRequest extends Request {
 
     /**
      * Validates the client input
+     * 
      * @return True if the input is valid, False otherwise
-     * @throws ExceptionReport if an exception occurred during validation
+     * @throws ExceptionReport
+     *             if an exception occurred during validation
      */
     public boolean validate() throws ExceptionReport {
         String req_id = getMapValue("request_id", true);
-        if(req_id.length() == 0){
-            throw new ExceptionReport("The value of parameter <request_id> is not valid.", ExceptionReport.INVALID_PARAMETER_VALUE);
+        if (req_id.length() == 0) {
+            throw new ExceptionReport("The value of parameter <request_id> is not valid.",
+                    ExceptionReport.INVALID_PARAMETER_VALUE);
         }
-        try{
-        }catch(NumberFormatException e){
-            throw new ExceptionReport("The value of parameter <request_id> is not an integer identifier", ExceptionReport.INVALID_PARAMETER_VALUE);
+        try {
+        } catch (NumberFormatException e) {
+            throw new ExceptionReport("The value of parameter <request_id> is not an integer identifier",
+                    ExceptionReport.INVALID_PARAMETER_VALUE);
         }
         IDatabase db = DatabaseFactory.getDatabase();
         this.storedResponse = db.lookupResponse(req_id);
@@ -88,7 +96,7 @@ public class RetrieveResultRequest extends Request {
     }
 
     public Object getAttachedResult() throws NullPointerException {
-        if(this.storedResponse == null) {
+        if (this.storedResponse == null) {
             throw new NullPointerException("No stored responses were found!");
         }
         return this.storedResponse;

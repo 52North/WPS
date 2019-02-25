@@ -42,52 +42,68 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.0.0", title = "Echo process", abstrakt = "A simple echo process for complex and literal data - get what you give.")
+@Algorithm(
+        version = "1.0.0",
+        title = "Echo process",
+        abstrakt = "A simple echo process for complex and literal data - get what you give.")
 public class EchoProcess extends AbstractAnnotatedAlgorithm {
 
     private static final Logger log = LoggerFactory.getLogger(EchoProcess.class);
 
     private List<XmlObject> complexInput;
+
     private List<String> literalInput;
 
     private XmlObject complexOutput;
+
     private String literalOutput;
 
     @Execute
     public void echo() {
         log.debug("Running echo process");
 
-        if (complexInput != null && complexInput.size() > 0){
+        if (complexInput != null && complexInput.size() > 0) {
             complexOutput = complexInput.get(0);
-        } else{
+        } else {
             log.debug("No complex inputs.");
         }
 
-        if (literalInput != null && literalInput.size() > 0){
+        if (literalInput != null && literalInput.size() > 0) {
             literalOutput = literalInput.get(0);
-        } else{
+        } else {
             log.debug("No literal input");
         }
 
-        log.debug("Finished echo process, literal output is '{}', complex output is : {}", literalOutput, complexOutput);
+        log.debug("Finished echo process, literal output is '{}', complex output is : {}", literalOutput,
+                complexOutput);
     }
 
-    @ComplexDataOutput(identifier = "complexOutput", binding = GenericXMLDataBinding.class)
+    @ComplexDataOutput(
+            identifier = "complexOutput",
+            binding = GenericXMLDataBinding.class)
     public XmlObject getComplexOutput() {
         return complexOutput;
     }
 
-    @LiteralDataOutput(identifier = "literalOutput")
+    @LiteralDataOutput(
+            identifier = "literalOutput")
     public String getLiteralOutput() {
         return literalOutput;
     }
 
-    @ComplexDataInput(binding = GenericXMLDataBinding.class, identifier = "complexInput", minOccurs = 0, maxOccurs = 1)
+    @ComplexDataInput(
+            binding = GenericXMLDataBinding.class,
+            identifier = "complexInput",
+            minOccurs = 0,
+            maxOccurs = 1)
     public void setComplexInput(List<XmlObject> complexInput) {
         this.complexInput = complexInput;
     }
 
-    @LiteralDataInput(identifier = "literalInput", minOccurs = 0, maxOccurs = 1)
+    @LiteralDataInput(
+            identifier = "literalInput",
+            minOccurs = 0,
+            maxOccurs = 1)
     public void setLiteralInput(List<String> literalInput) {
         this.literalInput = literalInput;
     }

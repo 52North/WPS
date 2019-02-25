@@ -75,14 +75,17 @@ import org.w3c.dom.Element;
  *
  * @author Jacob Mendt
  *
- * TODO Support more inputs (shapefile, raster)
- * TODO Generator for WCS and WFS
+ *         TODO Support more inputs (shapefile, raster) TODO Generator for WCS
+ *         and WFS
  */
 public class MapserverWMSGenerator extends AbstractGenerator {
 
     private String mapfile;
+
     private String workspace;
+
     private String shapefileRepository;
+
     private String wmsUrl;
 
     private static Logger LOGGER = LoggerFactory.getLogger(MapserverWMSGenerator.class);
@@ -120,15 +123,16 @@ public class MapserverWMSGenerator extends AbstractGenerator {
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema)
-            throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
         InputStream stream = null;
         try {
             Document doc = storeLayer(data);
             String xmlString = XMLUtil.nodeToString(doc);
             stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
-        } catch(TransformerException ex){
+        } catch (TransformerException ex) {
             LOGGER.error("Error generating MapServer WMS output. Reason: " + ex);
             throw new RuntimeException("Error generating MapServer WMS output. Reason: " + ex);
         } catch (IOException e) {
@@ -154,14 +158,13 @@ public class MapserverWMSGenerator extends AbstractGenerator {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private Document storeLayer(IData coll) throws HttpException, IOException,
-            ParserConfigurationException {
+    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException {
 
         // tests if the mapscript.jar was loaded correctly
         try {
-            //MapserverProperties.getInstance().testMapscriptLibrary();
+            // MapserverProperties.getInstance().testMapscriptLibrary();
             LOGGER.info("Mapscript is running correctly");
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             LOGGER.warn("Mapscript isn't running correctly");
             return null;
@@ -172,8 +175,8 @@ public class MapserverWMSGenerator extends AbstractGenerator {
         if (coll instanceof GTVectorDataBinding) {
             GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
             SimpleFeatureCollection ftColl = (SimpleFeatureCollection) gtData.getPayload();
-            wmsLayerName = MSMapfileBinding.getInstance().addFeatureCollectionToMapfile(ftColl, workspace,
-                    mapfile, shapefileRepository);
+            wmsLayerName = MSMapfileBinding.getInstance().addFeatureCollectionToMapfile(ftColl, workspace, mapfile,
+                    shapefileRepository);
             LOGGER.info("Layer was added to the mapfile");
             System.gc();
         }
@@ -202,8 +205,8 @@ public class MapserverWMSGenerator extends AbstractGenerator {
      *
      * @throws ParserConfigurationException
      */
-    private Document createXML(String layerName, String getCapabilitiesLink)
-            throws ParserConfigurationException {
+    private Document createXML(String layerName,
+            String getCapabilitiesLink) throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc = factory.newDocumentBuilder().newDocument();
 
@@ -214,10 +217,8 @@ public class MapserverWMSGenerator extends AbstractGenerator {
         resourceIDElement.appendChild(doc.createTextNode(layerName));
         root.appendChild(resourceIDElement);
 
-        Element getCapabilitiesLinkElement = doc
-                .createElement("GetCapabilitiesLink");
-        getCapabilitiesLinkElement.appendChild(doc
-                .createTextNode(getCapabilitiesLink));
+        Element getCapabilitiesLinkElement = doc.createElement("GetCapabilitiesLink");
+        getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
         root.appendChild(getCapabilitiesLinkElement);
         /*
          * Element directResourceLinkElement =

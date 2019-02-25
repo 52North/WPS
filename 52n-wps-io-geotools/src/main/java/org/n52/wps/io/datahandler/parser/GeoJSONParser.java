@@ -73,7 +73,7 @@ import org.locationtech.jts.geom.GeometryCollection;
  *
  * This class parses json into JTS geometries.
  *
- *  @author BenjaminPross(bpross-52n)
+ * @author BenjaminPross(bpross-52n)
  *
  */
 public class GeoJSONParser extends AbstractParser {
@@ -87,14 +87,15 @@ public class GeoJSONParser extends AbstractParser {
     }
 
     @Override
-    public IData parse(InputStream input, String mimeType, String schema) {
+    public IData parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         String geojsonstring = "";
 
         String line = "";
 
-        BufferedReader breader = new BufferedReader(
-                new InputStreamReader(input));
+        BufferedReader breader = new BufferedReader(new InputStreamReader(input));
 
         try {
             while ((line = breader.readLine()) != null) {
@@ -113,8 +114,7 @@ public class GeoJSONParser extends AbstractParser {
         if (geojsonstring.contains("FeatureCollection")) {
 
             try {
-                FeatureCollection<?, ?> featureCollection = new FeatureJSON()
-                        .readFeatureCollection(geojsonstring);
+                FeatureCollection<?, ?> featureCollection = new FeatureJSON().readFeatureCollection(geojsonstring);
 
                 return new GTVectorDataBinding(featureCollection);
 
@@ -131,8 +131,8 @@ public class GeoJSONParser extends AbstractParser {
 
                 featureList.add(feature);
 
-                ListFeatureCollection featureCollection = new ListFeatureCollection(
-                        feature.getFeatureType(), featureList);
+                ListFeatureCollection featureCollection =
+                        new ListFeatureCollection(feature.getFeatureType(), featureList);
 
                 return new GTVectorDataBinding(featureCollection);
 
@@ -151,12 +151,9 @@ public class GeoJSONParser extends AbstractParser {
                 LOGGER.info("Could not read GeometryCollection from inputstream.");
             }
 
-        } else if(geojsonstring.contains("Point") ||
-                geojsonstring.contains("LineString") ||
-                geojsonstring.contains("Polygon") ||
-                geojsonstring.contains("MultiPoint") ||
-                geojsonstring.contains("MultiLineString") ||
-                geojsonstring.contains("MultiPolygon")){
+        } else if (geojsonstring.contains("Point") || geojsonstring.contains("LineString")
+                || geojsonstring.contains("Polygon") || geojsonstring.contains("MultiPoint")
+                || geojsonstring.contains("MultiLineString") || geojsonstring.contains("MultiPolygon")) {
 
             try {
                 Geometry g = new GeometryJSON().read(geojsonstring);

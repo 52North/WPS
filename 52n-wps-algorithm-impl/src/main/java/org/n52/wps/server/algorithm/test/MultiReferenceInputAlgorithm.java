@@ -42,7 +42,9 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.1.0", title="for testing multiple inputs by reference")
+@Algorithm(
+        version = "1.1.0",
+        title = "for testing multiple inputs by reference")
 public class MultiReferenceInputAlgorithm extends AbstractAnnotatedAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MultiReferenceInputAlgorithm.class);
@@ -52,14 +54,21 @@ public class MultiReferenceInputAlgorithm extends AbstractAnnotatedAlgorithm {
     }
 
     private GenericFileData result;
+
     private List<GenericFileData> data;
 
-    @ComplexDataOutput(identifier = "result", binding = GenericFileDataBinding.class)
+    @ComplexDataOutput(
+            identifier = "result",
+            binding = GenericFileDataBinding.class)
     public GenericFileData getResult() {
         return result;
     }
 
-    @ComplexDataInput(identifier = "data", binding = GenericFileDataBinding.class, minOccurs=1, maxOccurs=2)
+    @ComplexDataInput(
+            identifier = "data",
+            binding = GenericFileDataBinding.class,
+            minOccurs = 1,
+            maxOccurs = 2)
     public void setData(List<GenericFileData> data) {
         this.data = data;
     }

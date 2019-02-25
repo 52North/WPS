@@ -38,37 +38,38 @@ import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
 
+public class DescribeProcessResponse extends Response {
 
-public class DescribeProcessResponse extends Response{
-
-    public DescribeProcessResponse(Request request){
+    public DescribeProcessResponse(Request request) {
         super(request);
     }
 
     @Override
-    public InputStream getAsStream() throws ExceptionReport{
+    public InputStream getAsStream() throws ExceptionReport {
         try {
-            //TODO change to Request.getMapValue
+            // TODO change to Request.getMapValue
             String[] requestedVersions = (String[]) getRequest().getMap().get("version");
 
-            if(requestedVersions != null && requestedVersions.length > 0){
+            if (requestedVersions != null && requestedVersions.length > 0) {
 
                 String requestedVersion = requestedVersions[0];
 
-                if(requestedVersion.equals(WPSConfig.VERSION_100)){
+                if (requestedVersion.equals(WPSConfig.VERSION_100)) {
 
-                    return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+                    return ((ProcessDescriptionsDocument) request.getAttachedResult())
+                            .newInputStream(XMLBeansHelper.getXmlOptions());
 
-                }else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+                } else if (requestedVersion.equals(WPSConfig.VERSION_200)) {
 
-                    return ((ProcessOfferingsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+                    return ((ProcessOfferingsDocument) request.getAttachedResult())
+                            .newInputStream(XMLBeansHelper.getXmlOptions());
 
                 }
 
             }
-        }
-        catch(Exception e) {
-            throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (Exception e) {
+            throw new ExceptionReport("Exception occured while writing response document",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
         return null;
     }

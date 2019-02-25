@@ -36,7 +36,10 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.0.0", title = "Process for testing status updates for WPS 2.0", abstrakt = "Updates the status in intervalls of 3 seconds.")
+@Algorithm(
+        version = "1.0.0",
+        title = "Process for testing status updates for WPS 2.0",
+        abstrakt = "Updates the status in intervalls of 3 seconds.")
 public class StatusTestingProcess extends AbstractAnnotatedAlgorithm {
 
     private static final Logger log = LoggerFactory.getLogger(StatusTestingProcess.class);
@@ -63,12 +66,16 @@ public class StatusTestingProcess extends AbstractAnnotatedAlgorithm {
         log.debug("Finished echo process, literal output is '{}'. ", literalOutput);
     }
 
-    @LiteralDataOutput(identifier = "literalOutput")
+    @LiteralDataOutput(
+            identifier = "literalOutput")
     public String getLiteralOutput() {
         return literalOutput;
     }
 
-    @LiteralDataInput(identifier = "literalInput", minOccurs = 0, maxOccurs = 1)
+    @LiteralDataInput(
+            identifier = "literalInput",
+            minOccurs = 0,
+            maxOccurs = 1)
     public void setLiteralInput(String literalInput) {
         this.literalInput = literalInput;
     }

@@ -63,7 +63,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 public class GTBinZippedSHPParser extends AbstractParser {
 
-    public GTBinZippedSHPParser(){
+    public GTBinZippedSHPParser() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
@@ -75,7 +75,9 @@ public class GTBinZippedSHPParser extends AbstractParser {
      * @see IParser#parse(InputStream input, String mimeType, String schema)
      */
     @Override
-    public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
+    public GTVectorDataBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
         try {
             String fileName = "tempfile" + UUID.randomUUID() + ".zip";
             String tmpDirPath = System.getProperty("java.io.tmpdir");
@@ -99,17 +101,13 @@ public class GTBinZippedSHPParser extends AbstractParser {
             }
             File shp = IOUtils.unzip(tempFile, "shp").get(0);
             DataStore store = new ShapefileDataStore(shp.toURI().toURL());
-            SimpleFeatureCollection features = store.getFeatureSource(
-                    store.getTypeNames()[0]).getFeatures();
+            SimpleFeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
             System.gc();
 
             return new GTVectorDataBinding(features);
         } catch (IOException e) {
-            throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);
+            throw new RuntimeException("An error has occurred while accessing provided data", e);
         }
     }
-
-
 
 }

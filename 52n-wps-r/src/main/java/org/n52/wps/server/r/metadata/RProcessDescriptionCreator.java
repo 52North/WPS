@@ -92,12 +92,8 @@ public class RProcessDescriptionCreator {
 
     private final ResourceUrlGenerator urlGenerator;
 
-    public RProcessDescriptionCreator(String publicProcessId,
-                                      boolean resourceDownload,
-                                      boolean importDownload,
-                                      boolean scriptDownload,
-                                      boolean sessionInfoLink,
-                                      ResourceUrlGenerator urlGenerator) {
+    public RProcessDescriptionCreator(String publicProcessId, boolean resourceDownload, boolean importDownload,
+            boolean scriptDownload, boolean sessionInfoLink, ResourceUrlGenerator urlGenerator) {
         this.id = publicProcessId;
         this.resourceDownloadEnabled = resourceDownload;
         this.importDownloadEnabled = importDownload;
@@ -112,14 +108,19 @@ public class RProcessDescriptionCreator {
      * Usually called from @GenericRProcess
      *
      * @param annotations
-     *        contain all process description information
+     *            contain all process description information
      * @param identifier
-     *        Process identifier
+     *            Process identifier
      * @return the process description
-     * @throws ExceptionReport if an exception occurred while creating the process description
-     * @throws RAnnotationException if an exception occurred while creating the process description
+     * @throws ExceptionReport
+     *             if an exception occurred while creating the process
+     *             description
+     * @throws RAnnotationException
+     *             if an exception occurred while creating the process
+     *             description
      */
-    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String identifier) throws ExceptionReport, RAnnotationException {
+    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations,
+            String identifier) throws ExceptionReport, RAnnotationException {
         log.debug("Creating Process Description for " + identifier);
 
         try {
@@ -129,15 +130,13 @@ public class RProcessDescriptionCreator {
 
             if (scriptDownloadEnabled) {
                 addScriptLink(urlGenerator.getScriptURL(identifier), pdt);
-            }
-            else {
+            } else {
                 log.trace("Script download link disabled.");
             }
 
             if (sessionInfoLinkEnabled) {
                 addSessionInfoLink(urlGenerator.getSessionInfoURL(), pdt);
-            }
-            else {
+            } else {
                 log.trace("Session info download link disabled.");
             }
 
@@ -151,37 +150,35 @@ public class RProcessDescriptionCreator {
                 log.trace("Adding information to process description based on annotation {}", annotation);
 
                 switch (annotation.getType()) {
-                    case INPUT:
-                        addInput(inputs, annotation);
-                        break;
-                    case OUTPUT:
-                        addOutput(outputs, annotation);
-                        break;
-                    case DESCRIPTION:
-                        addProcessDescription(pdt, annotation);
-                        break;
-                    case RESOURCE:
-                        if (resourceDownloadEnabled) {
-                            addProcessResources(pdt, annotation);
-                        }
-                        else {
-                            log.trace("Resource download is disabled, not adding elements to description.");
-                        }
-                        break;
-                    case IMPORT:
-                        if (importDownloadEnabled) {
-                            addImportProcessResources(pdt, annotation);
-                        }
-                        else {
-                            log.trace("Import download is disabled, not adding elements to description.");
-                        }
-                        break;
-                    case METADATA:
-                        addMetadataResources(pdt, annotation);
-                        break;
-                    default:
-                        log.trace("Unhandled annotation: {}", annotation);
-                        break;
+                case INPUT:
+                    addInput(inputs, annotation);
+                    break;
+                case OUTPUT:
+                    addOutput(outputs, annotation);
+                    break;
+                case DESCRIPTION:
+                    addProcessDescription(pdt, annotation);
+                    break;
+                case RESOURCE:
+                    if (resourceDownloadEnabled) {
+                        addProcessResources(pdt, annotation);
+                    } else {
+                        log.trace("Resource download is disabled, not adding elements to description.");
+                    }
+                    break;
+                case IMPORT:
+                    if (importDownloadEnabled) {
+                        addImportProcessResources(pdt, annotation);
+                    } else {
+                        log.trace("Import download is disabled, not adding elements to description.");
+                    }
+                    break;
+                case METADATA:
+                    addMetadataResources(pdt, annotation);
+                    break;
+                default:
+                    log.trace("Unhandled annotation: {}", annotation);
+                    break;
                 }
             }
 
@@ -214,24 +211,21 @@ public class RProcessDescriptionCreator {
             datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
 
             return pdt;
-        }
-        catch (RuntimeException | MalformedURLException e) {
+        } catch (RuntimeException | MalformedURLException e) {
             log.error("Error creating process description.", e);
-            throw new ExceptionReport("Error creating process description.",
-                                      "NA",
-                                      RProcessDescriptionCreator.class.getName(),
-                                      e);
+            throw new ExceptionReport("Error creating process description.", "NA",
+                    RProcessDescriptionCreator.class.getName(), e);
         }
     }
 
-    private void addMetadataResources(ProcessDescriptionType pdt, RAnnotation annotation) {
+    private void addMetadataResources(ProcessDescriptionType pdt,
+            RAnnotation annotation) {
         String title = null;
         String href = null;
         try {
             title = annotation.getStringValue(RAttribute.TITLE);
             href = annotation.getStringValue(RAttribute.HREF);
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             log.error("Problem adding process resources to process description", e);
             return;
         }
@@ -241,17 +235,16 @@ public class RProcessDescriptionCreator {
                 MetadataType mt = pdt.addNewMetadata();
                 mt.setTitle(title);
                 mt.setHref(href);
-            }
-            else {
+            } else {
                 log.warn("Cannot add metadat resource, 'href' is null or empty");
             }
-        }
-        else {
+        } else {
             log.warn("Cannot add metadat resource, 'title' is null or empty");
         }
     }
 
-    private void addScriptLink(URL fileUrl, ProcessDescriptionType pdt) {
+    private void addScriptLink(URL fileUrl,
+            ProcessDescriptionType pdt) {
         // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
         // not used for the resources
         // because validation fails with the cause:
@@ -263,34 +256,33 @@ public class RProcessDescriptionCreator {
             MetadataType mt = pdt.addNewMetadata();
             mt.setTitle(SCRIPT_LINK_TITLE);
             mt.setHref(fileUrl.toExternalForm());
-        }
-        else {
+        } else {
             log.warn("Cannot add url to script, is null");
         }
     }
 
-    private void addSessionInfoLink(URL sessionInfoUrl, ProcessDescriptionType pdt) {
+    private void addSessionInfoLink(URL sessionInfoUrl,
+            ProcessDescriptionType pdt) {
         if (sessionInfoUrl != null) {
             MetadataType mt = pdt.addNewMetadata();
             mt.setTitle(SESSION_INFO_TITLE);
             mt.setHref(sessionInfoUrl.toExternalForm());
-        }
-        else {
+        } else {
             log.warn("Cannot add url to session info, is null");
         }
     }
 
-    private void addProcessResources(ProcessDescriptionType pdt, RAnnotation annotation) {
+    private void addProcessResources(ProcessDescriptionType pdt,
+            RAnnotation annotation) {
         try {
             Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
-            if (obj instanceof Collection< ? >) {
-                Collection< ? > namedList = (Collection< ? >) obj;
+            if (obj instanceof Collection<?>) {
+                Collection<?> namedList = (Collection<?>) obj;
                 for (Object object : namedList) {
                     R_Resource resource = null;
                     if (object instanceof R_Resource) {
                         resource = (R_Resource) object;
-                    }
-                    else {
+                    } else {
                         continue;
                     }
 
@@ -298,33 +290,32 @@ public class RProcessDescriptionCreator {
                         MetadataType mt = pdt.addNewMetadata();
                         mt.setTitle(RESOURCE_TITLE_PREFIX + resource.getResourceValue());
 
-                        // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
+                        // URL url =
+                        // resource.getFullResourceURL(this.config.getResourceDirURL());
                         URL url = urlGenerator.getResourceURL(resource);
                         mt.setHref(url.toExternalForm());
                         log.trace("Added resource URL to metadata document: {}", url);
-                    }
-                    else {
+                    } else {
                         log.trace("Not adding resource because it is not public: {}", resource);
                     }
                 }
             }
-        }
-        catch (RAnnotationException | ExceptionReport e) {
+        } catch (RAnnotationException | ExceptionReport e) {
             log.error("Problem adding process resources to process description", e);
         }
     }
 
-    private void addImportProcessResources(ProcessDescriptionType pdt, RAnnotation annotation) {
+    private void addImportProcessResources(ProcessDescriptionType pdt,
+            RAnnotation annotation) {
         try {
             Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
-            if (obj instanceof Collection< ? >) {
-                Collection< ? > namedList = (Collection< ? >) obj;
+            if (obj instanceof Collection<?>) {
+                Collection<?> namedList = (Collection<?>) obj;
                 for (Object object : namedList) {
                     R_Resource resource = null;
                     if (object instanceof R_Resource) {
                         resource = (R_Resource) object;
-                    }
-                    else {
+                    } else {
                         continue;
                     }
 
@@ -332,23 +323,23 @@ public class RProcessDescriptionCreator {
                         MetadataType mt = pdt.addNewMetadata();
                         mt.setTitle(IMPORT_TITLE_PREFIX + resource.getResourceValue());
 
-                        // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
+                        // URL url =
+                        // resource.getFullResourceURL(this.config.getResourceDirURL());
                         URL url = urlGenerator.getImportURL(resource);
                         mt.setHref(url.toExternalForm());
                         log.trace("Added resource URL to metadata document: {}", url);
-                    }
-                    else {
+                    } else {
                         log.trace("Not adding resource because it is not public: {}", resource);
                     }
                 }
             }
-        }
-        catch (RAnnotationException | ExceptionReport e) {
+        } catch (RAnnotationException | ExceptionReport e) {
             log.error("Problem adding process resources to process description", e);
         }
     }
 
-    private void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
+    private void addProcessDescription(ProcessDescriptionType pdt,
+            RAnnotation annotation) throws RAnnotationException {
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
@@ -364,25 +355,25 @@ public class RProcessDescriptionCreator {
         String version = annotation.getStringValue(RAttribute.VERSION);
         if (version != null && !version.isEmpty()) {
             pdt.setProcessVersion(version);
-        }
-        else {
+        } else {
             pdt.setProcessVersion(DEFAULT_VERSION);
         }
     }
 
-    private static void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
+    private static void addInput(DataInputs inputs,
+            RAnnotation annotation) throws RAnnotationException {
         InputDescriptionType input = inputs.addNewInput();
 
         String identifier = annotation.getStringValue(RAttribute.IDENTIFIER);
         input.addNewIdentifier().setStringValue(identifier);
 
-        // title is optional in the annotation, therefore it could be null, but it is required in the
+        // title is optional in the annotation, therefore it could be null, but
+        // it is required in the
         // description - then set to ID
         String title = annotation.getStringValue(RAttribute.TITLE);
         if (title != null) {
             input.addNewTitle().setStringValue(title);
-        }
-        else {
+        } else {
             input.addNewTitle().setStringValue(identifier);
         }
 
@@ -402,14 +393,14 @@ public class RProcessDescriptionCreator {
 
         if (annotation.isComplex()) {
             addComplexInput(annotation, input);
-        }
-        else {
+        } else {
             addLiteralInput(annotation, input);
 
         }
     }
 
-    private static void addLiteralInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addLiteralInput(RAnnotation annotation,
+            InputDescriptionType input) throws RAnnotationException {
         LiteralInputType literalInput = input.addNewLiteralData();
         DomainMetadataType dataType = literalInput.addNewDataType();
         dataType.setReference(annotation.getProcessDescriptionType());
@@ -421,7 +412,8 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    private static void addComplexInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addComplexInput(RAnnotation annotation,
+            InputDescriptionType input) throws RAnnotationException {
         SupportedComplexDataType complexInput = input.addNewComplexData();
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
         cpldata.setMimeType(annotation.getProcessDescriptionType());
@@ -430,7 +422,7 @@ public class RProcessDescriptionCreator {
             cpldata.setEncoding(encod);
         }
 
-        Class< ? extends IData> iClass = annotation.getDataClass();
+        Class<? extends IData> iClass = annotation.getDataClass();
         if (iClass.equals(GenericFileDataBinding.class)) {
             ComplexDataCombinationsType supported = complexInput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();
@@ -445,24 +437,24 @@ public class RProcessDescriptionCreator {
                 ComplexDataDescriptionType format2 = supported.addNewFormat();
                 format2.setMimeType(annotation.getProcessDescriptionType());
             }
-        }
-        else {
+        } else {
             addSupportedInputFormats(complexInput, iClass);
         }
     }
 
-    private static void addOutput(ProcessOutputs outputs, RAnnotation out) throws RAnnotationException {
+    private static void addOutput(ProcessOutputs outputs,
+            RAnnotation out) throws RAnnotationException {
         OutputDescriptionType output = outputs.addNewOutput();
 
         String identifier = out.getStringValue(RAttribute.IDENTIFIER);
         output.addNewIdentifier().setStringValue(identifier);
 
-        // title is optional, therefore it could be null; but required in description, so the to id
+        // title is optional, therefore it could be null; but required in
+        // description, so the to id
         String title = out.getStringValue(RAttribute.TITLE);
         if (title != null) {
             output.addNewTitle().setStringValue(title);
-        }
-        else {
+        } else {
             output.addNewTitle().setStringValue(identifier);
         }
 
@@ -474,20 +466,21 @@ public class RProcessDescriptionCreator {
 
         if (out.isComplex()) {
             addComplexOutput(out, output);
-        }
-        else {
+        } else {
             addLiteralOutput(out, output);
         }
     }
 
-    private static void addLiteralOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addLiteralOutput(RAnnotation out,
+            OutputDescriptionType output) throws RAnnotationException {
         LiteralOutputType literalOutput = output.addNewLiteralOutput();
         DomainMetadataType dataType = literalOutput.addNewDataType();
         dataType.setReference(out.getProcessDescriptionType());
         literalOutput.setDataType(dataType);
     }
 
-    private static void addComplexOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addComplexOutput(RAnnotation out,
+            OutputDescriptionType output) throws RAnnotationException {
         SupportedComplexDataType complexOutput = output.addNewComplexOutput();
         ComplexDataDescriptionType complexData = complexOutput.addNewDefault().addNewFormat();
         complexData.setMimeType(out.getProcessDescriptionType());
@@ -497,7 +490,7 @@ public class RProcessDescriptionCreator {
             // base64 shall not be default, but occur in the supported formats
             complexData.setEncoding(encod);
         }
-        Class< ? extends IData> iClass = out.getDataClass();
+        Class<? extends IData> iClass = out.getDataClass();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
 
@@ -509,34 +502,35 @@ public class RProcessDescriptionCreator {
             if (encod != null) {
                 format.setEncoding(encod);
                 if (encod == "base64") {
-                    // set a format entry such that not encoded data is supported as well
+                    // set a format entry such that not encoded data is
+                    // supported as well
                     ComplexDataDescriptionType format2 = supported.addNewFormat();
                     format2.setMimeType(out.getProcessDescriptionType());
                 }
             }
-        }
-        else {
+        } else {
             addSupportedOutputFormats(complexOutput, iClass);
         }
 
     }
 
     /**
-     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
-     * supported list of an output
+     * Searches all available datahandlers for supported encodings / schemas /
+     * mime-types and adds them to the supported list of an output
      *
      * @param complex
-     *        IData class for which data handlers are searched
-     * @param supportedClass the supported class implementing <code>IData</code>
+     *            IData class for which data handlers are searched
+     * @param supportedClass
+     *            the supported class implementing <code>IData</code>
      */
     private static void addSupportedOutputFormats(SupportedComplexDataType complex,
-                                                  Class< ? extends IData> supportedClass) {
+            Class<? extends IData> supportedClass) {
         // retrieve a list of generators which support the supportedClass-input
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
-            Class< ? >[] supportedClasses = generator.getSupportedDataBindings();
-            for (Class< ? > clazz : supportedClasses) {
+            Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+            for (Class<?> clazz : supportedClasses) {
                 if (clazz.equals(supportedClass)) {
                     foundGenerators.add(generator);
                 }
@@ -553,8 +547,7 @@ public class RProcessDescriptionCreator {
                 String encoding = format.getEncoding();
                 if (encoding != null) {
                     newSupportedFormat.setEncoding(encoding);
-                }
-                else {
+                } else {
                     newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
                 }
 
@@ -570,21 +563,22 @@ public class RProcessDescriptionCreator {
     }
 
     /**
-     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
-     * supported list of an output
+     * Searches all available datahandlers for supported encodings / schemas /
+     * mime-types and adds them to the supported list of an output
      *
      * @param complex
-     *        IData class for which data handlers are searched
-     * @param supportedClass the supported class implementing <code>IData</code>
+     *            IData class for which data handlers are searched
+     * @param supportedClass
+     *            the supported class implementing <code>IData</code>
      */
     private static void addSupportedInputFormats(SupportedComplexDataType complex,
-                                                 Class< ? extends IData> supportedClass) {
+            Class<? extends IData> supportedClass) {
         // retrieve a list of parsers which support the supportedClass-input
         List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
         for (IParser parser : parsers) {
-            Class< ? >[] supportedClasses = parser.getSupportedDataBindings();
-            for (Class< ? > clazz : supportedClasses) {
+            Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+            for (Class<?> clazz : supportedClasses) {
                 if (clazz.equals(supportedClass)) {
                     foundParsers.add(parser);
                 }
@@ -601,8 +595,7 @@ public class RProcessDescriptionCreator {
                 String encoding = format.getEncoding();
                 if (encoding != null) {
                     newSupportedFormat.setEncoding(encoding);
-                }
-                else {
+                } else {
                     newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
                 }
                 newSupportedFormat.setMimeType(format.getMimeType());
@@ -623,7 +616,8 @@ public class RProcessDescriptionCreator {
         if (id != null) {
             builder.append("id=").append(id).append(", ");
         }
-        builder.append("resourceDownloadEnabled=").append(resourceDownloadEnabled).append(", importDownloadEnabled=").append(importDownloadEnabled).append("]");
+        builder.append("resourceDownloadEnabled=").append(resourceDownloadEnabled).append(", importDownloadEnabled=")
+                .append(importDownloadEnabled).append("]");
         return builder.toString();
     }
 

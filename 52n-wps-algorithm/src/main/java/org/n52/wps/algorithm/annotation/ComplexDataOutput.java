@@ -27,10 +27,13 @@ import org.n52.wps.io.data.IComplexData;
  * @author tkunicki
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ ElementType.METHOD, ElementType.FIELD })
 public @interface ComplexDataOutput {
-    String identifier();  // identifier
+    String identifier(); // identifier
+
     String title() default "";
-    String abstrakt() default "";  // 'abstract' is java reserved keyword
-    Class <? extends IComplexData> binding();
+
+    String abstrakt() default ""; // 'abstract' is java reserved keyword
+
+    Class<? extends IComplexData> binding();
 }

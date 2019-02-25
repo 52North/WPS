@@ -47,14 +47,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An RConnection that can be used to filter certain commands for security reasons using the
- * <code>filteredEval()</code> function. If the command passes the filter or the regular <code>eval()</code>
- * is used, then this class is a simple wrapper around {@link RConnection}.
+ * An RConnection that can be used to filter certain commands for security
+ * reasons using the <code>filteredEval()</code> function. If the command passes
+ * the filter or the regular <code>eval()</code> is used, then this class is a
+ * simple wrapper around {@link RConnection}.
  *
  * @author Daniel Nüst
  *
  */
-public class FilteredRConnection extends RConnection { // implements AutoCloseable {
+public class FilteredRConnection extends RConnection { // implements
+                                                       // AutoCloseable {
 
     public static interface RCommandFilter {
 
@@ -85,7 +87,7 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
             for (String illegal : this.illegalCommands) {
                 if (command.contains(illegal)) {
                     throw new ExceptionReport("Input is not allowed: " + command,
-                                              ExceptionReport.INVALID_PARAMETER_VALUE);
+                            ExceptionReport.INVALID_PARAMETER_VALUE);
                 }
             }
 
@@ -95,11 +97,12 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
     }
 
     /**
-     * replace potentially harmful commands like system, unlink, quit with different strings so that these
-     * functions cannot be called. It also escapes quotations marks.
+     * replace potentially harmful commands like system, unlink, quit with
+     * different strings so that these functions cannot be called. It also
+     * escapes quotations marks.
      *
-     * In the case that somebody named variables in a script using the character sequences "eval", "quit" and
-     * so forth, this should still work.
+     * In the case that somebody named variables in a script using the character
+     * sequences "eval", "quit" and so forth, this should still work.
      */
     private class SilentReplacingFilter implements RCommandFilter {
 
@@ -145,12 +148,12 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
         public String filter(String command) throws ExceptionReport {
             if (hexPattern.matcher(command).matches()) {
                 throw new ExceptionReport("Unicode encoded character found, not allowed, illegal command: " + command,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+                        ExceptionReport.INVALID_PARAMETER_VALUE);
             }
 
             if (nonAsciiPattern.matcher(command).matches()) {
                 throw new ExceptionReport("Only ASCII characters are allowed as input, illegal command: " + command,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+                        ExceptionReport.INVALID_PARAMETER_VALUE);
             }
 
             return command;
@@ -200,7 +203,9 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
     }
 
     @Override
-    public REXP eval(REXP arg0, REXP arg1, boolean arg2) throws REngineException {
+    public REXP eval(REXP arg0,
+            REXP arg1,
+            boolean arg2) throws REngineException {
         log.warn("Unfiltered command (filtering for this function not implemented).");
         return super.eval(arg0, arg1, arg2);
     }
@@ -216,9 +221,11 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
     /**
      * logs filtered commands.
      *
-     * @param command the command to be filtered
+     * @param command
+     *            the command to be filtered
      * @return a <code>REXP</code> representing the filtered command
-     * @throws RserveException if the command was illegal
+     * @throws RserveException
+     *             if the command was illegal
      */
     public REXP filteredEval(String command) throws RserveException {
         try {
@@ -227,8 +234,7 @@ public class FilteredRConnection extends RConnection { // implements AutoCloseab
             }
 
             return internalEval(command);
-        }
-        catch (ExceptionReport e) {
+        } catch (ExceptionReport e) {
             log.error("Illegal command {}", command, e);
             // would be nice to add a warning into the R session
             // super.eval("warning( \"" + e.getMessage() + "\" )");

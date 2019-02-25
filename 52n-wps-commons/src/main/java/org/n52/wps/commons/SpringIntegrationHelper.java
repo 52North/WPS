@@ -22,7 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 /**
- * A hacky utility class which provides mechanism to autowire fields of non-spring-managed beans.
+ * A hacky utility class which provides mechanism to autowire fields of
+ * non-spring-managed beans.
  *
  * @author Henning Bredel (contact: h.bredel@52north.org)
  *

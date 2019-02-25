@@ -24,12 +24,12 @@ import org.n52.wps.io.data.IComplexData;
  */
 public class ComplexDataOutputDescriptor<T extends Class<? extends IComplexData>> extends OutputDescriptor<T> {
 
-
     private ComplexDataOutputDescriptor(Builder builder) {
         super(builder);
     }
 
-    public static <T extends Class<? extends IComplexData>> Builder<?,T> builder(String identifier, T binding) {
+    public static <T extends Class<? extends IComplexData>> Builder<?, T> builder(String identifier,
+            T binding) {
         return new BuilderTyped(identifier, binding);
     }
 
@@ -37,13 +37,15 @@ public class ComplexDataOutputDescriptor<T extends Class<? extends IComplexData>
         public BuilderTyped(String identifier, T binding) {
             super(identifier, binding);
         }
+
         @Override
         protected BuilderTyped self() {
             return this;
         }
     }
 
-    public static abstract class Builder<B extends Builder<B,T>, T extends Class<? extends IComplexData>> extends OutputDescriptor.Builder<B,T> {
+    public static abstract class Builder<B extends Builder<B, T>, T extends Class<? extends IComplexData>>
+            extends OutputDescriptor.Builder<B, T> {
 
         private Builder(String identifier, T binding) {
             super(identifier, binding);

@@ -34,32 +34,20 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Describes each annotation type considering attributes, their order and behavior
+ * Describes each annotation type considering attributes, their order and
+ * behavior
  *
  */
 public enum RAnnotationType {
 
-    INPUT(Arrays.asList(RAttribute.INPUT_START,
-                        RAttribute.IDENTIFIER,
-                        RAttribute.TYPE,
-                        RAttribute.TITLE,
-                        RAttribute.ABSTRACT,
-                        RAttribute.DEFAULT_VALUE,
-                        RAttribute.MIN_OCCURS,
-                        RAttribute.MAX_OCCURS)),
+    INPUT(Arrays.asList(RAttribute.INPUT_START, RAttribute.IDENTIFIER, RAttribute.TYPE, RAttribute.TITLE,
+            RAttribute.ABSTRACT, RAttribute.DEFAULT_VALUE, RAttribute.MIN_OCCURS, RAttribute.MAX_OCCURS)),
 
-    OUTPUT(Arrays.asList(RAttribute.OUTPUT_START,
-                         RAttribute.IDENTIFIER,
-                         RAttribute.TYPE,
-                         RAttribute.TITLE,
-                         RAttribute.ABSTRACT)),
+    OUTPUT(Arrays.asList(RAttribute.OUTPUT_START, RAttribute.IDENTIFIER, RAttribute.TYPE, RAttribute.TITLE,
+            RAttribute.ABSTRACT)),
 
-    DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START,
-                              RAttribute.IDENTIFIER,
-                              RAttribute.TITLE,
-                              RAttribute.VERSION,
-                              RAttribute.ABSTRACT,
-                              RAttribute.AUTHOR)),
+    DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START, RAttribute.IDENTIFIER, RAttribute.TITLE, RAttribute.VERSION,
+            RAttribute.ABSTRACT, RAttribute.AUTHOR)),
 
     RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST)),
 
@@ -96,8 +84,8 @@ public enum RAnnotationType {
             return this.attributeLut.get(k);
         }
 
-        throw new RAnnotationException("Annotation " + this + " (" + this.startKey
-                + " ...) cannot contain a parameter named '" + key + "'.");
+        throw new RAnnotationException(
+                "Annotation " + this + " (" + this.startKey + " ...) cannot contain a parameter named '" + key + "'.");
     }
 
     public Iterable<RAttribute> getAttributeSequence() {
@@ -106,12 +94,13 @@ public enum RAnnotationType {
     }
 
     /**
-     * Checks if Annotation content is valid for process description and adds attributes / standard values if
-     * necessary
+     * Checks if Annotation content is valid for process description and adds
+     * attributes / standard values if necessary
      *
      * @param rAnnotation
-     *       the annotation from the RSkript
-     * @throws RAnnotationException if the annotation contains syntax errors
+     *            the annotation from the RSkript
+     * @throws RAnnotationException
+     *             if the annotation contains syntax errors
      */
     public void validateDescription(RAnnotation rAnnotation) throws RAnnotationException {
         // check minOccurs Attribute and default value:
@@ -119,14 +108,15 @@ public enum RAnnotationType {
             if (rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
                 Integer min = Integer.parseInt(rAnnotation.getStringValue(RAttribute.MIN_OCCURS));
                 if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !min.equals(0)) {
-                    throw new RAnnotationException("Default value found but minimum required number of occurrences is not '0' in annotation "
-                            + this);
+                    throw new RAnnotationException(
+                            "Default value found but minimum required number of occurrences is not '0' in annotation "
+                                    + this);
                 }
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), "
-                    + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey() + e.getMessage());
+                    + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey()
+                    + e.getMessage());
         }
 
         if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
@@ -138,8 +128,7 @@ public enum RAnnotationType {
             if (rAnnotation.containsKey(RAttribute.MAX_OCCURS)) {
                 Integer.parseInt(rAnnotation.getStringValue(RAttribute.MAX_OCCURS));
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), "
                     + "unable to parse Integer value from attribute " + RAttribute.MAX_OCCURS.getKey());
         }

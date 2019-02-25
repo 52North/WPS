@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericFileDataWithGTParserCM extends ClassKnowingModule{
+public class GenericFileDataWithGTParserCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GenericFileDataWithGTParserCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GenericFileDataWithGTParserCM(){
+    public GenericFileDataWithGTParserCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

@@ -46,17 +46,29 @@ public class BasicXMLTypeFactory {
 
     // List of supported basic XML datatypes.
     public static final String DOUBLE_URI = "xs:double";
+
     public static final String FLOAT_URI = "xs:float";
+
     public static final String INTEGER_URI = "xs:integer";
+
     public static final String LONG_URI = "xs:long";
+
     public static final String INT_URI = "xs:int";
+
     public static final String SHORT_URI = "xs:short";
+
     public static final String BYTE_URI = "xs:byte";
+
     public static final String BOOLEAN_URI = "xs:boolean";
+
     public static final String STRING_URI = "xs:string";
+
     public static final String DATETIME_URI = "xs:dateTime";
+
     public static final String DATE_URI = "xs:date";
+
     public static final String BASE64BINARY_URI = "xs:base64Binary";
+
     public static final String ANYURI_URI = "xs:anyURI";
 
     private final static DatatypeFactory DATATYPE_FACTORY;
@@ -73,19 +85,23 @@ public class BasicXMLTypeFactory {
         DATATYPE_FACTORY = datatypeFactory;
     }
 
-    private BasicXMLTypeFactory(){
+    private BasicXMLTypeFactory() {
 
     }
 
     /**
-     * This is a helper method to create always the correct Java Type out of a string.
-     * It is based on the basic schema datatypes.
-     * If xmlDataTypeURI is null, string dataType will be assumed.
-     * @param xmlDataTypeURI the expected XML basicDataType
-     * @param obj the XML object String
+     * This is a helper method to create always the correct Java Type out of a
+     * string. It is based on the basic schema datatypes. If xmlDataTypeURI is
+     * null, string dataType will be assumed.
+     * 
+     * @param xmlDataTypeURI
+     *            the expected XML basicDataType
+     * @param obj
+     *            the XML object String
      * @return the <code>IData</code> object fitting to the data type URI
      */
-    public static IData getBasicJavaObject(String xmlDataTypeURI, String obj) {
+    public static IData getBasicJavaObject(String xmlDataTypeURI,
+            String obj) {
         obj = obj.replace('\n', ' ').replace('\t', ' ').trim();
         if (xmlDataTypeURI == null) {
             return new LiteralStringBinding(obj);
@@ -107,7 +123,8 @@ public class BasicXMLTypeFactory {
             return new LiteralStringBinding(obj);
         } else if (xmlDataTypeURI.equalsIgnoreCase(DATETIME_URI) || xmlDataTypeURI.equalsIgnoreCase(DATE_URI)) {
             try {
-                return new LiteralDateTimeBinding(DATATYPE_FACTORY.newXMLGregorianCalendar(obj).toGregorianCalendar().getTime());
+                return new LiteralDateTimeBinding(
+                        DATATYPE_FACTORY.newXMLGregorianCalendar(obj).toGregorianCalendar().getTime());
             } catch (Exception e) {
                 LOGGER.error("Could not parse xs:dateTime or xs:date data", e);
                 return null;
@@ -126,11 +143,12 @@ public class BasicXMLTypeFactory {
         }
     }
 
-   public static String getStringRepresentation(String xmlDataTypeURI, IData obj) {
-       return obj.getPayload().toString();
-   }
+    public static String getStringRepresentation(String xmlDataTypeURI,
+            IData obj) {
+        return obj.getPayload().toString();
+    }
 
-   public static Class<? extends ILiteralData> getBindingForPayloadType(Class<?> payloadType) {
+    public static Class<? extends ILiteralData> getBindingForPayloadType(Class<?> payloadType) {
         if (payloadType.equals(float.class) || payloadType.equals(Float.class)) {
             return LiteralFloatBinding.class;
         }
@@ -176,7 +194,7 @@ public class BasicXMLTypeFactory {
             return LONG_URI;
         } else if (LiteralIntBinding.class.isAssignableFrom(clazz)) {
             return INT_URI;
-//            return INTEGER_URI;
+            // return INTEGER_URI;
         } else if (LiteralShortBinding.class.isAssignableFrom(clazz)) {
             return SHORT_URI;
         } else if (LiteralByteBinding.class.isAssignableFrom(clazz)) {
@@ -187,9 +205,9 @@ public class BasicXMLTypeFactory {
             return STRING_URI;
         } else if (LiteralDateTimeBinding.class.isAssignableFrom(clazz)) {
             return DATETIME_URI;
-//            return DATE_URI;
+            // return DATE_URI;
         } else if (LiteralBase64BinaryBinding.class.isAssignableFrom(clazz)) {
-            return  BASE64BINARY_URI;
+            return BASE64BINARY_URI;
         } else if (LiteralAnyURIBinding.class.isAssignableFrom(clazz)) {
             return ANYURI_URI;
         }

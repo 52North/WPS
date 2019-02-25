@@ -53,17 +53,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author Matthias Mueller
  *
- * Basic methods to retrieve input data using HTTP/GET, HTTP/POST or HTTP/POST with href'd body
+ *         Basic methods to retrieve input data using HTTP/GET, HTTP/POST or
+ *         HTTP/POST with href'd body
  *
  */
-public class DefaultReferenceStrategy implements IReferenceStrategy{
+public class DefaultReferenceStrategy implements IReferenceStrategy {
 
     // TODO: follow HTTP redirects with LaxRedirectStrategy
 
     Logger logger = LoggerFactory.getLogger(DefaultReferenceStrategy.class);
 
-    //TODO: get proxy from config
-    //static final HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+    // TODO: get proxy from config
+    // static final HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
     static final HttpHost proxy = null;
 
     @Override
@@ -82,7 +83,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 
         try {
             // Handling POST with referenced document
-            if(input.isSetBodyReference()) {
+            if (input.isSetBodyReference()) {
 
                 String bodyHref = input.getBodyReferenceHref();
 
@@ -107,21 +108,17 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
                 return httpGet(href, mimeType);
             }
 
-
-        }
-        catch(RuntimeException e) {
-            throw new ExceptionReport("Error occured while parsing XML",
-                                        ExceptionReport.NO_APPLICABLE_CODE, e);
-        }
-        catch(MalformedURLException e) {
+        } catch (RuntimeException e) {
+            throw new ExceptionReport("Error occured while parsing XML", ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (MalformedURLException e) {
             String inputID = input.getIdentifier();
-            throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + href,
-                                        ExceptionReport.INVALID_PARAMETER_VALUE );
-        }
-        catch(IOException e) {
-             String inputID = input.getIdentifier();
-             throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + href,
-                                     ExceptionReport.INVALID_PARAMETER_VALUE );
+            throw new ExceptionReport(
+                    "The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + href,
+                    ExceptionReport.INVALID_PARAMETER_VALUE);
+        } catch (IOException e) {
+            String inputID = input.getIdentifier();
+            throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID
+                    + " | dataURL: " + href, ExceptionReport.INVALID_PARAMETER_VALUE);
         }
     }
 
@@ -130,13 +127,14 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
      *
      * TODO: add support for autoretry, proxy
      */
-    private ReferenceInputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
+    private ReferenceInputStream httpGet(final String dataURLString,
+            final String mimeType) throws IOException {
         HttpClient backend = new DefaultHttpClient();
         DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 
         HttpGet httpget = new HttpGet(dataURLString);
 
-        if (mimeType != null){
+        if (mimeType != null) {
             httpget.addHeader(new BasicHeader("Content-type", mimeType));
         }
 
@@ -148,14 +146,16 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
      *
      * TODO: add support for autoretry, proxy
      */
-    private ReferenceInputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
+    private ReferenceInputStream httpPost(final String dataURLString,
+            final String body,
+            final String mimeType) throws IOException {
         HttpClient backend = new DefaultHttpClient();
 
         DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 
         HttpPost httppost = new HttpPost(dataURLString);
 
-        if (mimeType != null){
+        if (mimeType != null) {
             httppost.addHeader(new BasicHeader("Content-type", mimeType));
         }
 

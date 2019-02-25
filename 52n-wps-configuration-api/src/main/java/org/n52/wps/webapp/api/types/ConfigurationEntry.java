@@ -32,7 +32,8 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.ConfigurationType;
 
 /**
- * Used by {@link ConfigurationModule} implementations to create type safe configuration entries using the extending classes.
+ * Used by {@link ConfigurationModule} implementations to create type safe
+ * configuration entries using the extending classes.
  *
  * @see StringConfigurationEntry
  * @see IntegerConfigurationEntry
@@ -41,14 +42,19 @@ import org.n52.wps.webapp.api.ConfigurationType;
  * @see FileConfigurationEntry
  * @see URIConfigurationEntry
  *
- * TODO: add isActive here?!
+ *      TODO: add isActive here?!
  */
 public abstract class ConfigurationEntry<T> {
     private T value;
+
     private String key;
+
     private String title;
+
     private String description;
+
     private boolean required;
+
     private ConfigurationType type;
 
     protected ConfigurationEntry(String key, String title, ConfigurationType type) {
@@ -71,7 +77,8 @@ public abstract class ConfigurationEntry<T> {
         return value;
     }
 
-        @Deprecated // this setter makes it unclear if the value of the entry stores the actual value, or if I must save the value myself in a CM
+    @Deprecated // this setter makes it unclear if the value of the entry stores
+                // the actual value, or if I must save the value myself in a CM
     public void setValue(T value) {
         this.value = value;
     }

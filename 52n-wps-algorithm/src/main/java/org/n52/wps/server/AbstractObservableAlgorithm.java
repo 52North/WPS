@@ -31,10 +31,12 @@ import org.n52.wps.server.observerpattern.ISubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
+public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject {
 
     protected ProcessDescription description;
+
     protected final String wkName;
+
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
 
     /**
@@ -51,32 +53,39 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
     }
 
     /**
-     * @param wellKnownName the well known name of the algorithm
-     * default constructor, calls the initializeDescription() Method
+     * @param wellKnownName
+     *            the well known name of the algorithm default constructor,
+     *            calls the initializeDescription() Method
      */
     public AbstractObservableAlgorithm(String wellKnownName) {
-        this.wkName = wellKnownName; // Has to be initialized before the description.
+        this.wkName = wellKnownName; // Has to be initialized before the
+                                     // description.
         this.description = initializeDescription();
     }
 
     /**
      *
-     * @param wellKnownName the well known name of the algorithm
+     * @param wellKnownName
+     *            the well known name of the algorithm
      * @param initializeDescription
-     *        set this to false if you want to initialize the description in an extending class
+     *            set this to false if you want to initialize the description in
+     *            an extending class
      */
     public AbstractObservableAlgorithm(String wellKnownName, boolean initializeDescription) {
         this.wkName = wellKnownName;
-        if (initializeDescription){
+        if (initializeDescription) {
             this.description = initializeDescription();
         }
     }
 
     /**
-     * This method should be overwritten, in case you want to have a way of initializing.
+     * This method should be overwritten, in case you want to have a way of
+     * initializing.
      *
-     * In detail it looks for a xml descfile, which is located in the same directory as the implementing class and has the same
-     * name as the class, but with the extension XML.
+     * In detail it looks for a xml descfile, which is located in the same
+     * directory as the implementing class and has the same name as the class,
+     * but with the extension XML.
+     * 
      * @return the process description
      */
     protected ProcessDescription initializeDescription() {
@@ -86,34 +95,38 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
             XmlOptions option = new XmlOptions();
             option.setLoadTrimTextBuffer();
             ProcessDescriptionsDocument doc = ProcessDescriptionsDocument.Factory.parse(xmlDesc, option);
-            if(doc.getProcessDescriptions().getProcessDescriptionArray().length == 0) {
+            if (doc.getProcessDescriptions().getProcessDescriptionArray().length == 0) {
                 LOGGER.warn("ProcessDescription does not contain correct any description");
                 return null;
             }
 
-            // Checking that the process name (full class name or well-known name) matches the identifier.
-            if(!doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getClass().getName()) &&
-                    !doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getWellKnownName())) {
-                doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(this.getClass().getName());
-                LOGGER.warn("Identifier was not correct, was changed now temporary for server use to " + this.getClass().getName() + ". Please change it later in the description!");
+            // Checking that the process name (full class name or well-known
+            // name) matches the identifier.
+            if (!doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue()
+                    .equals(this.getClass().getName())
+                    && !doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue()
+                            .equals(this.getWellKnownName())) {
+                doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier()
+                        .setStringValue(this.getClass().getName());
+                LOGGER.warn("Identifier was not correct, was changed now temporary for server use to "
+                        + this.getClass().getName() + ". Please change it later in the description!");
             }
 
             ProcessDescription processDescription = new ProcessDescription();
 
-            processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+            processDescription.addProcessDescriptionForVersion(
+                    doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
 
             return processDescription;
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             LOGGER.warn("Could not initialize algorithm, parsing error: " + this.getClass().getName(), e);
-        }
-        catch(XmlException e) {
+        } catch (XmlException e) {
             LOGGER.warn("Could not initialize algorithm, parsing error: " + this.getClass().getName(), e);
         }
         return null;
     }
 
-    public ProcessDescription getDescription()  {
+    public ProcessDescription getDescription() {
         return description;
     }
 
@@ -130,27 +143,27 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
     private Object state = null;
 
     public Object getState() {
-      return state;
+        return state;
     }
 
     public void update(Object state) {
-       this.state = state;
-       notifyObservers();
+        this.state = state;
+        notifyObservers();
     }
 
-     public void addObserver(IObserver o) {
-       observers.add(o);
-     }
+    public void addObserver(IObserver o) {
+        observers.add(o);
+    }
 
-     public void removeObserver(IObserver o) {
-       observers.remove(o);
-     }
+    public void removeObserver(IObserver o) {
+        observers.remove(o);
+    }
 
-     public void notifyObservers() {
-       Iterator i = observers.iterator();
-       while (i.hasNext()) {
-         IObserver o = (IObserver) i.next();
-         o.update(this);
-       }
-     }
+    public void notifyObservers() {
+        Iterator i = observers.iterator();
+        while (i.hasNext()) {
+            IObserver o = (IObserver) i.next();
+            o.update(this);
+        }
+    }
 }

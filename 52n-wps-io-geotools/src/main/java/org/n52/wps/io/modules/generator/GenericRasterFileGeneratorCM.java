@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericRasterFileGeneratorCM extends ClassKnowingModule{
+public class GenericRasterFileGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GenericRasterFileGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GenericRasterFileGeneratorCM(){
+    public GenericRasterFileGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

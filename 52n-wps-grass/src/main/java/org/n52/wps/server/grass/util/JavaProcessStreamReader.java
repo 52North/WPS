@@ -39,28 +39,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class handles Java process streams. If this would not be done, the thread would not wait
- * for the process to be finished.
- * (See http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html?page=4)
+ * This class handles Java process streams. If this would not be done, the
+ * thread would not wait for the process to be finished. (See
+ * http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html?page=4)
  *
  * @author Benjamin Pross(bpross-52n)
  *
  */
 public class JavaProcessStreamReader extends Thread {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(JavaProcessStreamReader.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(JavaProcessStreamReader.class);
 
     InputStream inputStream;
+
     String type;
+
     OutputStream outputStream;
 
     public JavaProcessStreamReader(InputStream is, String type) {
         this(is, type, null);
     }
 
-    public JavaProcessStreamReader(InputStream is, String type,
-            OutputStream redirect) {
+    public JavaProcessStreamReader(InputStream is, String type, OutputStream redirect) {
         this.inputStream = is;
         this.type = type;
         this.outputStream = redirect;
@@ -90,8 +90,7 @@ public class JavaProcessStreamReader extends Thread {
                 printWriter.flush();
             }
         } catch (IOException ioe) {
-            LOGGER.error("Something went wrong while parsing the Java process stream.",
-                    ioe);
+            LOGGER.error("Something went wrong while parsing the Java process stream.", ioe);
         } finally {
             try {
                 if (printWriter != null) {
@@ -107,9 +106,7 @@ public class JavaProcessStreamReader extends Thread {
                     bufferedReader.close();
                 }
             } catch (Exception e) {
-                LOGGER.error(
-                        "Something went wrong while trying to close the streams.",
-                        e);
+                LOGGER.error("Something went wrong while trying to close the streams.", e);
             }
         }
     }

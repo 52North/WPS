@@ -93,11 +93,14 @@ import net.opengis.wps.x100.StatusType;
 /**
  * Handles an ExecuteRequest
  */
-public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
+public class ExecuteRequestV100 extends ExecuteRequest implements IObserver {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequestV100.class);
+
     private ExecuteDocument execDom;
+
     private Map<String, IData> returnResults;
+
     private ExecuteResponseBuilderV100 execRespType;
 
     /**
@@ -105,7 +108,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
      *
      * @param doc
      *            The clients submission
-     * @throws ExceptionReport if an exception occurred during construction
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
     public ExecuteRequestV100(Document doc) throws ExceptionReport {
         super(doc);
@@ -115,12 +119,10 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             this.execDom = ExecuteDocument.Factory.parse(doc, option);
             if (this.execDom == null) {
                 LOGGER.error("ExecuteDocument is null");
-                throw new ExceptionReport("Error while parsing post data",
-                        ExceptionReport.MISSING_PARAMETER_VALUE);
+                throw new ExceptionReport("Error while parsing post data", ExceptionReport.MISSING_PARAMETER_VALUE);
             }
         } catch (XmlException e) {
-            throw new ExceptionReport("Error while parsing post data",
-                    ExceptionReport.MISSING_PARAMETER_VALUE, e);
+            throw new ExceptionReport("Error while parsing post data", ExceptionReport.MISSING_PARAMETER_VALUE, e);
         }
 
         // validate the client input
@@ -151,31 +153,32 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
     private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
         String version = getMapValue("version", ciMap, true);
-        if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {//TODO check if this mustn't be 1.0.0
-            throw new ExceptionReport("request version is not supported: "
-                    + version, ExceptionReport.VERSION_NEGOTIATION_FAILED);
+        if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {// TODO check if
+                                                              // this mustn't be
+                                                              // 1.0.0
+            throw new ExceptionReport("request version is not supported: " + version,
+                    ExceptionReport.VERSION_NEGOTIATION_FAILED);
         }
         this.execDom = ExecuteDocument.Factory.newInstance();
         Execute execute = execDom.addNewExecute();
         String processID = getMapValue("Identifier", true);
         if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(processID)) {
-            throw new ExceptionReport("Process does not exist",
-                    ExceptionReport.INVALID_PARAMETER_VALUE);
+            throw new ExceptionReport("Process does not exist", ExceptionReport.INVALID_PARAMETER_VALUE);
         }
         execute.addNewIdentifier().setStringValue(processID);
         DataInputsType dataInputs = execute.addNewDataInputs();
         String dataInputString = getMapValue("DataInputs", true);
-        dataInputString = dataInputString.replace("&amp;","&");
+        dataInputString = dataInputString.replace("&amp;", "&");
         String[] inputs = dataInputString.split(";");
 
         // Handle data inputs
         for (String inputString : inputs) {
             int position = inputString.indexOf("=");
             if (position == -1) {
-                throw new ExceptionReport("No \"=\" supplied for attribute: "
-                        + inputString, ExceptionReport.MISSING_PARAMETER_VALUE);
+                throw new ExceptionReport("No \"=\" supplied for attribute: " + inputString,
+                        ExceptionReport.MISSING_PARAMETER_VALUE);
             }
-            //get name
+            // get name
             String key = inputString.substring(0, position);
             String value = null;
             if (key.length() + 1 < inputString.length()) {
@@ -187,17 +190,17 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                     value = inputString.substring(position + 1);
                 }
             }
-            ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+            ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
+                    .getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 
             if (description == null) {
-                throw new ExceptionReport("Data Identifier not supported: "
-                        + key, ExceptionReport.MISSING_PARAMETER_VALUE);
+                throw new ExceptionReport("Data Identifier not supported: " + key,
+                        ExceptionReport.MISSING_PARAMETER_VALUE);
             }
-            InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(key,
-                    description.getDataInputs());
+            InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(key, description.getDataInputs());
             if (inputDesc == null) {
-                throw new ExceptionReport("Data Identifier not supported: "
-                        + key, ExceptionReport.MISSING_PARAMETER_VALUE);
+                throw new ExceptionReport("Data Identifier not supported: " + key,
+                        ExceptionReport.MISSING_PARAMETER_VALUE);
             }
             InputType input = dataInputs.addNewInput();
             input.addNewIdentifier().setStringValue(key);
@@ -218,22 +221,21 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             if (inputItemstemp.length > 1) {
                 for (int i = 0; i < inputItems.length; i++) {
                     int attributePos = inputItems[i].indexOf("=");
-                    if (attributePos == -1
-                            || attributePos + 1 >= inputItems[i].length()) {
+                    if (attributePos == -1 || attributePos + 1 >= inputItems[i].length()) {
                         continue;
                     }
-                    String attributeName = inputItems[i].substring(0,
-                            attributePos);
-                    String attributeValue = inputItems[i]
-                            .substring(attributePos + 1);
-                    //attribute is input name
-                    if(attributeName.equals(key)){
+                    String attributeName = inputItems[i].substring(0, attributePos);
+                    String attributeValue = inputItems[i].substring(attributePos + 1);
+                    // attribute is input name
+                    if (attributeName.equals(key)) {
                         continue;
                     }
                     try {
                         attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
+                        throw new ExceptionReport(
+                                "Something went wrong while trying to decode value of " + attributeName,
+                                ExceptionReport.NO_APPLICABLE_CODE, e);
                     }
                     if (attributeName.equalsIgnoreCase("encoding")) {
                         encodingAttribute = attributeValue;
@@ -248,81 +250,81 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                     } else if (attributeName.equalsIgnoreCase("datatype")) {
                         dataType = attributeValue;
                     } else {
-                        throw new ExceptionReport(
-                                "Attribute is not supported: " + attributeName,
+                        throw new ExceptionReport("Attribute is not supported: " + attributeName,
                                 ExceptionReport.INVALID_PARAMETER_VALUE);
                     }
 
                 }
             }
-                if (inputDesc.isSetComplexData()) {
-                    // TODO: check for different attributes
-                    // handling ComplexReference
-                    if (!(hrefAttribute == null) && !hrefAttribute.equals("")) {
-                        InputReferenceType reference = input.addNewReference();
-                        reference.setHref(hrefAttribute);
-                        if (schemaAttribute != null) {
-                            reference.setSchema(schemaAttribute);
-                        }
-                        if (mimeTypeAttribute != null) {
-                            reference.setMimeType(mimeTypeAttribute);
-                        }
-                        if (encodingAttribute != null) {
-                            reference.setEncoding(encodingAttribute);
-                        }
-
+            if (inputDesc.isSetComplexData()) {
+                // TODO: check for different attributes
+                // handling ComplexReference
+                if (!(hrefAttribute == null) && !hrefAttribute.equals("")) {
+                    InputReferenceType reference = input.addNewReference();
+                    reference.setHref(hrefAttribute);
+                    if (schemaAttribute != null) {
+                        reference.setSchema(schemaAttribute);
                     }
-                    // Handling ComplexData
-                    else {
-                        ComplexDataType data = input.addNewData().addNewComplexData();
+                    if (mimeTypeAttribute != null) {
+                        reference.setMimeType(mimeTypeAttribute);
+                    }
+                    if (encodingAttribute != null) {
+                        reference.setEncoding(encodingAttribute);
+                    }
 
-                        InputStream stream = new ByteArrayInputStream(value.getBytes());
+                }
+                // Handling ComplexData
+                else {
+                    ComplexDataType data = input.addNewData().addNewComplexData();
 
+                    InputStream stream = new ByteArrayInputStream(value.getBytes());
+
+                    try {
+                        data.set(XmlObject.Factory.parse(stream));
+                    } catch (Exception e) {
+                        LOGGER.warn("Could not parse value: " + value + " as XMLObject. Trying to create text node.");
                         try {
-                            data.set(XmlObject.Factory.parse(stream));
-                        } catch (Exception e) {
-                            LOGGER.warn("Could not parse value: " + value + " as XMLObject. Trying to create text node.");
-                            try {
-                                Node textNode = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().createTextNode(value);
-                                data.set(XmlObject.Factory.parse(textNode));
-                            } catch (Exception e1) {
-                                throw new ExceptionReport("Exception while trying to parse value: " + value,
-                                        ExceptionReport.NO_APPLICABLE_CODE, e1);
-                            }
-                        }
-
-                        if (schemaAttribute != null) {
-                            data.setSchema(schemaAttribute);
-                        }
-                        if (mimeTypeAttribute != null) {
-                            data.setMimeType(mimeTypeAttribute);
-                        }
-                        if (encodingAttribute != null) {
-                            data.setEncoding(encodingAttribute);
+                            Node textNode = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
+                                    .createTextNode(value);
+                            data.set(XmlObject.Factory.parse(textNode));
+                        } catch (Exception e1) {
+                            throw new ExceptionReport("Exception while trying to parse value: " + value,
+                                    ExceptionReport.NO_APPLICABLE_CODE, e1);
                         }
                     }
+
+                    if (schemaAttribute != null) {
+                        data.setSchema(schemaAttribute);
+                    }
+                    if (mimeTypeAttribute != null) {
+                        data.setMimeType(mimeTypeAttribute);
+                    }
+                    if (encodingAttribute != null) {
+                        data.setEncoding(encodingAttribute);
+                    }
+                }
 
             } else if (inputDesc.isSetLiteralData()) {
                 LiteralDataType data = input.addNewData().addNewLiteralData();
                 if (value == null) {
-                    throw new ExceptionReport("No value provided for literal: "
-                            + inputDesc.getIdentifier().getStringValue(),
+                    throw new ExceptionReport(
+                            "No value provided for literal: " + inputDesc.getIdentifier().getStringValue(),
                             ExceptionReport.MISSING_PARAMETER_VALUE);
                 }
                 data.setStringValue(value);
-                if(uom != null){
+                if (uom != null) {
                     data.setUom(uom);
                 }
-                if(dataType != null){
+                if (dataType != null) {
                     data.setDataType(dataType);
                 }
             } else if (inputDesc.isSetBoundingBoxData()) {
                 BoundingBoxType data = input.addNewData().addNewBoundingBoxData();
                 String[] values = value.split(",");
 
-                if(values.length<4){
-                    throw new ExceptionReport("Invalid Number of BBOX Values: "
-                            + inputDesc.getIdentifier().getStringValue(),
+                if (values.length < 4) {
+                    throw new ExceptionReport(
+                            "Invalid Number of BBOX Values: " + inputDesc.getIdentifier().getStringValue(),
                             ExceptionReport.MISSING_PARAMETER_VALUE);
                 }
                 List<String> lowerCorner = new ArrayList<String>();
@@ -335,11 +337,11 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                 upperCorner.add(values[3]);
                 data.setUpperCorner(upperCorner);
 
-                if(values.length>4){
+                if (values.length > 4) {
                     data.setCrs(values[4]);
                 }
 
-                if(values.length>5){
+                if (values.length > 5) {
                     data.setDimensions(BigInteger.valueOf(Long.valueOf(values[5])));
                 }
             }
@@ -360,8 +362,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         String responseDocument = getMapValue("ResponseDocument", false);
         if (responseDocument != null) {
             String[] outputs = responseDocument.split(";");
-            ResponseDocumentType responseDoc = execute.addNewResponseForm()
-                    .addNewResponseDocument();
+            ResponseDocumentType responseDoc = execute.addNewResponseForm().addNewResponseDocument();
             responseDoc.setStatus(status);
             responseDoc.setStoreExecuteResponse(store);
             for (String outputID : outputs) {
@@ -373,35 +374,31 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                     outputDataInput = outputID;
                 }
                 outputDataInput = outputDataInput.replace("=", "");
-                ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
-                OutputDescriptionType outputDesc = XMLBeansHelper
-                        .findOutputByID(outputDataInput, description.getProcessOutputs()
-                                .getOutputArray());
+                ProcessDescriptionType description =
+                        (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance()
+                                .getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+                OutputDescriptionType outputDesc = XMLBeansHelper.findOutputByID(outputDataInput,
+                        description.getProcessOutputs().getOutputArray());
                 if (outputDesc == null) {
-                    throw new ExceptionReport(
-                            "Data output Identifier not supported: "
-                                    + outputDataInput,
+                    throw new ExceptionReport("Data output Identifier not supported: " + outputDataInput,
                             ExceptionReport.MISSING_PARAMETER_VALUE);
                 }
-                DocumentOutputDefinitionType output = responseDoc
-                        .addNewOutput();
+                DocumentOutputDefinitionType output = responseDoc.addNewOutput();
                 output.addNewIdentifier().setStringValue(outputDataInput);
 
                 for (int i = 1; i < outputDataparameters.length; i++) {
                     int attributePos = outputDataparameters[i].indexOf("=");
-                    if (attributePos == -1
-                            || attributePos + 1 >= outputDataparameters[i]
-                                    .length()) {
+                    if (attributePos == -1 || attributePos + 1 >= outputDataparameters[i].length()) {
                         continue;
                     }
-                    String attributeName = outputDataparameters[i].substring(0,
-                            attributePos);
-                    String attributeValue = outputDataparameters[i]
-                            .substring(attributePos + 1);
-                    try{
+                    String attributeName = outputDataparameters[i].substring(0, attributePos);
+                    String attributeValue = outputDataparameters[i].substring(attributePos + 1);
+                    try {
                         attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
+                        throw new ExceptionReport(
+                                "Something went wrong while trying to decode value of " + attributeName,
+                                ExceptionReport.NO_APPLICABLE_CODE, e);
                     }
                     if (attributeName.equalsIgnoreCase("mimeType")) {
                         output.setMimeType(attributeValue);
@@ -423,36 +420,32 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             } else {
                 rawDataInput = rawData;
             }
-            ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
-            OutputDescriptionType outputDesc = XMLBeansHelper.findOutputByID(
-                    rawDataInput,
-                            description.getProcessOutputs().getOutputArray());
+            ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
+                    .getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+            OutputDescriptionType outputDesc =
+                    XMLBeansHelper.findOutputByID(rawDataInput, description.getProcessOutputs().getOutputArray());
             if (outputDesc == null) {
-                throw new ExceptionReport(
-                        "Data output Identifier not supported: " + rawData,
+                throw new ExceptionReport("Data output Identifier not supported: " + rawData,
                         ExceptionReport.MISSING_PARAMETER_VALUE);
             }
             ResponseFormType responseForm = execute.addNewResponseForm();
             OutputDefinitionType output = responseForm.addNewRawDataOutput();
-            output.addNewIdentifier().setStringValue(
-                    outputDesc.getIdentifier().getStringValue());
+            output.addNewIdentifier().setStringValue(outputDesc.getIdentifier().getStringValue());
 
             if (rawDataparameters.length > 0) {
                 for (int i = 0; i < rawDataparameters.length; i++) {
                     int attributePos = rawDataparameters[i].indexOf("=");
-                    if (attributePos == -1
-                            || attributePos + 1 >= rawDataparameters[i]
-                                    .length()) {
+                    if (attributePos == -1 || attributePos + 1 >= rawDataparameters[i].length()) {
                         continue;
                     }
-                    String attributeName = rawDataparameters[i].substring(0,
-                            attributePos);
-                    String attributeValue = rawDataparameters[i]
-                            .substring(attributePos + 1);
-                    try{
+                    String attributeName = rawDataparameters[i].substring(0, attributePos);
+                    String attributeValue = rawDataparameters[i].substring(attributePos + 1);
+                    try {
                         attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
+                        throw new ExceptionReport(
+                                "Something went wrong while trying to decode value of " + attributeName,
+                                ExceptionReport.NO_APPLICABLE_CODE, e);
                     }
                     if (attributeName.equalsIgnoreCase("mimeType")) {
                         output.setMimeType(attributeValue);
@@ -462,8 +455,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                         output.setEncoding(attributeValue);
 
                     } else {
-                        throw new ExceptionReport(
-                                "Attribute is not supported: " + attributeName,
+                        throw new ExceptionReport("Attribute is not supported: " + attributeName,
                                 ExceptionReport.INVALID_PARAMETER_VALUE);
                     }
 
@@ -478,7 +470,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
      * Validates the client request
      *
      * @return True if the input is valid, False otherwise
-     * @throws ExceptionReport if an exception occurred during validation
+     * @throws ExceptionReport
+     *             if an exception occurred during validation
      */
     public boolean validate() throws ExceptionReport {
         // Identifier must be specified.
@@ -487,45 +480,40 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
          *
          * try{ // Specifies if all complex valued output(s) of this process
          * should be stored by process // as web-accessible resources store =
-         * getMapValue("store").equals("true");
-         *  // Specifies if Execute operation response shall be returned quickly
-         * with status information status =
-         * getMapValue("status").equals("true"); }catch(ExceptionReport e){ //
-         * if parameters "store" or "status" are not included, they default to
-         * false; }
-         *  // just testing if the number of arguments is even... String[]
-         * diArray = getMapValue("DataInputs").split(","); if(diArray.length % 2 !=
-         * 0) { throw new ExceptionReport("Incorrect number of arguments for
-         * parameter dataInputs, please only a even number of parameter values",
+         * getMapValue("store").equals("true"); // Specifies if Execute
+         * operation response shall be returned quickly with status information
+         * status = getMapValue("status").equals("true"); }catch(ExceptionReport
+         * e){ // if parameters "store" or "status" are not included, they
+         * default to false; } // just testing if the number of arguments is
+         * even... String[] diArray = getMapValue("DataInputs").split(",");
+         * if(diArray.length % 2 != 0) { throw new ExceptionReport("Incorrect
+         * number of arguments for parameter dataInputs, please only a even
+         * number of parameter values",
          * ExceptionReport.INVALID_PARAMETER_VALUE); }
          *
          */
         if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
-            throw new ExceptionReport("Specified version is not supported.",
-                    ExceptionReport.INVALID_PARAMETER_VALUE, "version="
-                            + getExecute().getVersion());
+            throw new ExceptionReport("Specified version is not supported.", ExceptionReport.INVALID_PARAMETER_VALUE,
+                    "version=" + getExecute().getVersion());
         }
 
-        //Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+        // Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
         String identifier = getAlgorithmIdentifier();
 
-        if(identifier == null){
-            throw new ExceptionReport(
-                    "No process identifier supplied.",
-                    ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");
+        if (identifier == null) {
+            throw new ExceptionReport("No process identifier supplied.", ExceptionReport.MISSING_PARAMETER_VALUE,
+                    "identifier");
         }
 
         // check if the algorithm is in our repository
-        if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(
-                identifier)) {
-            throw new ExceptionReport(
-                    "Specified process identifier does not exist",
-                    ExceptionReport.INVALID_PARAMETER_VALUE,
-                    "identifier=" + identifier);
+        if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(identifier)) {
+            throw new ExceptionReport("Specified process identifier does not exist",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "identifier=" + identifier);
         }
 
         // validate if the process can be executed
-        ProcessDescriptionType desc = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_100);
+        ProcessDescriptionType desc = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance()
+                .getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_100);
         // We need a description of the inputs for the algorithm
         if (desc == null) {
             LOGGER.warn("desc == null");
@@ -534,16 +522,17 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
         // Get the inputdescriptions of the algorithm
 
-        if(desc.getDataInputs()!=null){
+        if (desc.getDataInputs() != null) {
             InputDescriptionType[] inputDescs = desc.getDataInputs().getInputArray();
 
-        //prevent NullPointerException for zero input values in execute request (if only default values are used)
-        InputType[] inputs;
-        if(getExecute().getDataInputs()==null) {
-                inputs=new InputType[0];
-        } else {
-            inputs = getExecute().getDataInputs().getInputArray();
-        }
+            // prevent NullPointerException for zero input values in execute
+            // request (if only default values are used)
+            InputType[] inputs;
+            if (getExecute().getDataInputs() == null) {
+                inputs = new InputType[0];
+            } else {
+                inputs = getExecute().getDataInputs().getInputArray();
+            }
 
             // For each input supplied by the client
             for (InputType input : inputs) {
@@ -551,44 +540,29 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                 // Try to match the input with one of the descriptions
                 for (InputDescriptionType inputDesc : inputDescs) {
                     // If found, then process:
-                    if (inputDesc.getIdentifier().getStringValue().equals(
-                            input.getIdentifier().getStringValue())) {
+                    if (inputDesc.getIdentifier().getStringValue().equals(input.getIdentifier().getStringValue())) {
                         identifierMatched = true;
                         // If it is a literal value,
-                        if (input.getData() != null
-                                && input.getData().getLiteralData() != null) {
-                            // then check if the desription is also of type literal
+                        if (input.getData() != null && input.getData().getLiteralData() != null) {
+                            // then check if the desription is also of type
+                            // literal
                             if (inputDesc.getLiteralData() == null) {
-                                throw new ExceptionReport("Inputtype LiteralData is not supported for input"
-                                                                  + inputDesc.getIdentifier().getStringValue(),
+                                throw new ExceptionReport(
+                                        "Inputtype LiteralData is not supported for input"
+                                                + inputDesc.getIdentifier().getStringValue(),
                                         ExceptionReport.INVALID_PARAMETER_VALUE);
                             }
                             // literalValue.getDataType ist optional
                             if (input.getData().getLiteralData().getDataType() != null) {
                                 if (inputDesc.getLiteralData() != null) {
                                     if (inputDesc.getLiteralData().getDataType() != null) {
-                                        if (inputDesc.getLiteralData()
-                                                .getDataType().getReference() != null){
+                                        if (inputDesc.getLiteralData().getDataType().getReference() != null) {
 
-                                            if (!input
-                                                    .getData()
-                                                    .getLiteralData()
-                                                    .getDataType()
-                                                    .equals(
-                                                            inputDesc
-                                                                    .getLiteralData()
-                                                                    .getDataType()
-                                                                    .getReference())) {
-                                                throw new ExceptionReport(
-                                                        "Specified dataType is not supported "
-                                                                + input
-                                                                        .getData()
-                                                                        .getLiteralData()
-                                                                        .getDataType()
-                                                                + " for input "
-                                                                + input
-                                                                        .getIdentifier()
-                                                                        .getStringValue(),
+                                            if (!input.getData().getLiteralData().getDataType()
+                                                    .equals(inputDesc.getLiteralData().getDataType().getReference())) {
+                                                throw new ExceptionReport("Specified dataType is not supported "
+                                                        + input.getData().getLiteralData().getDataType() + " for input "
+                                                        + input.getIdentifier().getStringValue(),
                                                         ExceptionReport.INVALID_PARAMETER_VALUE);
                                             }
                                         }
@@ -599,13 +573,13 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                         break;
                     }
                 }
-                // if the identifier did not match one of the descriptions, it is
+                // if the identifier did not match one of the descriptions, it
+                // is
                 // invalid
                 if (!identifierMatched) {
-                    throw new ExceptionReport("Input Identifier is not valid: "
-                            + input.getIdentifier().getStringValue(),
-                            ExceptionReport.INVALID_PARAMETER_VALUE,
-                            "input identifier");
+                    throw new ExceptionReport(
+                            "Input Identifier is not valid: " + input.getIdentifier().getStringValue(),
+                            ExceptionReport.INVALID_PARAMETER_VALUE, "input identifier");
                 }
             }
         }
@@ -615,7 +589,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * @throws ExceptionReport
+     *             if an exception occurred while handling the request
      */
     public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
@@ -626,19 +601,22 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
                 OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
 
-                if(getExecute().getResponseForm().isSetRawDataOutput()){
-                    outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(new OutputDefinitionType[]{getExecute().getResponseForm().getRawDataOutput()}));
-                }else{
-                    outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
+                if (getExecute().getResponseForm().isSetRawDataOutput()) {
+                    outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays
+                            .asList(new OutputDefinitionType[] { getExecute().getResponseForm().getRawDataOutput() }));
+                } else {
+                    outputTypeWrapper.setWps100OutputDefinitionTypes(
+                            Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
                 }
 
-                context =  new ExecutionContext(outputTypeWrapper);
-            }
-            else {
+                context = new ExecutionContext(outputTypeWrapper);
+            } else {
                 context = new ExecutionContext();
             }
 
-            // register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
+            // register so that any function that calls
+            // ExecuteContextFactory.getContext() gets the instance registered
+            // with this thread
             ExecutionContextFactory.registerContext(context);
 
             LOGGER.debug("started with execution");
@@ -647,7 +625,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
             // parse the input
             InputType[] inputs = new InputType[0];
-            if( getExecute().getDataInputs()!=null){
+            if (getExecute().getDataInputs() != null) {
                 inputs = getExecute().getDataInputs().getInputArray();
             }
             InputHandler parser = new InputHandler.Builder(new Input(inputs), getAlgorithmIdentifier()).build();
@@ -657,19 +635,20 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
             /*
              * IAlgorithm algorithm =
-             * RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
-             * returnResults = algorithm.run((Map)parser.getParsedInputLayers(),
+             * RepositoryManager.getInstance().getAlgorithm(
+             * getAlgorithmIdentifier()); returnResults =
+             * algorithm.run((Map)parser.getParsedInputLayers(),
              * (Map)parser.getParsedInputParameters());
              */
             algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(getAlgorithmIdentifier());
 
-            if(algorithm instanceof ISubject){
+            if (algorithm instanceof ISubject) {
                 ISubject subject = (ISubject) algorithm;
                 subject.addObserver(this);
             }
 
-            if(algorithm instanceof AbstractTransactionalAlgorithm){
-                returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
+            if (algorithm instanceof AbstractTransactionalAlgorithm) {
+                returnResults = ((AbstractTransactionalAlgorithm) algorithm).run(execDom);
             } else {
                 inputMap = parser.getParsedInputData();
                 returnResults = algorithm.run(inputMap);
@@ -678,12 +657,13 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             List<String> errorList = algorithm.getErrors();
             if (errorList != null && !errorList.isEmpty()) {
                 String errorMessage = errorList.get(0);
-                LOGGER.error("Error reported while handling ExecuteRequest for " + getAlgorithmIdentifier() + ": " + errorMessage);
+                LOGGER.error("Error reported while handling ExecuteRequest for " + getAlgorithmIdentifier() + ": "
+                        + errorMessage);
                 updateStatusError(errorMessage);
             } else {
                 updateStatusSuccess();
             }
-        } catch(Throwable e) {
+        } catch (Throwable e) {
             String errorMessage = null;
             if (algorithm != null && algorithm.getErrors() != null && !algorithm.getErrors().isEmpty()) {
                 errorMessage = algorithm.getErrors().get(0);
@@ -694,28 +674,31 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             if (errorMessage == null) {
                 errorMessage = "UNKNOWN ERROR";
             }
-            LOGGER.error("Exception/Error while executing ExecuteRequest for " + getAlgorithmIdentifier() + ": " + errorMessage);
+            LOGGER.error("Exception/Error while executing ExecuteRequest for " + getAlgorithmIdentifier() + ": "
+                    + errorMessage);
             updateStatusError(errorMessage);
             if (e instanceof Error) {
                 // This is required when catching Error
-                throw (Error)e;
+                throw (Error) e;
             }
             if (e instanceof ExceptionReport) {
-                throw (ExceptionReport)e;
+                throw (ExceptionReport) e;
             } else {
-                throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+                throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(),
+                        ExceptionReport.NO_APPLICABLE_CODE, e);
             }
         } finally {
-            //  you ***MUST*** call this or else you will have a PermGen ClassLoader memory leak due to ThreadLocal use
+            // you ***MUST*** call this or else you will have a PermGen
+            // ClassLoader memory leak due to ThreadLocal use
             ExecutionContextFactory.unregisterContext();
             if (algorithm instanceof ISubject) {
-                ((ISubject)algorithm).removeObserver(this);
+                ((ISubject) algorithm).removeObserver(this);
             }
             if (inputMap != null) {
-                for(List<IData> l : inputMap.values()) {
+                for (List<IData> l : inputMap.values()) {
                     for (IData d : l) {
                         if (d instanceof IComplexData) {
-                            ((IComplexData)d).dispose();
+                            ((IComplexData) d).dispose();
                         }
                     }
                 }
@@ -723,7 +706,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             if (returnResults != null) {
                 for (IData d : returnResults.values()) {
                     if (d instanceof IComplexData) {
-                        ((IComplexData)d).dispose();
+                        ((IComplexData) d).dispose();
                     }
                 }
             }
@@ -733,15 +716,14 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         return response;
     }
 
-
     /**
      * Gets the identifier of the algorithm the client requested
      *
      * @return An identifier
      */
     public String getAlgorithmIdentifier() {
-        //Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
-        if(getExecute().getIdentifier() != null){
+        // Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+        if (getExecute().getIdentifier() != null) {
             return getExecute().getIdentifier().getStringValue();
         }
         return null;
@@ -767,8 +749,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         if (execDom.getExecute().getResponseForm().getRawDataOutput() != null) {
             return false;
         }
-        return execDom.getExecute().getResponseForm().getResponseDocument()
-                .getStoreExecuteResponse();
+        return execDom.getExecute().getResponseForm().getResponseDocument().getStoreExecuteResponse();
     }
 
     public boolean isQuickStatus() {
@@ -778,8 +759,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         if (execDom.getExecute().getResponseForm().getRawDataOutput() != null) {
             return false;
         }
-        return execDom.getExecute().getResponseForm().getResponseDocument()
-                .getStatus();
+        return execDom.getExecute().getResponseForm().getResponseDocument().getStatus();
     }
 
     public ExecuteResponseBuilderV100 getExecuteResponseBuilder() {
@@ -797,7 +777,6 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         }
     }
 
-
     public void update(ISubject subject) {
         Object state = subject.getState();
         LOGGER.info("Update received from Subject, state changed to : " + state);
@@ -807,8 +786,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         if (state instanceof Integer) {
             percentage = (Integer) state;
             status.addNewProcessStarted().setPercentCompleted(percentage);
-        }else if(state instanceof String){
-            status.addNewProcessStarted().setStringValue((String)state);
+        } else if (state instanceof String) {
+            status.addNewProcessStarted().setStringValue((String) state);
         }
         updateStatus(status);
     }
@@ -833,8 +812,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
     public void updateStatusError(String errorMessage) {
         StatusType status = StatusType.Factory.newInstance();
-        net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep = status
-                .addNewProcessFailed().addNewExceptionReport();
+        net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep =
+                status.addNewProcessFailed().addNewExceptionReport();
         excRep.setVersion("1.0.0");
         ExceptionType excType = excRep.addNewException();
         excType.addNewExceptionText().setStringValue(errorMessage);
@@ -851,8 +830,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                 InputStream is = null;
                 try {
                     is = executeResponse.getAsStream();
-                    DatabaseFactory.getDatabase().storeResponse(
-                            getUniqueId().toString(), is);
+                    DatabaseFactory.getDatabase().storeResponse(getUniqueId().toString(), is);
                 } finally {
                     IOUtils.closeQuietly(is);
                 }
@@ -867,8 +845,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         InputStream is = null;
         try {
             is = executeDocument.newInputStream();
-            DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, true);
+            DatabaseFactory.getDatabase().insertRequest(getUniqueId().toString(), is, true);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {
@@ -887,9 +864,9 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             for (Object key : map.keySet()) {
                 Object value = map.get(key);
                 String valueString = "";
-                if(value instanceof String[]){
-                    valueString = ((String[])value)[0];
-                }else{
+                if (value instanceof String[]) {
+                    valueString = ((String[]) value)[0];
+                } else {
                     valueString = value.toString();
                 }
                 w.append(key.toString()).append('=').append(valueString);
@@ -897,8 +874,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             }
             w.flush();
             is = new ByteArrayInputStream(os.toByteArray());
-            DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, false);
+            DatabaseFactory.getDatabase().insertRequest(getUniqueId().toString(), is, false);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {

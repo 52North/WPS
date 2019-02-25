@@ -23,10 +23,10 @@ import java.util.Set;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-
 /**
  * Extending subclasses of AbstractGenerator shall provide functionality to
- * generate serviceable output data for the processes offered by the 52N WPS framework.
+ * generate serviceable output data for the processes offered by the 52N WPS
+ * framework.
  *
  * @author Matthias Mueller
  *
@@ -34,13 +34,18 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public abstract class AbstractIOHandler implements IOHandler {
     protected Set<String> supportedFormats;
+
     protected Set<String> supportedSchemas;
+
     protected Set<String> supportedEncodings;
+
     protected Set<Class<?>> supportedIDataTypes;
+
     protected List<? extends ConfigurationEntry<?>> properties;
+
     protected List<FormatEntry> formats;
 
-    public AbstractIOHandler(){
+    public AbstractIOHandler() {
         this.supportedFormats = new HashSet<String>();
         this.supportedSchemas = new HashSet<String>();
         this.supportedEncodings = new HashSet<String>();
@@ -52,7 +57,7 @@ public abstract class AbstractIOHandler implements IOHandler {
      */
     public boolean isSupportedFormat(String format) {
         String[] sf = getSupportedFormats();
-        for(String f : sf) {
+        for (String f : sf) {
             if (f.equalsIgnoreCase(format)) {
                 return true;
             }
@@ -67,7 +72,6 @@ public abstract class AbstractIOHandler implements IOHandler {
         return supportedFormats.toArray(new String[supportedFormats.size()]);
     }
 
-
     /**
      * Returns an array having the supported schemas.
      */
@@ -75,21 +79,36 @@ public abstract class AbstractIOHandler implements IOHandler {
         return supportedSchemas.toArray(new String[supportedSchemas.size()]);
     }
 
-
     /**
-     * Returns true if the given schema is supported, else false.
-     * Binary data has no schema in WPS 1.0.0: If the request does not contain a schema and
-     * the Generator has no schemas configured it is assumed to be a "binary case".
-     * The method will return TRUE in this case.
-     * Might lead to unexpected behaviour in malformed requests.
+     * Returns true if the given schema is supported, else false. Binary data
+     * has no schema in WPS 1.0.0: If the request does not contain a schema and
+     * the Generator has no schemas configured it is assumed to be a "binary
+     * case". The method will return TRUE in this case. Might lead to unexpected
+     * behaviour in malformed requests.
      */
     public boolean isSupportedSchema(String schema) {
-        //no schema given. assuming no schema required. therefore accept all schemas
-        if(supportedSchemas.size()==0 && (schema == null || schema.isEmpty())){ // test whether schema is empty, because in ArcToolbox process descriptions, there is empty elements for schemas
+        // no schema given. assuming no schema required. therefore accept all
+        // schemas
+        if (supportedSchemas.size() == 0 && (schema == null || schema.isEmpty())) { // test
+                                                                                    // whether
+                                                                                    // schema
+                                                                                    // is
+                                                                                    // empty,
+                                                                                    // because
+                                                                                    // in
+                                                                                    // ArcToolbox
+                                                                                    // process
+                                                                                    // descriptions,
+                                                                                    // there
+                                                                                    // is
+                                                                                    // empty
+                                                                                    // elements
+                                                                                    // for
+                                                                                    // schemas
             return true;
         }
-        for(String supportedSchema : supportedSchemas) {
-            if(supportedSchema.equalsIgnoreCase(schema)){
+        for (String supportedSchema : supportedSchemas) {
+            if (supportedSchema.equalsIgnoreCase(schema)) {
                 return true;
             }
         }
@@ -100,46 +119,47 @@ public abstract class AbstractIOHandler implements IOHandler {
         return supportedIDataTypes.toArray(new Class<?>[supportedIDataTypes.size()]);
     }
 
-
     public boolean isSupportedDataBinding(Class<?> binding) {
-        for (Class<?> currentBinding : supportedIDataTypes){
-            if (binding.equals(currentBinding)){
+        for (Class<?> currentBinding : supportedIDataTypes) {
+            if (binding.equals(currentBinding)) {
                 return true;
             }
         }
         return false;
     }
 
-    public String[] getSupportedEncodings(){
+    public String[] getSupportedEncodings() {
         String[] resultArray = supportedEncodings.toArray(new String[supportedEncodings.size()]);
         return resultArray;
-        //return IOHandler.SUPPORTED_ENCODINGS;
+        // return IOHandler.SUPPORTED_ENCODINGS;
     }
 
-    public List<FormatEntry> getSupportedFullFormats(){
+    public List<FormatEntry> getSupportedFullFormats() {
         return formats;
     }
 
-    public boolean isSupportedEncoding(String encoding){
-        for (String currentEncoding : this.getSupportedEncodings()){
-            if (currentEncoding.equalsIgnoreCase(encoding)){
+    public boolean isSupportedEncoding(String encoding) {
+        for (String currentEncoding : this.getSupportedEncodings()) {
+            if (currentEncoding.equalsIgnoreCase(encoding)) {
                 return true;
             }
         }
         return false;
     }
 
-    protected boolean isSupportedGenerate (Class<?> binding, String mimeType, String schema){
+    protected boolean isSupportedGenerate(Class<?> binding,
+            String mimeType,
+            String schema) {
 
-        if (!(this.isSupportedFormat(mimeType))){
+        if (!(this.isSupportedFormat(mimeType))) {
             return false;
         }
 
-        if (!(this.isSupportedSchema(schema))){
+        if (!(this.isSupportedSchema(schema))) {
             return false;
         }
 
-        if(!(this.isSupportedDataBinding(binding))){
+        if (!(this.isSupportedDataBinding(binding))) {
             return false;
         }
 
@@ -147,4 +167,3 @@ public abstract class AbstractIOHandler implements IOHandler {
     }
 
 }
-

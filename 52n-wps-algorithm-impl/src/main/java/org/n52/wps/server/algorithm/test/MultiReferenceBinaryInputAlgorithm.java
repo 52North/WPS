@@ -42,7 +42,9 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.1.0", title="for testing multiple binary inputs by reference")
+@Algorithm(
+        version = "1.1.0",
+        title = "for testing multiple binary inputs by reference")
 public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MultiReferenceBinaryInputAlgorithm.class);
@@ -52,14 +54,21 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
     }
 
     private GenericFileData result;
+
     private List<GenericFileData> data;
 
-    @ComplexDataOutput(identifier = "result", binding = GenericFileDataBinding.class)
+    @ComplexDataOutput(
+            identifier = "result",
+            binding = GenericFileDataBinding.class)
     public GenericFileData getResult() {
         return result;
     }
 
-    @ComplexDataInput(identifier = "data", binding = GenericFileDataBinding.class, minOccurs=1, maxOccurs=2)
+    @ComplexDataInput(
+            identifier = "data",
+            binding = GenericFileDataBinding.class,
+            minOccurs = 1,
+            maxOccurs = 2)
     public void setData(List<GenericFileData> data) {
         this.data = data;
     }
@@ -77,7 +86,7 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
 
             f = gfd.getBaseFile(false);
 
-            if(!f.exists()){
+            if (!f.exists()) {
                 throw new RuntimeException("Input file does not exist for identifier data.");
             }
         }

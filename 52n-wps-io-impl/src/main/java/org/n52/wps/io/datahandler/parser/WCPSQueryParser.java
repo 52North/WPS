@@ -42,23 +42,25 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden
  *
  */
-public class WCPSQueryParser extends AbstractParser{
+public class WCPSQueryParser extends AbstractParser {
 
-    public WCPSQueryParser(){
+    public WCPSQueryParser() {
         super();
         supportedIDataTypes.add(PlainStringBinding.class);
     }
 
     @Override
-    public PlainStringBinding parse(InputStream stream, String mimeType, String schema) {
+    public PlainStringBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
         BufferedReader br;
         StringWriter sw;
         try {
-            br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
+            br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-            sw=new StringWriter();
+            sw = new StringWriter();
             int k;
-            while((k=br.read())!=-1){
+            while ((k = br.read()) != -1) {
                 sw.write(k);
             }
         } catch (UnsupportedEncodingException e) {

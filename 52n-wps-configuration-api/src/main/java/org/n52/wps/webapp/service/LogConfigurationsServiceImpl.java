@@ -36,8 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * An implementation for the {@link LogConfigurationsService} interface. This implementation uses the
- * {@link LogConfigurationsDAO} interface to perform get and save from/to the log configuration file.
+ * An implementation for the {@link LogConfigurationsService} interface. This
+ * implementation uses the {@link LogConfigurationsDAO} interface to perform get
+ * and save from/to the log configuration file.
  */
 @Service("logConfigurationsService")
 public class LogConfigurationsServiceImpl implements LogConfigurationsService {

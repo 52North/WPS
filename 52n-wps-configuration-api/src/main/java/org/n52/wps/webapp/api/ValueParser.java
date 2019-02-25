@@ -36,7 +36,8 @@ import org.n52.wps.webapp.service.ConfigurationService;
 import org.springframework.stereotype.Component;
 
 /**
- * Used by the {@link ConfigurationService} to validate and parse values to the correct configuration entry type.
+ * Used by the {@link ConfigurationService} to validate and parse values to the
+ * correct configuration entry type.
  */
 @Component
 public class ValueParser {

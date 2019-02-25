@@ -23,9 +23,10 @@ public class LiteralStringBinding extends AbstractLiteralDataBinding {
      *
      */
     private static final long serialVersionUID = 4918615178134884183L;
+
     private transient String payload;
 
-    public LiteralStringBinding(String payload){
+    public LiteralStringBinding(String payload) {
         this.payload = payload;
     }
 
@@ -37,13 +38,11 @@ public class LiteralStringBinding extends AbstractLiteralDataBinding {
         return String.class;
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-    {
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.writeObject(payload);
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-    {
+    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         payload = (String) oos.readObject();
     }
 }

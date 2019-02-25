@@ -74,14 +74,15 @@ import edu.umn.gis.mapscript.rectObj;
  *
  * @author Jacob Mendt
  *
- * TODO Layer management
- * TODO Timestamp
+ *         TODO Layer management TODO Timestamp
  */
 public class MSLayerBinding {
 
     // metadata parameter
     private String mdSrs;
+
     private String mdTitle;
+
     private String mdTimestamp;
 
     // filesystem paths
@@ -92,6 +93,7 @@ public class MSLayerBinding {
 
     // mapscript objects
     private MS_LAYER_TYPE geometryType;
+
     private rectObj bbox;
 
     private CoordinateReferenceSystem crs;
@@ -106,7 +108,8 @@ public class MSLayerBinding {
      * @param workspace
      *            Path to the workspace of the mapfile object.
      *
-     * @throws Exception if the <code>MSLayerBinding</code>  cannot be constructed
+     * @throws Exception
+     *             if the <code>MSLayerBinding</code> cannot be constructed
      */
     public MSLayerBinding(String shapePath, String workspace) throws Exception {
 
@@ -119,7 +122,7 @@ public class MSLayerBinding {
             LOGGER.debug("Parsing of the relativ data source path successful.");
             if (this.openShapefile(shapePath)) {
                 LOGGER.debug("Opening and parsing of the shapefile successful.");
-            } else{
+            } else {
                 LOGGER.error("Error while opening and parsing the shapefile.");
             }
         } else {
@@ -162,8 +165,7 @@ public class MSLayerBinding {
         }
 
         // create out of the envelope object an rectObj (mapscript)
-        bbox = new rectObj(envelope.getMinX(), envelope.getMinY(),
-                envelope.getMaxX(), envelope.getMaxY(), 0);
+        bbox = new rectObj(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY(), 0);
 
         // parse the name
         mdTitle = ftSource.getName().getLocalPart();
@@ -188,10 +190,10 @@ public class MSLayerBinding {
      * @return <tt>true</tt> if relativ data source path is set and lies in the
      *         folder hierarchy of the workspace
      */
-    private boolean parseDataSourcePath(String shapePath, String workspace) {
+    private boolean parseDataSourcePath(String shapePath,
+            String workspace) {
         if (shapePath.contains(workspace)) {
-            int tmp = shapePath.length()
-                    - (shapePath.length() - workspace.length() - 1);
+            int tmp = shapePath.length() - (shapePath.length() - workspace.length() - 1);
             dataSourcePath = shapePath.substring(tmp, shapePath.length());
             LOGGER.debug("Shapefile lies in the folder hierarchy of the mapfile workspace.");
             return true;
@@ -213,8 +215,7 @@ public class MSLayerBinding {
     private boolean openShapefile(String shapePath) {
         ftSource = null;
         try {
-            FileDataStore store = FileDataStoreFinder.getDataStore(new File(
-                    shapePath));
+            FileDataStore store = FileDataStoreFinder.getDataStore(new File(shapePath));
             ftSource = store.getFeatureSource();
         } catch (IOException e) {
             LOGGER.error("Error while opening the shapefile.");
@@ -242,31 +243,24 @@ public class MSLayerBinding {
      * @return <tt>true</tt> if the GeometryType could be parsed
      */
     private boolean parseGeometryDescription() {
-        GeometryDescriptor geomDescription = ftSource.getSchema()
-                .getGeometryDescriptor();
+        GeometryDescriptor geomDescription = ftSource.getSchema().getGeometryDescriptor();
 
-        if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("POINT")) {
+        if (geomDescription.getType().getName().toString().equalsIgnoreCase("POINT")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_POINT;
             return true;
-        } else if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("MULTIPOINT")) {
+        } else if (geomDescription.getType().getName().toString().equalsIgnoreCase("MULTIPOINT")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_POINT;
             return true;
-        } else if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("LINE")) {
+        } else if (geomDescription.getType().getName().toString().equalsIgnoreCase("LINE")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_LINE;
             return true;
-        } else if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("MULTILINESTRING")) {
+        } else if (geomDescription.getType().getName().toString().equalsIgnoreCase("MULTILINESTRING")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_LINE;
             return true;
-        } else if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("POLYGON")) {
+        } else if (geomDescription.getType().getName().toString().equalsIgnoreCase("POLYGON")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_POLYGON;
             return true;
-        } else if (geomDescription.getType().getName().toString()
-                .equalsIgnoreCase("MULTIPOLYGON")) {
+        } else if (geomDescription.getType().getName().toString().equalsIgnoreCase("MULTIPOLYGON")) {
             geometryType = MS_LAYER_TYPE.MS_LAYER_POLYGON;
             return true;
         }
@@ -335,8 +329,7 @@ public class MSLayerBinding {
      * @return String BoundingBox as a String
      */
     public String getMdBBox() {
-        return bbox.getMinx() + " " + bbox.getMiny() + " " + bbox.getMaxx()
-                + " " + bbox.getMaxy();
+        return bbox.getMinx() + " " + bbox.getMiny() + " " + bbox.getMaxx() + " " + bbox.getMaxy();
     }
 
 }

@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GeoserverWCSGeneratorCM extends ClassKnowingModule{
+public class GeoserverWCSGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GeoserverWCSGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GeoserverWCSGeneratorCM(){
+    public GeoserverWCSGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

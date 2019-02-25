@@ -61,27 +61,29 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 /**
  * This parser handles xml files compliant to GML2.
+ * 
  * @author schaeffer
  *
  */
 public class GML2BasicParser4Files extends AbstractParser {
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
 
-
     public GML2BasicParser4Files() {
         super();
         supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
     }
 
-    public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
+    public GenericFileDataWithGTBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
 
         FileOutputStream fos = null;
-        try{
+        try {
             File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
             finalizeFiles.add(tempFile); // mark for final delete
             fos = new FileOutputStream(tempFile);
             int i = stream.read();
-            while(i != -1){
+            while (i != -1) {
                 fos.write(i);
                 i = stream.read();
             }
@@ -90,11 +92,12 @@ public class GML2BasicParser4Files extends AbstractParser {
             GenericFileDataWithGTBinding data = parseXML(tempFile);
 
             return data;
-        }
-        catch(IOException e) {
-            if (fos != null){
-                try { fos.close(); }
-                catch (Exception e1) { }
+        } catch (IOException e) {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception e1) {
+                }
             }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }

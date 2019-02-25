@@ -79,23 +79,35 @@ import net.opengis.wps.x20.ResultDocument;
 public class OutputDataItem extends ResponseData {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OutputDataItem.class);
+
     private static final String COMPLEX_DATA_TYPE = "ComplexDataResponse";
+
     private XmlString title;
 
     /**
      *
-     * @param obj the <code>IData</code> object
-     * @param id the id of the data
-     * @param schema the schema of the data
-     * @param encoding the encoding of the data
-     * @param mimeType the mimeType of the data
-     * @param title the title of the data
-     * @param algorithmIdentifier the id of the data
-     * @param description the process description that the <code>RawData</code> belongs to
-     * @throws ExceptionReport if an exception occurred during construction
+     * @param obj
+     *            the <code>IData</code> object
+     * @param id
+     *            the id of the data
+     * @param schema
+     *            the schema of the data
+     * @param encoding
+     *            the encoding of the data
+     * @param mimeType
+     *            the mimeType of the data
+     * @param title
+     *            the title of the data
+     * @param algorithmIdentifier
+     *            the id of the data
+     * @param description
+     *            the process description that the <code>RawData</code> belongs
+     *            to
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
-    public OutputDataItem(IData obj, String id, String schema, String encoding,
-            String mimeType, XmlString title, String algorithmIdentifier, ProcessDescription description) throws ExceptionReport {
+    public OutputDataItem(IData obj, String id, String schema, String encoding, String mimeType, XmlString title,
+            String algorithmIdentifier, ProcessDescription description) throws ExceptionReport {
         super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
 
         this.title = title;
@@ -103,15 +115,15 @@ public class OutputDataItem extends ResponseData {
 
     /**
      *
-     * @param res the <code>ExecuteResponseDocument</code>
-     * @throws ExceptionReport if an exception occurred while updating the response document
+     * @param res
+     *            the <code>ExecuteResponseDocument</code>
+     * @throws ExceptionReport
+     *             if an exception occurred while updating the response document
      */
     public void updateResponseForInlineComplexData(ExecuteResponseDocument res) throws ExceptionReport {
         OutputDataType output = prepareOutput(res);
         prepareGenerator();
         ComplexDataType complexData = null;
-
-
 
         try {
             // CHECKING IF STORE IS TRUE AND THEN PROCESSING.... SOMEHOW!
@@ -126,23 +138,23 @@ public class OutputDataItem extends ResponseData {
             // in case encoding is
             //
             InputStream stream = null;
-            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
                 stream = generator.generateStream(super.obj, mimeType, schema);
             }
 
             // in case encoding is base64 create a new text node
             // and parse the generator's result into it
-            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
                 stream = generator.generateBase64Stream(super.obj, mimeType, schema);
-            }
-            else {
-                throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+            } else {
+                throw new ExceptionReport("Unable to generate encoding " + encoding,
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
             complexData = output.addNewData().addNewComplexData();
-            if(mimeType.contains("xml") || mimeType.contains("XML")){
+            if (mimeType.contains("xml") || mimeType.contains("XML")) {
                 complexData.set(XmlObject.Factory.parse(stream));
                 stream.close();
-            }else{
+            } else {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document document = builder.newDocument();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -154,18 +166,23 @@ public class OutputDataItem extends ResponseData {
                 complexData.set(XmlObject.Factory.parse(dataNode));
             }
 
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (XmlException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport(
+                    "Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (ParserConfigurationException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
 
         if (complexData != null) {
@@ -182,7 +199,8 @@ public class OutputDataItem extends ResponseData {
         }
     }
 
-    public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
+    public void updateResponseForLiteralData(ExecuteResponseDocument res,
+            String dataTypeReference) {
         OutputDataType output = prepareOutput(res);
         String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
         LiteralDataType literalData = output.addNewData().addNewLiteralData();
@@ -190,15 +208,17 @@ public class OutputDataItem extends ResponseData {
             literalData.setDataType(dataTypeReference);
         }
         literalData.setStringValue(processValue);
-        if(obj instanceof AbstractLiteralDataBinding){
-            String uom = ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
-            if(uom != null && !uom.equals("")){
+        if (obj instanceof AbstractLiteralDataBinding) {
+            String uom = ((AbstractLiteralDataBinding) obj).getUnitOfMeasurement();
+            if (uom != null && !uom.equals("")) {
                 literalData.setUom(uom);
             }
         }
     }
 
-    public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
+    public void updateResponseAsReference(ExecuteResponseDocument res,
+            String reqID,
+            String mimeType) throws ExceptionReport {
         prepareGenerator();
         OutputDataType output = prepareOutput(res);
         InputStream stream;
@@ -217,33 +237,35 @@ public class OutputDataItem extends ResponseData {
         String storeID = reqID + "" + id;
 
         try {
-            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
                 stream = generator.generateStream(super.obj, mimeType, schema);
             }
 
             // in case encoding is base64
-            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
                 stream = generator.generateBase64Stream(super.obj, mimeType, schema);
             }
 
             else {
-                throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+                throw new ExceptionReport("Unable to generate encoding " + encoding,
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Error while generating Complex Data out of the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
 
         String storeReference = db.storeComplexValue(storeID, stream, COMPLEX_DATA_TYPE, mimeType);
         storeReference = storeReference.replace("#", "%23");
         outReference.setHref(storeReference);
-        // MSS:  05-02-2009 changed default output type to text/xml to be certain that the calling application doesn't
+        // MSS: 05-02-2009 changed default output type to text/xml to be certain
+        // that the calling application doesn't
         // serve the wrong type as it is a reference in this case.
         this.mimeType = "text/xml";
     }
 
-    private OutputDataType prepareOutput(ExecuteResponseDocument res){
+    private OutputDataType prepareOutput(ExecuteResponseDocument res) {
         OutputDataType output = res.getExecuteResponse().getProcessOutputs().addNewOutput();
         CodeType identifierCode = output.addNewIdentifier();
         identifierCode.setStringValue(id);
@@ -251,7 +273,8 @@ public class OutputDataItem extends ResponseData {
         return output;
     }
 
-    public void updateResponseForBBOXData(ExecuteResponseDocument res, IBBOXData bbox) {
+    public void updateResponseForBBOXData(ExecuteResponseDocument res,
+            IBBOXData bbox) {
         OutputDataType output = prepareOutput(res);
         BoundingBoxType bboxData = output.addNewData().addNewBoundingBoxData();
         if (bbox.getCRS() != null) {
@@ -262,7 +285,7 @@ public class OutputDataItem extends ResponseData {
         bboxData.setDimensions(BigInteger.valueOf(bbox.getDimension()));
     }
 
-    private DataOutputType prepareOutput(ResultDocument res){
+    private DataOutputType prepareOutput(ResultDocument res) {
         DataOutputType output = res.getResult().addNewOutput();
         output.setId(id);
         return output;
@@ -270,38 +293,40 @@ public class OutputDataItem extends ResponseData {
 
     public void updateResponseForLiteralData(ResultDocument res,
             String dataTypeReference) {
-            DataOutputType output = prepareOutput(res);
-            String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
-            Data literalData = output.addNewData();
-//            if (dataTypeReference != null) {
-//                    literalData.setDataType(dataTypeReference);
-//            }
-            LiteralValueDocument literalValueDocument = LiteralValueDocument.Factory.newInstance();
+        DataOutputType output = prepareOutput(res);
+        String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
+        Data literalData = output.addNewData();
+        // if (dataTypeReference != null) {
+        // literalData.setDataType(dataTypeReference);
+        // }
+        LiteralValueDocument literalValueDocument = LiteralValueDocument.Factory.newInstance();
 
-            LiteralValue literalValue = literalValueDocument.addNewLiteralValue();
+        LiteralValue literalValue = literalValueDocument.addNewLiteralValue();
 
-            try {
-                DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document document = builder.newDocument();
-                Node dataNode = document.createTextNode(processValue);
-                literalValue.set(XmlObject.Factory.parse(dataNode));
-                literalData.set(literalValueDocument);
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = builder.newDocument();
+            Node dataNode = document.createTextNode(processValue);
+            literalValue.set(XmlObject.Factory.parse(dataNode));
+            literalData.set(literalValueDocument);
 
-            } catch (Exception e) {
-                LOGGER.error("Excepion while trying to write inline literal output.");
-                LOGGER.error(e.getMessage());
-            }
-//            literalData.setStringValue(processValue);
-//            if(obj instanceof AbstractLiteralDataBinding){
-//                    String uom = ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
-//                    if(uom != null && !uom.equals("")){
-//                            literalData.setUom(uom);
-//                    }
-//            }
+        } catch (Exception e) {
+            LOGGER.error("Excepion while trying to write inline literal output.");
+            LOGGER.error(e.getMessage());
+        }
+        // literalData.setStringValue(processValue);
+        // if(obj instanceof AbstractLiteralDataBinding){
+        // String uom =
+        // ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
+        // if(uom != null && !uom.equals("")){
+        // literalData.setUom(uom);
+        // }
+        // }
 
     }
 
-    public void updateResponseAsReference(ResultDocument res, String reqID,
+    public void updateResponseAsReference(ResultDocument res,
+            String reqID,
             String mimeType) throws ExceptionReport {
         prepareGenerator();
         DataOutputType output = prepareOutput(res);
@@ -321,29 +346,32 @@ public class OutputDataItem extends ResponseData {
         String storeID = reqID + "" + id;
 
         try {
-            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
                 stream = generator.generateStream(super.obj, mimeType, schema);
             }
 
             // in case encoding is base64
-            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
                 stream = generator.generateBase64Stream(super.obj, mimeType, schema);
             }
 
             else {
-                throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+                throw new ExceptionReport("Unable to generate encoding " + encoding,
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Error while generating Complex Data out of the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
 
-        // TODO enhance this to support additional storage possibilities, e.g. WFS
+        // TODO enhance this to support additional storage possibilities, e.g.
+        // WFS
         String storeReference = db.storeComplexValue(storeID, stream, COMPLEX_DATA_TYPE, mimeType);
         storeReference = storeReference.replace("#", "%23");
         outReference.setHref(storeReference);
-        // MSS:  05-02-2009 changed default output type to text/xml to be certain that the calling application doesn't
+        // MSS: 05-02-2009 changed default output type to text/xml to be certain
+        // that the calling application doesn't
         // serve the wrong type as it is a reference in this case.
         this.mimeType = "text/xml";
 
@@ -364,23 +392,23 @@ public class OutputDataItem extends ResponseData {
             // in case encoding is
             //
             InputStream stream = null;
-            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+            if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
                 stream = generator.generateStream(super.obj, mimeType, schema);
             }
 
             // in case encoding is base64 create a new text node
             // and parse the generator's result into it
-            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+            else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
                 stream = generator.generateBase64Stream(super.obj, mimeType, schema);
-            }
-            else {
-                throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+            } else {
+                throw new ExceptionReport("Unable to generate encoding " + encoding,
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
             complexData = output.addNewData();
-            if(mimeType.contains("xml") || mimeType.contains("XML")){
+            if (mimeType.contains("xml") || mimeType.contains("XML")) {
                 complexData.set(XmlObject.Factory.parse(stream));
                 stream.close();
-            }else{
+            } else {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document document = builder.newDocument();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -392,18 +420,23 @@ public class OutputDataItem extends ResponseData {
                 complexData.set(XmlObject.Factory.parse(dataNode));
             }
 
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (XmlException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport(
+                    "Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (ParserConfigurationException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
 
         if (complexData != null) {

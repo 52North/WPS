@@ -26,7 +26,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class UploadedAlgorithmRepositoryCM extends ClassKnowingModule{
+public class UploadedAlgorithmRepositoryCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 

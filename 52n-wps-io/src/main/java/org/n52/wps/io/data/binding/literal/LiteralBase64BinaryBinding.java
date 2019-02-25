@@ -23,6 +23,7 @@ public class LiteralBase64BinaryBinding extends AbstractLiteralDataBinding {
      *
      */
     private static final long serialVersionUID = -9025105142295309281L;
+
     private transient byte[] binary;
 
     public LiteralBase64BinaryBinding(byte[] binary) {
@@ -43,13 +44,11 @@ public class LiteralBase64BinaryBinding extends AbstractLiteralDataBinding {
         return byte[].class;
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-    {
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.writeObject(new String(binary));
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-    {
+    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         binary = ((String) oos.readObject()).getBytes();
     }
 }

@@ -38,7 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * POJO for extended information on R algorithm, i.e. the file and validation result
+ * POJO for extended information on R algorithm, i.e. the file and validation
+ * result
  *
  * @author Daniel
  *
@@ -58,8 +59,7 @@ public class RProcessInfo {
 
         try (FileInputStream fis = new FileInputStream(scriptfile);) {
             this.isValid = parser.validateScript(fis, wkn);
-        }
-        catch (RuntimeException | IOException | RAnnotationException e) {
+        } catch (RuntimeException | IOException | RAnnotationException e) {
             LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
             this.lastException = e;
             this.isValid = false;

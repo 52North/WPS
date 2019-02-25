@@ -35,7 +35,8 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
 
 /**
- * CRUD operations on configuration modules, entries, and values to the underlying datastore.
+ * CRUD operations on configuration modules, entries, and values to the
+ * underlying datastore.
  */
 public interface ConfigurationDAO {
 
@@ -59,15 +60,18 @@ public interface ConfigurationDAO {
     /**
      * Get the active/inactive status of a configuration module
      *
-     * @param module The module for which the status is checked
+     * @param module
+     *            The module for which the status is checked
      * @return The module status
      */
     Boolean getConfigurationModuleStatus(ConfigurationModule module);
 
     /**
-     * Checks if the configuration module with the given class name is persistent
+     * Checks if the configuration module with the given class name is
+     * persistent
      *
-     * @param moduleClassName The class name of the module
+     * @param moduleClassName
+     *            The class name of the module
      * @return true, if the module is persistent, false otherwise
      */
     Boolean isConfigurationModulePersistent(String moduleClassName);
@@ -76,77 +80,95 @@ public interface ConfigurationDAO {
      * Get the stored configuration entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the configuration entry
+     *            the fully qualified name of the module holding the
+     *            configuration entry
      * @param entryKey
      *            the configuration entry key
-     * @return The stored configuration entry value or {@code null} if no entry is found.
+     * @return The stored configuration entry value or {@code null} if no entry
+     *         is found.
      */
-    Object getConfigurationEntryValue(String moduleClassName, String entryKey);
+    Object getConfigurationEntryValue(String moduleClassName,
+            String entryKey);
 
     /**
      * Insert new configuration entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the configuration entry
+     *            the fully qualified name of the module holding the
+     *            configuration entry
      * @param entryKey
      *            the configuration entry key
      * @param value
      *            the value to be stored
      */
-    void insertConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
+    void insertConfigurationEntryValue(String moduleClassName,
+            String entryKey,
+            Object value);
 
     /**
      * Update a configuration entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the configuration entry
+     *            the fully qualified name of the module holding the
+     *            configuration entry
      * @param entryKey
      *            the configuration entry key
      * @param value
      *            the value to be stored
      */
-    void updateConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
+    void updateConfigurationEntryValue(String moduleClassName,
+            String entryKey,
+            Object value);
 
     /**
      * Get the stored algorithm entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm entry
+     *            the fully qualified name of the module holding the algorithm
+     *            entry
      * @param algorithm
      *            the algorithm name
      * @return The algorithm entry or {@code null} if no entry is found.
      */
-    AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm);
+    AlgorithmEntry getAlgorithmEntry(String moduleClassName,
+            String algorithm);
 
     /**
      * Insert new algorithm entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm entry
+     *            the fully qualified name of the module holding the algorithm
+     *            entry
      * @param algorithm
      *            the algorithm name
      * @param active
      *            the algorithm status
      */
-    void insertAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
+    void insertAlgorithmEntry(String moduleClassName,
+            String algorithm,
+            boolean active);
 
     /**
      * Update an algorithm entry
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm entry
+     *            the fully qualified name of the module holding the algorithm
+     *            entry
      * @param algorithm
      *            the algorithm name to be updated
      * @param active
      *            the new algorithm status
      */
-    void updateAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
+    void updateAlgorithmEntry(String moduleClassName,
+            String algorithm,
+            boolean active);
 
     /**
      * Get all algorithm entries
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm entries
+     *            the fully qualified name of the module holding the algorithm
+     *            entries
      * @return All algorithm entries of the module.
      */
     List<AlgorithmEntry> getAlgorithmEntries(String moduleClassName);
@@ -155,64 +177,81 @@ public interface ConfigurationDAO {
      * Delete an algorithm entries
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm entries
+     *            the fully qualified name of the module holding the algorithm
+     *            entries
      * @param algorithmName
      *            the name of the algorithm to be deleted
      */
-    void deleteAlgorithmEntry(String moduleClassName, String algorithmName);
+    void deleteAlgorithmEntry(String moduleClassName,
+            String algorithmName);
 
     /**
      * Get the stored format entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the format entry
-         * @param mimeType
-         *            the mime type of the format entry
-         * @param schema
-         *            the schema of the format entry
-         * @param encoding
-         *            the encoding of the format entry
+     *            the fully qualified name of the module holding the format
+     *            entry
+     * @param mimeType
+     *            the mime type of the format entry
+     * @param schema
+     *            the schema of the format entry
+     * @param encoding
+     *            the encoding of the format entry
      * @return The format entry or {@code null} if no entry is found.
      */
-    FormatEntry getFormatEntry(String moduleClassName, String mimeType, String schema, String encoding);
+    FormatEntry getFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding);
 
     /**
      * Insert new format entry value
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the format entry
-         * @param mimeType
-         *            the mime type of the format entry
-         * @param schema
-         *            the schema of the format entry
-         * @param encoding
-         *            the encoding of the format entry
+     *            the fully qualified name of the module holding the format
+     *            entry
+     * @param mimeType
+     *            the mime type of the format entry
+     * @param schema
+     *            the schema of the format entry
+     * @param encoding
+     *            the encoding of the format entry
      * @param active
      *            the format status
      */
-    void insertFormatEntry(String moduleClassName, String mimeType, String schema, String encoding, boolean active);
+    void insertFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding,
+            boolean active);
 
     /**
      * Update an format entry
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the format entry
-         * @param mimeType
-         *            the mime type of the format entry
-         * @param schema
-         *            the schema of the format entry
-         * @param encoding
-         *            the encoding of the format entry
+     *            the fully qualified name of the module holding the format
+     *            entry
+     * @param mimeType
+     *            the mime type of the format entry
+     * @param schema
+     *            the schema of the format entry
+     * @param encoding
+     *            the encoding of the format entry
      * @param active
      *            the new format status
      */
-    void updateFormatEntry(String moduleClassName, String mimeType, String schema, String encoding, boolean active);
+    void updateFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding,
+            boolean active);
 
     /**
      * Get all format entries
      *
      * @param moduleClassName
-     *            the fully qualified name of the module holding the format entries
+     *            the fully qualified name of the module holding the format
+     *            entries
      * @return All format entries of the module.
      */
     List<FormatEntry> getFormatEntries(String moduleClassName);
@@ -220,16 +259,19 @@ public interface ConfigurationDAO {
     /**
      * Delete an format entry
      *
-         * @param moduleClassName
-         *            the class name of the module
-         * @param mimeType
-         *            the mime type of the format entry
-         * @param schema
-         *            the schema of the format entry
-         * @param encoding
-         *            the encoding of the format entry
+     * @param moduleClassName
+     *            the class name of the module
+     * @param mimeType
+     *            the mime type of the format entry
+     * @param schema
+     *            the schema of the format entry
+     * @param encoding
+     *            the encoding of the format entry
      */
-    void deleteFormatEntry(String moduleClassName, String mimeType, String schema, String encoding);
+    void deleteFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding);
 
     /**
      * Update class name of an algorithm entry

@@ -29,6 +29,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceLoaderAlgorithmRepository.class);
+
     private Map<String, Class<? extends IAlgorithm>> currentAlgorithms;
 
     public ServiceLoaderAlgorithmRepository() {
@@ -40,8 +41,8 @@ public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
         ServiceLoader<IAlgorithm> loader = ServiceLoader.load(IAlgorithm.class);
 
         for (IAlgorithm ia : loader) {
-            logger.debug("Adding algorithm with identifier {} and class {}",
-                    ia.getWellKnownName(), ia.getClass().getCanonicalName());
+            logger.debug("Adding algorithm with identifier {} and class {}", ia.getWellKnownName(),
+                    ia.getClass().getCanonicalName());
             result.put(ia.getWellKnownName(), ia.getClass());
         }
 
@@ -85,6 +86,5 @@ public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
     @Override
     public void shutdown() {
     }
-
 
 }

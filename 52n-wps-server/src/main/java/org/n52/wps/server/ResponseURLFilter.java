@@ -60,6 +60,7 @@ public class ResponseURLFilter implements Filter {
     public final static String PROP_responseURLFilterEnabled = "responseURLFilterEnabled";
 
     private String configURLString;
+
     private boolean enabled;
 
     @Override
@@ -67,13 +68,11 @@ public class ResponseURLFilter implements Filter {
 
         Server server = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
 
-        // Build URL from WPS configuration.  This is the
+        // Build URL from WPS configuration. This is the
         // hardcoded URL that we expect to see in responses and would like to
         // replace with the URL from the HTTP request.
-        configURLString =  server.getProtocol() + "://" +
-            server.getHostname() + ":" +
-            server.getHostport() + "/" +
-            server.getWebappPath();
+        configURLString = server.getProtocol() + "://" + server.getHostname() + ":" + server.getHostport() + "/"
+                + server.getWebappPath();
 
         enabled = server.isResponseURLFilterEnabled();
 
@@ -85,13 +84,13 @@ public class ResponseURLFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request,
+            ServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest requestHTTP = (request instanceof HttpServletRequest) ?
-                (HttpServletRequest) request : null;
-        HttpServletResponse responseHTTP = (response instanceof HttpServletResponse) ?
-                (HttpServletResponse) response : null;
+        HttpServletRequest requestHTTP = (request instanceof HttpServletRequest) ? (HttpServletRequest) request : null;
+        HttpServletResponse responseHTTP =
+                (response instanceof HttpServletResponse) ? (HttpServletResponse) response : null;
 
         if (enabled && requestHTTP != null && responseHTTP != null) {
 
@@ -101,8 +100,7 @@ public class ResponseURLFilter implements Filter {
             String baseURLString = requestURLString.replaceAll("/[^/]*$", "");
 
             LOGGER.info("Wrapping response for URL filtering");
-            chain.doFilter(request, new BaseURLFilterHttpServletResponse(
-                    responseHTTP, configURLString, baseURLString));
+            chain.doFilter(request, new BaseURLFilterHttpServletResponse(responseHTTP, configURLString, baseURLString));
         } else {
             LOGGER.warn("Unable to to wrap response for URL filtering");
             chain.doFilter(request, response);
@@ -121,9 +119,11 @@ public class ResponseURLFilter implements Filter {
     private static class BaseURLFilterHttpServletResponse extends HttpServletResponseWrapper {
 
         private final String configURLString;
+
         public final String requestURLString;
 
-        public BaseURLFilterHttpServletResponse(HttpServletResponse response, String configURLString, String requestURLString) {
+        public BaseURLFilterHttpServletResponse(HttpServletResponse response, String configURLString,
+                String requestURLString) {
             super(response);
             this.configURLString = configURLString;
             this.requestURLString = requestURLString;
@@ -132,14 +132,15 @@ public class ResponseURLFilter implements Filter {
         @Override
         public ServletOutputStream getOutputStream() throws IOException {
             String contentType = getResponse().getContentType();
-            if (contentType == null || contentType.startsWith("text/xml") || contentType.startsWith("application/xml")) {
-                LOGGER.info("Content-type: {}, response URL filtering enabled for response to {}", contentType, requestURLString);
-                return new ServletOutputStreamWrapper(
-                        getResponse().getOutputStream(),
-                        configURLString,
+            if (contentType == null || contentType.startsWith("text/xml")
+                    || contentType.startsWith("application/xml")) {
+                LOGGER.info("Content-type: {}, response URL filtering enabled for response to {}", contentType,
+                        requestURLString);
+                return new ServletOutputStreamWrapper(getResponse().getOutputStream(), configURLString,
                         requestURLString);
             } else {
-                LOGGER.info("Content-type: {}, response URL filtering disabled for response to {}", contentType, requestURLString);
+                LOGGER.info("Content-type: {}, response URL filtering disabled for response to {}", contentType,
+                        requestURLString);
                 return getResponse().getOutputStream();
             }
         }
@@ -155,7 +156,9 @@ public class ResponseURLFilter implements Filter {
         private final ServletOutputStream outputStream;
 
         private ByteBuffer find;
+
         private ByteBuffer replace;
+
         private boolean match;
 
         public ServletOutputStreamWrapper(ServletOutputStream outputStream, String find, String replace) {
@@ -166,9 +169,9 @@ public class ResponseURLFilter implements Filter {
 
         @Override
         public void write(int i) throws IOException {
-            byte b = (byte)(i & 0xff);
+            byte b = (byte) (i & 0xff);
             if (match) {
-                if(find.get() == b) {
+                if (find.get() == b) {
                     if (!find.hasRemaining()) {
                         // COMPLETE MATCH
                         // 1) write out replacement buffer
@@ -193,7 +196,8 @@ public class ResponseURLFilter implements Filter {
                     match = true;
                     find.position(1);
                 } else {
-                    // NO MATCH, just pass byte through to underlying outputstream
+                    // NO MATCH, just pass byte through to underlying
+                    // outputstream
                     outputStream.write(b);
                 }
             }
@@ -205,8 +209,12 @@ public class ResponseURLFilter implements Filter {
         }
 
         @Override
-        public void write(byte[] b, int o, int l) throws IOException {
-            for (int i = 0; i < l; ++i) { write(b[o + i]); }
+        public void write(byte[] b,
+                int o,
+                int l) throws IOException {
+            for (int i = 0; i < l; ++i) {
+                write(b[o + i]);
+            }
         }
 
         @Override

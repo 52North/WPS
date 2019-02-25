@@ -38,8 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * An implementation for the {@link UserService} interface. This implementation uses the {@link UserDAO} for database
- * operations.
+ * An implementation for the {@link UserService} interface. This implementation
+ * uses the {@link UserDAO} for database operations.
  */
 @Service("userService")
 public class UserServiceImpl implements UserService {

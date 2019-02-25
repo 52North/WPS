@@ -56,28 +56,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.wps.io.LargeBufferStream;
 
-/** This class measures the payload of the post data
+/**
+ * This class measures the payload of the post data
  *
  * TODO seems to be not used
+ * 
  * @author foerster
  *
  */
 public final class CommunicationSizeLogFilter implements Filter {
     private static Logger LOGGER = LoggerFactory.getLogger(CommunicationSizeLogFilter.class);
-    public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain)
-    throws IOException, ServletException {
+
+    public void doFilter(ServletRequest request,
+            ServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
         RequestSizeInfoWrapper myWrappedReq = new RequestSizeInfoWrapper(request);
         ResponseSizeInfoWrapper myWrappedResp = new ResponseSizeInfoWrapper(response);
-        chain.doFilter(myWrappedReq,  myWrappedResp);
+        chain.doFilter(myWrappedReq, myWrappedResp);
         myWrappedReq.getInputStream().close();
         myWrappedResp.getOutputStream().close();
-        long requestSize = ((RequestSizeInfoStream)myWrappedReq.getInputStream()).getSize();
-        long responseSize = ((ResponseSizeInfoStream)myWrappedResp.getOutputStream()).getSize();
-        if(requestSize == 0) {
+        long requestSize = ((RequestSizeInfoStream) myWrappedReq.getInputStream()).getSize();
+        long responseSize = ((ResponseSizeInfoStream) myWrappedResp.getOutputStream()).getSize();
+        if (requestSize == 0) {
             return;
         }
-        BigDecimal result = new BigDecimal((double)responseSize/(double)requestSize).setScale(4, BigDecimal.ROUND_HALF_UP);
+        BigDecimal result =
+                new BigDecimal((double) responseSize / (double) requestSize).setScale(4, BigDecimal.ROUND_HALF_UP);
         result = result.movePointRight(2);
         LOGGER.info("Simplification ratio " + result);
     }
@@ -90,8 +94,11 @@ public final class CommunicationSizeLogFilter implements Filter {
 
     class ResponseSizeInfoStream extends ServletOutputStream {
         private OutputStream intStream;
+
         private LargeBufferStream baStream;
+
         private boolean closed = false;
+
         private long streamSize = 0;
 
         public ResponseSizeInfoStream(OutputStream outStream) {
@@ -111,14 +118,10 @@ public final class CommunicationSizeLogFilter implements Filter {
             }
         }
 
-        /*    public void flush() throws java.io.IOException {
-            if (baStream.size() != 0) {
-                 if (! closed) {
-//                  processStream();              // need to synchronize the flush!
-//                  baStream = new ByteArrayOutputStream();
-                  }
-               }
-            }
+        /*
+         * public void flush() throws java.io.IOException { if (baStream.size()
+         * != 0) { if (! closed) { // processStream(); // need to synchronize
+         * the flush! // baStream = new ByteArrayOutputStream(); } } }
          */
         public void processStream() throws java.io.IOException {
             baStream.close();
@@ -126,13 +129,13 @@ public final class CommunicationSizeLogFilter implements Filter {
             this.intStream.flush();
         }
 
-        public byte []  countBytes(byte [] inBytes) {
-            //streamSize = streamSize + inBytes.length;
+        public byte[] countBytes(byte[] inBytes) {
+            // streamSize = streamSize + inBytes.length;
             return inBytes;
         }
 
         public long getSize() {
-            if(this.closed) {
+            if (this.closed) {
                 return streamSize;
             } else {
                 return -1;
@@ -153,6 +156,7 @@ public final class CommunicationSizeLogFilter implements Filter {
 
     class ResponseSizeInfoWrapper extends HttpServletResponseWrapper {
         private PrintWriter tpWriter;
+
         private ResponseSizeInfoStream tpStream;
 
         public ResponseSizeInfoWrapper(ServletResponse inResp) throws java.io.IOException {
@@ -165,6 +169,7 @@ public final class CommunicationSizeLogFilter implements Filter {
 
             return tpStream;
         }
+
         public PrintWriter getWriter() throws java.io.IOException {
 
             return tpWriter;
@@ -174,7 +179,9 @@ public final class CommunicationSizeLogFilter implements Filter {
     class RequestSizeInfoStream extends ServletInputStream {
         // private BufferedInputStream buStream;
         private boolean closed = false;
+
         private long streamSize = 0;
+
         private InputStream inputStream;
 
         public RequestSizeInfoStream(InputStream inStream) {
@@ -196,21 +203,19 @@ public final class CommunicationSizeLogFilter implements Filter {
             }
         }
 
-        /*  public void processStream() throws IOException {
-           byte[] bytes = new byte[8096];
-           int length = buStream.read(bytes, 0 , 8096);
-           while(length != -1) {
-               length = buStream.read(bytes, 0 , 8096);
-               streamSize = streamSize + length;
-           }
-
-       }*/
+        /*
+         * public void processStream() throws IOException { byte[] bytes = new
+         * byte[8096]; int length = buStream.read(bytes, 0 , 8096); while(length
+         * != -1) { length = buStream.read(bytes, 0 , 8096); streamSize =
+         * streamSize + length; }
+         * 
+         * }
+         */
 
         public long getSize() {
-            if(this.closed) {
+            if (this.closed) {
                 return this.streamSize;
-            }
-            else {
+            } else {
                 return -1;
             }
         }
@@ -233,6 +238,7 @@ public final class CommunicationSizeLogFilter implements Filter {
 
     class RequestSizeInfoWrapper extends HttpServletRequestWrapper {
         private BufferedReader tpReader;
+
         private RequestSizeInfoStream tpStream;
 
         public RequestSizeInfoWrapper(ServletRequest req) throws java.io.IOException {

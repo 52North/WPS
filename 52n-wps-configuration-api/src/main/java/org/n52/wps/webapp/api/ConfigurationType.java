@@ -37,7 +37,8 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
 /**
- * User by {@link ConfigurationEntry} implementations to specify their type. Each type has its own class.
+ * User by {@link ConfigurationEntry} implementations to specify their type.
+ * Each type has its own class.
  *
  * @see StringConfigurationEntry
  * @see IntegerConfigurationEntry

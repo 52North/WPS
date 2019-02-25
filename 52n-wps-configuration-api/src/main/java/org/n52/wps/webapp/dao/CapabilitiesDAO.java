@@ -32,13 +32,13 @@ import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 /**
- * Read and write to/from the capabilities configuration file to/from {@link ServiceIdentification} and
- * {@link ServiceProvider} objects.
+ * Read and write to/from the capabilities configuration file to/from
+ * {@link ServiceIdentification} and {@link ServiceProvider} objects.
  */
 public interface CapabilitiesDAO {
     /**
-     * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}
-     * object
+     * Parse wpsCapabilitiesSkeleton.xml and map service identification
+     * properties to a {@code ServiceIdentification} object
      *
      * @return Populated {@code ServiceIdentification} object
      */
@@ -47,12 +47,14 @@ public interface CapabilitiesDAO {
     /**
      * Write {@code ServiceIdentification} values to wpsCapabilitiesSkeleton.xml
      *
-     * @param serviceIdentification The {@code ServiceIdentification}
+     * @param serviceIdentification
+     *            The {@code ServiceIdentification}
      */
     void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
     /**
-     * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to a {@code ServiceProvider} object
+     * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to
+     * a {@code ServiceProvider} object
      *
      * @return Populated {@code ServiceProvider} object
      */
@@ -61,7 +63,8 @@ public interface CapabilitiesDAO {
     /**
      * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
      *
-     * @param serviceProvider The {@code ServiceProvider}
+     * @param serviceProvider
+     *            The {@code ServiceProvider}
      */
     void saveServiceProvider(ServiceProvider serviceProvider);
 }

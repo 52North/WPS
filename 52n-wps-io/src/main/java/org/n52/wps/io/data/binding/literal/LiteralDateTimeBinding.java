@@ -26,6 +26,7 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
      *
      */
     private static final long serialVersionUID = -4336688658437832346L;
+
     private transient Date date;
 
     public LiteralDateTimeBinding(Date date) {
@@ -54,14 +55,12 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
         return Date.class;
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-    {
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.writeObject(new Long(date.getTime()).toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-    {
-        date = new Date( ((Long) oos.readObject()).longValue() );
+    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+        date = new Date(((Long) oos.readObject()).longValue());
     }
 
 }

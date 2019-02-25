@@ -46,23 +46,35 @@ import org.n52.wps.webapp.service.LogConfigurationsService;
  * @see LogConfigurationsDAO
  */
 public class LogConfigurations {
-    @NotBlank(message = "File  name pattern cannot be empty.")
+    @NotBlank(
+            message = "File  name pattern cannot be empty.")
     private String wpsfileAppenderFileNamePattern;
 
-    @Digits(integer = 10, fraction = 0, message = "Max history must be an integer.")
-    @NotNull(message = "Max history cannot be empty.")
-    @Min(value = 1, message = "Minimum value is 1.")
+    @Digits(
+            integer = 10,
+            fraction = 0,
+            message = "Max history must be an integer.")
+    @NotNull(
+            message = "Max history cannot be empty.")
+    @Min(
+            value = 1,
+            message = "Minimum value is 1.")
     private int wpsfileAppenderMaxHistory;
 
-    @NotBlank(message = "File encoder pattern cannot be empty.")
+    @NotBlank(
+            message = "File encoder pattern cannot be empty.")
     private String wpsfileAppenderEncoderPattern;
 
-    @NotBlank(message = "Console encoder pattern cannot be empty.")
+    @NotBlank(
+            message = "Console encoder pattern cannot be empty.")
     private String wpsconsoleEncoderPattern;
 
     private SortedMap<String, String> loggers = new TreeMap<String, String>();
+
     private String rootLevel;
+
     private boolean fileAppenderEnabled;
+
     private boolean consoleAppenderEnabled;
 
     public String getWpsfileAppenderFileNamePattern() {

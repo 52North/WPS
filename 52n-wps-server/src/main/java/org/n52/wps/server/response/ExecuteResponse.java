@@ -37,21 +37,21 @@ public class ExecuteResponse extends Response {
 
     private ExecuteResponseBuilder builder;
 
-    public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
+    public ExecuteResponse(ExecuteRequest request) throws ExceptionReport {
         super(request);
         this.builder = request.getExecuteResponseBuilder();
     }
 
     @Override
-    public InputStream getAsStream() throws ExceptionReport{
+    public InputStream getAsStream() throws ExceptionReport {
         return this.builder.getAsStream();
     }
 
-    public ExecuteResponseBuilder getExecuteResponseBuilder(){
+    public ExecuteResponseBuilder getExecuteResponseBuilder() {
         return builder;
     }
 
-    public String getMimeType(){
+    public String getMimeType() {
         return builder.getMimeType();
     }
 }

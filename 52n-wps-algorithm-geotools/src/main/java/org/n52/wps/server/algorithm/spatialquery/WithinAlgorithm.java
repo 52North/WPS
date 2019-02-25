@@ -68,12 +68,16 @@ import org.locationtech.jts.geom.Geometry;
  * @author Benjamin Pross (bpross-52n)
  *
  */
-public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm{
+public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm {
 
     Logger LOGGER = LoggerFactory.getLogger(WithinAlgorithm.class);
+
     private final String inputID1 = "LAYER1";
+
     private final String inputID2 = "LAYER2";
+
     private final String outputID = "RESULT";
+
     private List<String> errors = new ArrayList<String>();
 
     public List<String> getErrors() {
@@ -88,7 +92,7 @@ public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm{
     }
 
     public Class<LiteralBooleanBinding> getOutputDataType(String id) {
-        if(id.equalsIgnoreCase(outputID)){
+        if (id.equalsIgnoreCase(outputID)) {
             return LiteralBooleanBinding.class;
         }
         return null;
@@ -97,14 +101,14 @@ public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm{
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
 
-        if(inputData==null || !inputData.containsKey(inputID1)){
+        if (inputData == null || !inputData.containsKey(inputID1)) {
             throw new RuntimeException("Error while allocating input parameters");
         }
-        if(inputData==null || !inputData.containsKey(inputID2)){
+        if (inputData == null || !inputData.containsKey(inputID2)) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         List<IData> firstDataList = inputData.get(inputID1);
-        if(firstDataList == null || firstDataList.size() != 1){
+        if (firstDataList == null || firstDataList.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = firstDataList.get(0);
@@ -112,7 +116,7 @@ public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm{
         FeatureCollection<?, ?> firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
         List<IData> secondDataList = inputData.get(inputID2);
-        if(secondDataList == null || secondDataList.size() != 1){
+        if (secondDataList == null || secondDataList.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData secondInputData = secondDataList.get(0);
@@ -123,25 +127,24 @@ public class WithinAlgorithm extends AbstractSelfDescribingAlgorithm{
 
         FeatureIterator<?> secondIterator = secondCollection.features();
 
-        if(!firstIterator.hasNext()){
+        if (!firstIterator.hasNext()) {
             throw new RuntimeException("Error while iterating over features in layer 1");
         }
 
-        if(!secondIterator.hasNext()){
+        if (!secondIterator.hasNext()) {
             throw new RuntimeException("Error while iterating over features in layer 2");
         }
-
 
         SimpleFeature firstFeature = (SimpleFeature) firstIterator.next();
 
         SimpleFeature secondFeature = (SimpleFeature) secondIterator.next();
 
-        boolean within = ((Geometry)firstFeature.getDefaultGeometry()).within((Geometry)secondFeature.getDefaultGeometry());
+        boolean within =
+                ((Geometry) firstFeature.getDefaultGeometry()).within((Geometry) secondFeature.getDefaultGeometry());
 
         HashMap<String, IData> result = new HashMap<String, IData>();
 
-        result.put(outputID,
-                new LiteralBooleanBinding(within));
+        result.put(outputID, new LiteralBooleanBinding(within));
         return result;
     }
 

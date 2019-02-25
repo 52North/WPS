@@ -99,33 +99,35 @@ public class GTBinDirectorySHPGenerator {
 
     private Map<String, String> attributeNameMap = new HashMap<>();
 
-    public File writeFeatureCollectionToDirectory(IData data)
-            throws IOException {
+    public File writeFeatureCollectionToDirectory(IData data) throws IOException {
         return writeFeatureCollectionToDirectory(data, null);
     }
 
-    public File writeFeatureCollectionToDirectory(IData data, File parent) throws IOException {
+    public File writeFeatureCollectionToDirectory(IData data,
+            File parent) throws IOException {
         GTVectorDataBinding binding = (GTVectorDataBinding) data;
         SimpleFeatureCollection originalCollection = (SimpleFeatureCollection) binding.getPayload();
 
-        if(checkIfAttributeNameIsLongerThan10Chars(originalCollection.getSchema())){
+        if (checkIfAttributeNameIsLongerThan10Chars(originalCollection.getSchema())) {
             originalCollection = createCorrectFeatureCollection(originalCollection);
         }
 
         return createShapefileDirectory(originalCollection, parent);
     }
 
-    //attribute names have to be truncated or they will not be filled with values
-    private SimpleFeatureCollection createCorrectFeatureCollection(
-            SimpleFeatureCollection fc) {
+    // attribute names have to be truncated or they will not be filled with
+    // values
+    private SimpleFeatureCollection createCorrectFeatureCollection(SimpleFeatureCollection fc) {
 
         List<SimpleFeature> featureList = new ArrayList<>();
         SimpleFeatureType featureType = truncateAttributeNames(fc.getSchema());
         SimpleFeatureIterator iterator = fc.features();
 
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             SimpleFeature feature = (SimpleFeature) iterator.next();
-            SimpleFeature resultFeature = GTHelper.createFeature(feature.getID(), (Geometry)feature.getDefaultGeometry(), featureType, truncatePropertyNames(feature.getProperties()));
+            SimpleFeature resultFeature =
+                    GTHelper.createFeature(feature.getID(), (Geometry) feature.getDefaultGeometry(), featureType,
+                            truncatePropertyNames(feature.getProperties()));
 
             featureList.add(resultFeature);
         }
@@ -133,13 +135,13 @@ public class GTBinDirectorySHPGenerator {
 
     }
 
-    private boolean checkIfAttributeNameIsLongerThan10Chars(SimpleFeatureType simpleFeatureType){
+    private boolean checkIfAttributeNameIsLongerThan10Chars(SimpleFeatureType simpleFeatureType) {
 
         List<AttributeDescriptor> attributeDescriptors = simpleFeatureType.getAttributeDescriptors();
 
         for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
             String attributeName = attributeDescriptor.getName().getLocalPart();
-            if(attributeName.length() > 10){
+            if (attributeName.length() > 10) {
                 return true;
             }
 
@@ -147,7 +149,7 @@ public class GTBinDirectorySHPGenerator {
         return false;
     }
 
-    public Collection<Property> truncatePropertyNames(Collection<Property> properties){
+    public Collection<Property> truncatePropertyNames(Collection<Property> properties) {
 
         Collection<Property> newProperties = new ArrayList<>();
 
@@ -157,11 +159,12 @@ public class GTBinDirectorySHPGenerator {
 
             String propertyName = property.getName().getLocalPart();
 
-            if(propertyName.length() > 10){
-                //truncate
-//                String newPropertyName = attributeNameMap.get(propertyName);
+            if (propertyName.length() > 10) {
+                // truncate
+                // String newPropertyName = attributeNameMap.get(propertyName);
 
-                newProperty = new AttributeImpl(property.getValue(), attributeNameDescriptorMap.get(propertyName), null);
+                newProperty =
+                        new AttributeImpl(property.getValue(), attributeNameDescriptorMap.get(propertyName), null);
             }
 
             newProperties.add(newProperty);
@@ -171,7 +174,7 @@ public class GTBinDirectorySHPGenerator {
 
     }
 
-    public SimpleFeatureType truncateAttributeNames(SimpleFeatureType simpleFeatureType){
+    public SimpleFeatureType truncateAttributeNames(SimpleFeatureType simpleFeatureType) {
 
         SimpleFeatureType newType = simpleFeatureType;
 
@@ -182,41 +185,51 @@ public class GTBinDirectorySHPGenerator {
         for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
             String attributeName = attributeDescriptor.getName().getLocalPart();
             AttributeDescriptor newAttributeDescriptor = attributeDescriptor;
-            if(attributeName.length() > 10){
-                //truncate
-                String newAttributeName = attributeName.substring(0,10);
+            if (attributeName.length() > 10) {
+                // truncate
+                String newAttributeName = attributeName.substring(0, 10);
 
-                LOGGER.info(String.format("Attribute name: %s  was longer than 10 chars, truncating to %s", attributeName, newAttributeName));
+                LOGGER.info(String.format("Attribute name: %s  was longer than 10 chars, truncating to %s",
+                        attributeName, newAttributeName));
 
                 checkNames(attributeName, newAttributeName, attributeNameMap);
 
                 attributeNameMap.put(attributeName, newAttributeName);
 
-                //create new attribute
+                // create new attribute
                 Name newName = new NameImpl(attributeDescriptor.getName().getNamespaceURI(), newAttributeName);
 
                 AttributeType attributeType = attributeDescriptor.getType();
 
-                AttributeType newAttributeType = new AttributeTypeImpl(newName, attributeType.getBinding(), attributeType.isIdentified(), attributeType.isAbstract(), attributeType.getRestrictions(), attributeType.getSuper(), attributeType.getDescription());
+                AttributeType newAttributeType = new AttributeTypeImpl(newName, attributeType.getBinding(),
+                        attributeType.isIdentified(), attributeType.isAbstract(), attributeType.getRestrictions(),
+                        attributeType.getSuper(), attributeType.getDescription());
 
-                newAttributeDescriptor = new AttributeDescriptorImpl(newAttributeType, newName, attributeDescriptor.getMinOccurs(), attributeDescriptor.getMaxOccurs(), attributeDescriptor.isNillable(), attributeDescriptor.getDefaultValue());
+                newAttributeDescriptor = new AttributeDescriptorImpl(newAttributeType, newName,
+                        attributeDescriptor.getMinOccurs(), attributeDescriptor.getMaxOccurs(),
+                        attributeDescriptor.isNillable(), attributeDescriptor.getDefaultValue());
 
                 attributeNameDescriptorMap.put(attributeName, newAttributeDescriptor);
             }
             newAttributeDescriptors.add(newAttributeDescriptor);
         }
 
-        newType = new SimpleFeatureTypeImpl(simpleFeatureType.getName(), newAttributeDescriptors, simpleFeatureType.getGeometryDescriptor(), simpleFeatureType.isAbstract(), simpleFeatureType.getRestrictions(), simpleFeatureType.getSuper(), simpleFeatureType.getDescription());
+        newType = new SimpleFeatureTypeImpl(simpleFeatureType.getName(), newAttributeDescriptors,
+                simpleFeatureType.getGeometryDescriptor(), simpleFeatureType.isAbstract(),
+                simpleFeatureType.getRestrictions(), simpleFeatureType.getSuper(), simpleFeatureType.getDescription());
 
         return newType;
     }
 
-    public String checkNames(String originalName, String truncatedName, Map<String, String> attributeNameMap){
+    public String checkNames(String originalName,
+            String truncatedName,
+            Map<String, String> attributeNameMap) {
 
-        //check if truncated attribute name already exists
-        //it can happen that two truncated attribute name are equal
-        //e.g. population_min and population_max, which would be truncated both to population
-        if(attributeNameMap.containsValue(truncatedName)){
+        // check if truncated attribute name already exists
+        // it can happen that two truncated attribute name are equal
+        // e.g. population_min and population_max, which would be truncated both
+        // to population
+        if (attributeNameMap.containsValue(truncatedName)) {
 
             LOGGER.info("Found duplicate truncated name: " + truncatedName);
             // create new truncatedName, substring 0,9 and add increasing number
@@ -229,15 +242,15 @@ public class GTBinDirectorySHPGenerator {
 
     }
 
-    private String createNewTruncatedName(String truncatedName){
+    private String createNewTruncatedName(String truncatedName) {
 
-        //we'll go for 1 digit
-        String shortenedTruncatedName = truncatedName.substring(0,9);
+        // we'll go for 1 digit
+        String shortenedTruncatedName = truncatedName.substring(0, 9);
         String possibleNumber = truncatedName.substring(9);
 
-        if(!StringUtils.isNumeric(possibleNumber)){
+        if (!StringUtils.isNumeric(possibleNumber)) {
             truncatedName = shortenedTruncatedName + 1;
-        }else{
+        } else {
             truncatedName = shortenedTruncatedName + (Integer.parseInt(possibleNumber) + 1);
         }
 
@@ -258,8 +271,8 @@ public class GTBinDirectorySHPGenerator {
      *             If an error occurs while writing the features into the the
      *             shapefile
      */
-    private File createShapefileDirectory(SimpleFeatureCollection collection, File parent)
-            throws IOException, IllegalAttributeException {
+    private File createShapefileDirectory(SimpleFeatureCollection collection,
+            File parent) throws IOException, IllegalAttributeException {
         if (parent == null) {
             File tempBaseFile = File.createTempFile("resolveDir", ".tmp");
             tempBaseFile.deleteOnExit();
@@ -283,11 +296,10 @@ public class GTBinDirectorySHPGenerator {
         params.put("url", tempSHPfile.toURI().toURL());
         params.put("create spatial index", Boolean.TRUE);
 
-        ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
-                .createNewDataStore(params);
+        ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
 
         newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
-        if(collection.getSchema().getCoordinateReferenceSystem()==null){
+        if (collection.getSchema().getCoordinateReferenceSystem() == null) {
             try {
                 newDataStore.forceSchemaCRS(CRS.decode("4326"));
             } catch (NoSuchAuthorityCodeException e) {
@@ -297,16 +309,15 @@ public class GTBinDirectorySHPGenerator {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }else{
-            newDataStore.forceSchemaCRS(collection.getSchema()
-                .getCoordinateReferenceSystem());
+        } else {
+            newDataStore.forceSchemaCRS(collection.getSchema().getCoordinateReferenceSystem());
         }
 
         Transaction transaction = new DefaultTransaction("create");
 
         String typeName = newDataStore.getTypeNames()[0];
-        FeatureStore<SimpleFeatureType, SimpleFeature> featureStore = (SimpleFeatureStore) newDataStore
-                .getFeatureSource(typeName);
+        FeatureStore<SimpleFeatureType, SimpleFeature> featureStore =
+                (SimpleFeatureStore) newDataStore.getFeatureSource(typeName);
         featureStore.setTransaction(transaction);
         try {
             featureStore.addFeatures(collection);

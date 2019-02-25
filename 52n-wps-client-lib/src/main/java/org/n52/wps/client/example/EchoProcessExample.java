@@ -55,14 +55,11 @@ public class EchoProcessExample {
         EchoProcessExample example = new EchoProcessExample();
         try {
             example.run();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (WPSClientException e) {
+        } catch (WPSClientException e) {
             e.printStackTrace();
-        }
-        catch (TransformerException e) {
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
@@ -73,7 +70,7 @@ public class EchoProcessExample {
         // connect session
         WPSClientSession wpsClient = WPSClientSession.getInstance();
         boolean connected = wpsClient.connect(url);
-        if ( !connected) {
+        if (!connected) {
             System.out.println("Could not connect to WPS.");
             return;
         }
@@ -90,7 +87,7 @@ public class EchoProcessExample {
         String parameterOut = "literalOutput";
         executeBuilder.setResponseDocument(parameterOut, null, null, null);
 
-        if ( !executeBuilder.isExecuteValid()) {
+        if (!executeBuilder.isExecuteValid()) {
             System.out.println("Created execute request is NOT valid.");
         }
 

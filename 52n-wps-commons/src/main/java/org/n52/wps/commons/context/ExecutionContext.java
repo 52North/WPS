@@ -21,6 +21,7 @@ import java.io.File;
 public class ExecutionContext {
 
     private String tempFolderName;
+
     private OutputTypeWrapper outputDefinitionTypes;
 
     public ExecutionContext() {

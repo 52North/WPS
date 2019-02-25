@@ -48,10 +48,12 @@ public class ServiceIdentification {
 
     private String keywords;
 
-    @NotBlank(message = blankErrorMessage)
+    @NotBlank(
+            message = blankErrorMessage)
     private String serviceType;
 
-    @NotBlank(message = blankErrorMessage)
+    @NotBlank(
+            message = blankErrorMessage)
     private String serviceTypeVersions;
 
     private String fees;

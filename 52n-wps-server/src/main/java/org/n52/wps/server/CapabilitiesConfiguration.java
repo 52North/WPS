@@ -58,10 +58,12 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 
 /**
- * Encapsulation of the WPS Capabilities document. This class has to be initialized with either a
- * {@linkplain #getInstance(java.io.File) file}, {@linkplain #getInstance(java.net.URL) URL},
+ * Encapsulation of the WPS Capabilities document. This class has to be
+ * initialized with either a {@linkplain #getInstance(java.io.File) file},
+ * {@linkplain #getInstance(java.net.URL) URL},
  * {@linkplain #getInstance(java.lang.String) path} or
- * {@linkplain #getInstance(net.opengis.wps.x100.CapabilitiesDocument) instance}.
+ * {@linkplain #getInstance(net.opengis.wps.x100.CapabilitiesDocument)
+ * instance}.
  *
  * @author foerster
  * @author Christian Autermann
@@ -85,96 +87,98 @@ public class CapabilitiesConfiguration {
     }
 
     /**
-     * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
-     * {@link #getInstance()} and {@link #getInstance(boolean)
-     * } will use this file to obtain the skeleton.
+     * Gets the WPS Capabilities using the specified file to obtain the
+     * skeleton. All future calls to {@link #getInstance()} and
+     * {@link #getInstance(boolean) } will use this file to obtain the skeleton.
      *
      * @param filePath
-     *        the File pointing to a skeleton
+     *            the File pointing to a skeleton
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance(String filePath) throws XmlException, IOException {
         return getInstance(new FileLoadingStrategy(filePath));
     }
 
     /**
-     * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
-     * {@link #getInstance()} and {@link #getInstance(boolean)
-     * } will use this file to obtain the skeleton.
+     * Gets the WPS Capabilities using the specified file to obtain the
+     * skeleton. All future calls to {@link #getInstance()} and
+     * {@link #getInstance(boolean) } will use this file to obtain the skeleton.
      *
      * @param file
-     *        the File pointing to a skeleton
+     *            the File pointing to a skeleton
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance(File file) throws XmlException, IOException {
         return getInstance(new FileLoadingStrategy(file));
     }
 
     /**
-     * Gets the WPS Capabilities using the specified URL to obtain the skeleton. All future calls to
-     * {@link #getInstance()} and {@link #getInstance(boolean)
-     * } will use this URL to obtain the skeleton.
+     * Gets the WPS Capabilities using the specified URL to obtain the skeleton.
+     * All future calls to {@link #getInstance()} and
+     * {@link #getInstance(boolean) } will use this URL to obtain the skeleton.
      *
      * @param url
-     *        the URL pointing to a skeleton
+     *            the URL pointing to a skeleton
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance(URL url) throws XmlException, IOException {
         return getInstance(new URLLoadingStrategy(url));
     }
 
     /**
-     * Gets the WPS Capabilities using the specified skeleton. All future calls to {@link #getInstance()} and
-     * {@link #getInstance(boolean) } will use this skeleton.
+     * Gets the WPS Capabilities using the specified skeleton. All future calls
+     * to {@link #getInstance()} and {@link #getInstance(boolean) } will use
+     * this skeleton.
      *
      * @param skel
-     *        the skeleton
+     *            the skeleton
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance(CapabilitiesDocument skel) throws XmlException, IOException {
         return getInstance(new InstanceStrategy(skel));
     }
 
     /**
-     * Gets the WPS Capabilities using the specified strategy. All future calls to {@link #getInstance()} and
-     * {@link #getInstance(boolean) } will use this strategy.
+     * Gets the WPS Capabilities using the specified strategy. All future calls
+     * to {@link #getInstance()} and {@link #getInstance(boolean) } will use
+     * this strategy.
      *
      * @param strategy
-     *        the strategy to load the skeleton
+     *            the strategy to load the skeleton
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
-    private static CapabilitiesDocument getInstance(CapabilitiesSkeletonLoadingStrategy strategy) throws XmlException,
-            IOException {
+    private static CapabilitiesDocument getInstance(CapabilitiesSkeletonLoadingStrategy strategy)
+            throws XmlException, IOException {
         Preconditions.checkNotNull(strategy);
         lock.lock();
         try {
@@ -183,40 +187,39 @@ public class CapabilitiesConfiguration {
             }
             loadingStrategy = strategy;
             return getInstance(true);
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
 
     /**
-     * Get the WPS Capabilities for this service. The capabilities are reloaded if caching is not enabled in
-     * the WPS configuration.
+     * Get the WPS Capabilities for this service. The capabilities are reloaded
+     * if caching is not enabled in the WPS configuration.
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
         boolean cached = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isCacheCapabilites();
-        return getInstance( !cached);
+        return getInstance(!cached);
     }
 
     /**
      * Get the WPS Capabilities for this service and optionally force a reload.
      *
      * @param reload
-     *        if the capabilities should be reloaded
+     *            if the capabilities should be reloaded
      *
      * @return the capabilities document
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static CapabilitiesDocument getInstance(boolean reload) throws XmlException, IOException {
         lock.lock();
@@ -226,20 +229,20 @@ public class CapabilitiesConfiguration {
                 initSkeleton(capabilitiesDocumentObj);
             }
             return capabilitiesDocumentObj;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
 
     /**
-     * Enriches a capabilities skeleton by adding the endpoint URL and creating the process offerings.
+     * Enriches a capabilities skeleton by adding the endpoint URL and creating
+     * the process offerings.
      *
      * @param skel
-     *        the skeleton to enrich
+     *            the skeleton to enrich
      *
      * @throws UnknownHostException
-     *         if the local host name can not be obtained
+     *             if the local host name can not be obtained
      */
     private static void initSkeleton(CapabilitiesDocument skel) throws UnknownHostException {
         String endpoint = getEndpointURL();
@@ -254,22 +257,23 @@ public class CapabilitiesConfiguration {
      * Enriches the capabilities skeleton by creating the process offerings.
      *
      * @param skel
-     *        the skeleton to enrich
+     *            the skeleton to enrich
      */
     private static void initProcessOfferings(CapabilitiesDocument skel) {
-        ProcessOfferings processes = skel.getCapabilities()
-                .addNewProcessOfferings();
+        ProcessOfferings processes = skel.getCapabilities().addNewProcessOfferings();
         RepositoryManager rm = RepositoryManagerSingletonWrapper.getInstance();
-        boolean addProcessDescriptionLinkToProcessSummary = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getAddProcessDescriptionLinkToProcessSummary();
+        boolean addProcessDescriptionLinkToProcessSummary = WPSConfig.getInstance().getWPSConfig()
+                .getServerConfigurationModule().getAddProcessDescriptionLinkToProcessSummary();
         List<String> algorithms = rm.getAlgorithms();
-        if (algorithms.isEmpty()){
+        if (algorithms.isEmpty()) {
             LOG.warn("No algorithms found in repository manager.");
         }
 
         for (String algorithmName : algorithms) {
             try {
-                ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
-                        .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
+                ProcessDescriptionType description =
+                        (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance()
+                                .getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
                 if (description != null) {
                     ProcessBriefType process = processes.addNewProcess();
                     CodeType ct = process.addNewIdentifier();
@@ -298,23 +302,24 @@ public class CapabilitiesConfiguration {
                     }
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
-            }
-            catch (RuntimeException e) {
+            } catch (RuntimeException e) {
                 LOG.warn("Exception during instantiation of process {}", algorithmName, e);
             }
         }
     }
 
     /**
-     * Enriches a capabilities skeleton by adding the endpoint URL to the operations meta data.
+     * Enriches a capabilities skeleton by adding the endpoint URL to the
+     * operations meta data.
      *
      * @param skel
-     *        the skeleton to enrich
+     *            the skeleton to enrich
      * @param endpointUrl
-     *        the endpoint URL of the service
+     *            the endpoint URL of the service
      *
      */
-    private static void initOperationsMetadata(CapabilitiesDocument skel, String endpointUrl) {
+    private static void initOperationsMetadata(CapabilitiesDocument skel,
+            String endpointUrl) {
         if (skel.getCapabilities().getOperationsMetadata() != null) {
             String endpointUrlGet = endpointUrl + "?";
             for (Operation op : skel.getCapabilities().getOperationsMetadata().getOperationArray()) {
@@ -332,12 +337,13 @@ public class CapabilitiesConfiguration {
     }
 
     /**
-     * Gets the endpoint URL of this service by checking the configuration file and the local host name.
+     * Gets the endpoint URL of this service by checking the configuration file
+     * and the local host name.
      *
      * @return the endpoint URL
      *
      * @throws UnknownHostException
-     *         if the local host name could not be resolved into an address
+     *             if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
         WPSConfig config = WPSConfig.getInstance();
@@ -348,9 +354,9 @@ public class CapabilitiesConfiguration {
      * Force a reload of the capabilities skeleton.
      *
      * @throws XmlException
-     *         if the Capabilities skeleton is not valid
+     *             if the Capabilities skeleton is not valid
      * @throws IOException
-     *         if an IO error occurs
+     *             if an IO error occurs
      */
     public static void reloadSkeleton() throws XmlException, IOException {
         getInstance(true);
@@ -365,8 +371,7 @@ public class CapabilitiesConfiguration {
         lock.lock();
         try {
             return capabilitiesDocumentObj != null;
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -376,12 +381,11 @@ public class CapabilitiesConfiguration {
         if (serverConfigurationModule == null) {
 
             if (configurationManager == null) {
-                configurationManager = WPSConfig
-                        .getInstance().getConfigurationManager();
-            }if(configurationManager != null){
-                serverConfigurationModule = (Server) configurationManager
-                        .getConfigurationServices().getConfigurationModule(
-                                Server.class.getName());
+                configurationManager = WPSConfig.getInstance().getConfigurationManager();
+            }
+            if (configurationManager != null) {
+                serverConfigurationModule = (Server) configurationManager.getConfigurationServices()
+                        .getConfigurationModule(Server.class.getName());
             }
         }
         return serverConfigurationModule;
@@ -397,7 +401,7 @@ public class CapabilitiesConfiguration {
          * Creates a new strategy using the specified URL.
          *
          * @param file
-         *        the file
+         *            the file
          */
         URLLoadingStrategy(URL url) {
             this.url = Preconditions.checkNotNull(url);
@@ -442,7 +446,7 @@ public class CapabilitiesConfiguration {
          * Creates a new strategy using the specified file.
          *
          * @param file
-         *        the file
+         *            the file
          */
         FileLoadingStrategy(File file) throws MalformedURLException {
             super(file.toURI().toURL());
@@ -452,7 +456,7 @@ public class CapabilitiesConfiguration {
          * Creates a new strategy using the specified file.
          *
          * @param file
-         *        the path to the file
+         *            the path to the file
          */
         FileLoadingStrategy(String file) throws MalformedURLException {
             this(new File(Preconditions.checkNotNull(file)));
@@ -470,7 +474,7 @@ public class CapabilitiesConfiguration {
          * Creates a new strategy using the specified instance.
          *
          * @param instance
-         *        the instance
+         *            the instance
          */
         InstanceStrategy(CapabilitiesDocument instance) {
             this.instance = Preconditions.checkNotNull(instance);
@@ -510,14 +514,15 @@ public class CapabilitiesConfiguration {
      */
     private interface CapabilitiesSkeletonLoadingStrategy {
         /**
-         * Loads a CapabilitiesDocument skeleton. Every call to this method should return another instance.
+         * Loads a CapabilitiesDocument skeleton. Every call to this method
+         * should return another instance.
          *
          * @return the capabilities skeleton
          *
          * @throws XmlException
-         *         if the Capabilities skeleton is not valid
+         *             if the Capabilities skeleton is not valid
          * @throws IOException
-         *         if an IO error occurs
+         *             if an IO error occurs
          */
         CapabilitiesDocument loadSkeleton() throws XmlException, IOException;
     }

@@ -37,7 +37,7 @@ import org.n52.wps.webapp.service.CapabilitiesService;
  * @see CapabilitiesService
  * @see CapabilitiesDAO
  */
-public class ServiceProvider  {
+public class ServiceProvider {
 
     private String providerName;
 

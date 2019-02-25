@@ -28,7 +28,6 @@
  */
 package org.n52.wps.server.r.data;
 
-
 /**
  *
  * POJO for a file system resource use by R scripts.
@@ -65,7 +64,8 @@ public class R_Resource {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("R_Resource [resourceValue=").append(resourceValue).append(", scriptId=").append(processId).append(", isPublic=").append(isPublic).append("]");
+        builder.append("R_Resource [resourceValue=").append(resourceValue).append(", scriptId=").append(processId)
+                .append(", isPublic=").append(isPublic).append("]");
         return builder.toString();
     }
 
@@ -74,8 +74,8 @@ public class R_Resource {
         final int prime = 31;
         int result = 1;
         result = prime * result + (isPublic ? 1231 : 1237);
-        result = prime * result + ( (resourceValue == null) ? 0 : resourceValue.hashCode());
-        result = prime * result + ( (processId == null) ? 0 : processId.hashCode());
+        result = prime * result + ((resourceValue == null) ? 0 : resourceValue.hashCode());
+        result = prime * result + ((processId == null) ? 0 : processId.hashCode());
         return result;
     }
 
@@ -98,16 +98,14 @@ public class R_Resource {
             if (other.resourceValue != null) {
                 return false;
             }
-        }
-        else if ( !resourceValue.equals(other.resourceValue)) {
+        } else if (!resourceValue.equals(other.resourceValue)) {
             return false;
         }
         if (processId == null) {
             if (other.processId != null) {
                 return false;
             }
-        }
-        else if ( !processId.equals(other.processId)) {
+        } else if (!processId.equals(other.processId)) {
             return false;
         }
         return true;

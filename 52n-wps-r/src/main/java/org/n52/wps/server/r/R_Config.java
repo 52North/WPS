@@ -60,7 +60,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
 @Component
-@Scope(value = "singleton")
+@Scope(
+        value = "singleton")
 public class R_Config implements ServletContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
@@ -105,13 +106,13 @@ public class R_Config implements ServletContextAware {
         return configModule;
     }
 
-   public String resolveFullPath(String pathToResolve) throws ExceptionReport {
+    public String resolveFullPath(String pathToResolve) throws ExceptionReport {
         File file = new File(pathToResolve);
-        if ( !file.isAbsolute()) {
+        if (!file.isAbsolute()) {
             file = getBaseDir().resolve(Paths.get(pathToResolve)).toFile();
         }
 
-        if ( !file.exists()) {
+        if (!file.exists()) {
             LOGGER.error("'" + pathToResolve + "' denotes a non-existent path.");
             throw new ExceptionReport("Configuration Error!", "Inconsistent property");
         }
@@ -126,7 +127,7 @@ public class R_Config implements ServletContextAware {
         String[] dirs = resourceDirConfigParam.split(DIR_DELIMITER);
         for (String s : dirs) {
             Path dir = Paths.get(s);
-            if ( !dir.isAbsolute()) {
+            if (!dir.isAbsolute()) {
                 dir = getBaseDir().resolve(s);
             }
 
@@ -144,7 +145,7 @@ public class R_Config implements ServletContextAware {
         String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
         for (String s : scriptDirs) {
             File dir = new File(s);
-            if ( !dir.isAbsolute()) {
+            if (!dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
             }
             File[] files = dir.listFiles(new RFileExtensionFilter());
@@ -175,11 +176,8 @@ public class R_Config implements ServletContextAware {
 
     // TODO the config should not open connections
     public FilteredRConnection openRConnection() throws RserveException {
-        return this.connector.getNewConnection(this.getEnableBatchStart(),
-                                               this.getRServeHost(),
-                                               this.getRServePort(),
-                                               this.getRServeUser(),
-                                               this.getRServePassword());
+        return this.connector.getNewConnection(this.getEnableBatchStart(), this.getRServeHost(), this.getRServePort(),
+                this.getRServeUser(), this.getRServePassword());
     }
 
     private String getRServePassword() {
@@ -208,8 +206,7 @@ public class R_Config implements ServletContextAware {
                 + "/WebProcessingService?Request=DescribeProcess&identifier=" + processWKN;
         try {
             return new URL(s);
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             LOGGER.error("Could not create URL for process {}", processWKN, e);
             return null;
         }
@@ -229,12 +226,10 @@ public class R_Config implements ServletContextAware {
                 for (String s : configVariableDirs) {
                     Collection<File> files = resolveFilesFromResourcesOrFromWebapp(s, basedir);
                     this.utilsFiles.addAll(files);
-                    LOGGER.debug("Added {} files to the list of util files: {}",
-                                 files.size(),
-                                 Arrays.toString(files.toArray()));
+                    LOGGER.debug("Added {} files to the list of util files: {}", files.size(),
+                            Arrays.toString(files.toArray()));
                 }
-            }
-            else {
+            } else {
                 LOGGER.error("Could not load utils directory variable from config, not loading any utils files!");
             }
         }
@@ -243,22 +238,22 @@ public class R_Config implements ServletContextAware {
     }
 
     /**
-     * given a relative path, this method tries to locate the directory first within the webapp folder, then
-     * within the resources directory.
+     * given a relative path, this method tries to locate the directory first
+     * within the webapp folder, then within the resources directory.
      *
      * @param p
      * @param baseDir
-     *        the full path to the webapp directory
+     *            the full path to the webapp directory
      * @return
      */
-    private Collection<File> resolveFilesFromResourcesOrFromWebapp(String s, Path baseDir) {
+    private Collection<File> resolveFilesFromResourcesOrFromWebapp(String s,
+            Path baseDir) {
         LOGGER.debug("Loading util files from {}", s);
 
         Path p = Paths.get(s);
-        if ( !baseDir.isAbsolute()) {
-            throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
-                                                     baseDir,
-                                                     p));
+        if (!baseDir.isAbsolute()) {
+            throw new RuntimeException(
+                    String.format("The given basedir (%s) is not absolute, cannot resolve path %s.", baseDir, p));
         }
 
         ArrayList<File> foundFiles = new ArrayList<>();
@@ -266,13 +261,13 @@ public class R_Config implements ServletContextAware {
 
         // try resource first
         try (InputStream input = getClass().getClassLoader().getResourceAsStream(s);) {
-        //URL url = Resources.getResource(p.toString());
-        //try (InputStream input = Resources.asByteSource(url).openStream();) {
+            // URL url = Resources.getResource(p.toString());
+            // try (InputStream input =
+            // Resources.asByteSource(url).openStream();) {
             if (input != null) {
                 if (this.utilFileCache.containsKey(p) && this.utilFileCache.get(p).exists()) {
                     f = this.utilFileCache.get(p);
-                }
-                else {
+                } else {
                     try {
                         f = File.createTempFile("wps4rutil_", "_" + p.getFileName().toString());
                         Files.copy(input, Paths.get(f.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
@@ -280,14 +275,12 @@ public class R_Config implements ServletContextAware {
                             foundFiles.add(f);
                             this.utilFileCache.put(p, f);
                         }
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         LOGGER.warn("Could not add util file from classpath.", e);
                     }
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.warn("Could not add util file from classpath.", e);
         }
 
@@ -298,8 +291,7 @@ public class R_Config implements ServletContextAware {
                 f = resolved.toFile();
                 File[] files = f.listFiles(rFileFilter);
                 foundFiles.addAll(Arrays.asList(files));
-            }
-            else {
+            } else {
                 LOGGER.warn("Configured utils directory does not exist: {}", p);
             }
         }
@@ -310,11 +302,9 @@ public class R_Config implements ServletContextAware {
     }
 
     public Path getBaseDir() {
-//        return baseDir;
+        // return baseDir;
         try {
-            return this.baseDir == null
-                    ? Paths.get(getClass().getResource("/").toURI())
-                    : baseDir;
+            return this.baseDir == null ? Paths.get(getClass().getResource("/").toURI()) : baseDir;
         } catch (URISyntaxException e) {
             LOGGER.error("Could not determine fallback base dir!", e);
             return Paths.get(""); // empty path

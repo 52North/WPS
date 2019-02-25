@@ -38,7 +38,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericXMLDataGeneratorCM extends ClassKnowingModule{
+public class GenericXMLDataGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -46,7 +46,7 @@ public class GenericXMLDataGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GenericXMLDataGeneratorCM(){
+    public GenericXMLDataGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

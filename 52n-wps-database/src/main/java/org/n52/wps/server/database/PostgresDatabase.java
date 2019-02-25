@@ -70,38 +70,51 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 
 /**
- *Uses the Postgres database to store and retrieve data.
+ * Uses the Postgres database to store and retrieve data.
+ * 
  * @author isuftin (Ivan Suftin, USGS)
  */
 public class PostgresDatabase extends AbstractDatabase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresDatabase.class);
+
     private static PostgresDatabase db;
+
     private static String connectionURL = null;
+
     private static Connection conn = null;
+
     private final static String KEY_DATABASE_ROOT = "org.n52.wps.server.database";
+
     private final static String KEY_DATABASE_PATH = "path";
+
     private final static String KEY_DATABASE_WIPE_ENABLED = "wipe.enabled";
+
     private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
+
     private final static String KEY_DATABASE_WIPE_THRESHOLD = "wipe.threshold";
+
     private final static boolean DEFAULT_DATABASE_WIPE_ENABLED = true;
+
     private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60;
+
     private final static long DEFAULT_DATABASE_WIPE_THRESHOLD = 1000 * 60 * 60 * 24 * 7;
+
     private final static String SUFFIX_GZIP = "gz";
-    private final static String DEFAULT_DATABASE_PATH
-            = Joiner.on(File.separator).join(
-                    System.getProperty("java.io.tmpdir", "."),
-                    "Database",
-                    "Results");
+
+    private final static String DEFAULT_DATABASE_PATH =
+            Joiner.on(File.separator).join(System.getProperty("java.io.tmpdir", "."), "Database", "Results");
+
     private static File BASE_DIRECTORY;
+
     protected final String baseResultURL;
-    public static final String pgCreationString = "CREATE TABLE RESULTS ("
-            + "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, "
-            + "REQUEST_DATE TIMESTAMP, "
-            + "RESPONSE_TYPE VARCHAR(100), "
-            + "RESPONSE TEXT, "
-            + "RESPONSE_MIMETYPE VARCHAR(100))";
+
+    public static final String pgCreationString =
+            "CREATE TABLE RESULTS (" + "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " + "REQUEST_DATE TIMESTAMP, "
+                    + "RESPONSE_TYPE VARCHAR(100), " + "RESPONSE TEXT, " + "RESPONSE_MIMETYPE VARCHAR(100))";
+
     protected final Object storeResponseSerialNumberLock;
+
     protected final Timer wipeTimer;
 
     // If the delimiter changes, examine Patterns below.
@@ -116,7 +129,10 @@ public class PostgresDatabase extends AbstractDatabase {
             // Create lock object
             storeResponseSerialNumberLock = new Object();
 
-            PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
+            PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule =
+                    (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager()
+                            .getConfigurationServices()
+                            .getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
 
             Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
@@ -127,13 +143,15 @@ public class PostgresDatabase extends AbstractDatabase {
 
             // Create database wiper task
             if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
-                long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
-                long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
+                long periodMillis =
+                        propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
+                long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD,
+                        DEFAULT_DATABASE_WIPE_THRESHOLD);
 
                 wipeTimer = new Timer(getClass().getSimpleName() + " Postgres Wiper", true);
                 wipeTimer.scheduleAtFixedRate(new PostgresDatabase.WipeTimerTask(thresholdMillis), 15000, periodMillis);
                 LOGGER.info("Started {} Postgres wiper timer; period {} ms, threshold {} ms",
-                        new Object[]{getDatabaseName(), periodMillis, thresholdMillis});
+                        new Object[] { getDatabaseName(), periodMillis, thresholdMillis });
             } else {
                 wipeTimer = null;
             }
@@ -160,7 +178,10 @@ public class PostgresDatabase extends AbstractDatabase {
             }
         }
 
-        PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
+        PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule =
+                (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager()
+                        .getConfigurationServices()
+                        .getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
 
         PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
@@ -202,8 +223,7 @@ public class PostgresDatabase extends AbstractDatabase {
             props.setProperty("password", password);
             PostgresDatabase.conn = null;
             try {
-                PostgresDatabase.conn = DriverManager.getConnection(
-                        PostgresDatabase.connectionURL, props);
+                PostgresDatabase.conn = DriverManager.getConnection(PostgresDatabase.connectionURL, props);
                 PostgresDatabase.conn.setAutoCommit(false);
                 LOGGER.info("Connected to WPS database.");
             } catch (SQLException e) {
@@ -215,26 +235,32 @@ public class PostgresDatabase extends AbstractDatabase {
     }
 
     @Override
-    public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {
+    public synchronized void insertRequest(String id,
+            InputStream inputStream,
+            boolean xml) {
         insertResultEntity(inputStream, "REQ_" + id, "ExecuteRequest", xml ? "text/xml" : "text/plain");
     }
 
     @Override
-    public synchronized String insertResponse(String id, InputStream inputStream) {
+    public synchronized String insertResponse(String id,
+            InputStream inputStream) {
         return insertResultEntity(inputStream, id, "ExecuteResponse", "text/xml");
     }
 
     @Override
     public synchronized String storeComplexValue(String id,
-        InputStream stream,
-        String type,
-        String mimeType) {
+            InputStream stream,
+            String type,
+            String mimeType) {
         id = JOINER.join(id, UUID.randomUUID().toString());
         return super.storeComplexValue(id, stream, type, mimeType);
     }
 
     @Override
-    protected synchronized String insertResultEntity(InputStream stream, String id, String type, String mimeType) {
+    protected synchronized String insertResultEntity(InputStream stream,
+            String id,
+            String type,
+            String mimeType) {
         Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
         FileInputStream fis = null;
         Boolean storingOutput = null != id && id.toLowerCase().contains("output");
@@ -255,12 +281,15 @@ public class PostgresDatabase extends AbstractDatabase {
             if (storingOutput) {
                 if (!saveResultsToDB) {
                     byte[] filePathByteArray = filePath.toUri().toString().getBytes();
-                    AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, new ByteArrayInputStream(filePathByteArray), filePathByteArray.length);
+                    AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE,
+                            new ByteArrayInputStream(filePathByteArray), filePathByteArray.length);
                 } else {
-                    AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, fis, (int) filePath.toFile().length());
+                    AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, fis,
+                            (int) filePath.toFile().length());
                 }
             } else {
-                AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, fis, (int) filePath.toFile().length());
+                AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, fis,
+                        (int) filePath.toFile().length());
             }
 
             AbstractDatabase.insertSQL.executeUpdate();
@@ -278,7 +307,8 @@ public class PostgresDatabase extends AbstractDatabase {
                 }
             }
 
-            // If we are storing output, we want to only delete the file if we're
+            // If we are storing output, we want to only delete the file if
+            // we're
             // storing the results to the database. Otherwise, don't delete the
             // file since that will be served on request
             if (filePath != null) {
@@ -299,7 +329,8 @@ public class PostgresDatabase extends AbstractDatabase {
     }
 
     @Override
-    public synchronized void updateResponse(String id, InputStream stream) {
+    public synchronized void updateResponse(String id,
+            InputStream stream) {
         Path tempFilePath = null;
         FileInputStream fis = null;
         try {
@@ -308,7 +339,8 @@ public class PostgresDatabase extends AbstractDatabase {
             fis = new FileInputStream(tempFilePath.toFile());
 
             AbstractDatabase.updateSQL.setString(UPDATE_COLUMN_REQUEST_ID, id);
-            AbstractDatabase.updateSQL.setAsciiStream(UPDATE_COLUMN_RESPONSE, fis, (int) tempFilePath.toFile().length());
+            AbstractDatabase.updateSQL.setAsciiStream(UPDATE_COLUMN_RESPONSE, fis,
+                    (int) tempFilePath.toFile().length());
             AbstractDatabase.updateSQL.executeUpdate();
             getConnection().commit();
         } catch (SQLException e) {
@@ -337,7 +369,7 @@ public class PostgresDatabase extends AbstractDatabase {
         try {
             ResultSet rs;
             DatabaseMetaData meta = PostgresDatabase.conn.getMetaData();
-            rs = meta.getTables(null, null, "results", new String[]{"TABLE"});
+            rs = meta.getTables(null, null, "results", new String[] { "TABLE" });
             if (!rs.next()) {
                 LOGGER.info("Table RESULTS does not yet exist.");
                 Statement st = PostgresDatabase.conn.createStatement();
@@ -347,7 +379,7 @@ public class PostgresDatabase extends AbstractDatabase {
 
                 meta = PostgresDatabase.conn.getMetaData();
 
-                rs = meta.getTables(null, null, "results", new String[]{"TABLE"});
+                rs = meta.getTables(null, null, "results", new String[] { "TABLE" });
                 if (rs.next()) {
                     LOGGER.info("Succesfully created table RESULTS.");
                 } else {
@@ -413,9 +445,8 @@ public class PostgresDatabase extends AbstractDatabase {
                 PostgresDatabase.db = null;
             }
         } catch (SQLException e) {
-            LOGGER.error("Error occured while closing Postgres database connection: "
-                    + "closed prepared statements?" + isClosedPreparedStatements
-                    + ";closed connection?" + isClosedConnection, e);
+            LOGGER.error("Error occured while closing Postgres database connection: " + "closed prepared statements?"
+                    + isClosedPreparedStatements + ";closed connection?" + isClosedConnection, e);
             return;
         } finally {
             try {
@@ -448,7 +479,8 @@ public class PostgresDatabase extends AbstractDatabase {
                     if (responseFile != null && responseFile.exists()) {
                         LOGGER.debug("Response file for {} is {}", id, responseFile.getPath());
                         try {
-                            result = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile))
+                            result = responseFile.getName().endsWith(SUFFIX_GZIP)
+                                    ? new GZIPInputStream(new FileInputStream(responseFile))
                                     : new FileInputStream(responseFile);
                         } catch (FileNotFoundException e) {
                             LOGGER.warn("Response not found for id " + id, e);
@@ -501,11 +533,11 @@ public class PostgresDatabase extends AbstractDatabase {
             wipe(thresholdMillis, savingResultsToDB);
         }
 
-        private void wipe(long thresholdMillis, Boolean saveResultsToDB) {
+        private void wipe(long thresholdMillis,
+                Boolean saveResultsToDB) {
             // SimpleDataFormat is not thread-safe.
             long currentTimeMillis = System.currentTimeMillis();
-            LOGGER.info(getDatabaseName() + " Postgres wiper, checking for records older than {} ms",
-                    thresholdMillis);
+            LOGGER.info(getDatabaseName() + " Postgres wiper, checking for records older than {} ms", thresholdMillis);
 
             List<String> oldRecords = findOldRecords(currentTimeMillis, thresholdMillis);
             if (oldRecords.size() > 0) {
@@ -535,7 +567,8 @@ public class PostgresDatabase extends AbstractDatabase {
                     Files.delete(fileToDelete.toPath());
                     deleted = true;
                 } catch (IOException ex) {
-                    LOGGER.warn("{} could not be deleted. Reason: {}", fileToDelete.toURI().toString(), ex.getMessage());
+                    LOGGER.warn("{} could not be deleted. Reason: {}", fileToDelete.toURI().toString(),
+                            ex.getMessage());
                 }
             }
 
@@ -553,8 +586,8 @@ public class PostgresDatabase extends AbstractDatabase {
 
             try {
 
-                String deleteStatementString = "DELETE FROM RESULTS "
-                        + "WHERE RESULTS.REQUEST_ID IN (" + builder.deleteCharAt(builder.length() - 1).toString() + ")";
+                String deleteStatementString = "DELETE FROM RESULTS " + "WHERE RESULTS.REQUEST_ID IN ("
+                        + builder.deleteCharAt(builder.length() - 1).toString() + ")";
                 deleteStatement = PostgresDatabase.conn.prepareStatement(deleteStatementString);
 
                 int idIdx = 1;
@@ -579,16 +612,16 @@ public class PostgresDatabase extends AbstractDatabase {
             return deletedRecordsCount;
         }
 
-        private List<String> findOldRecords(long currentTimeMillis, long threshold) {
+        private List<String> findOldRecords(long currentTimeMillis,
+                long threshold) {
             PreparedStatement lookupStatement = null;
             ResultSet rs = null;
             List<String> matchingRecords = new ArrayList<String>();
             try {
                 long ageMillis = currentTimeMillis - thresholdMillis;
-                String lookupStatementString = "SELECT * FROM "
-                        + "(SELECT REQUEST_ID, EXTRACT(EPOCH FROM REQUEST_DATE) * 1000 AS TIMESTAMP "
-                        + "FROM RESULTS) items "
-                        + "WHERE TIMESTAMP < ?";
+                String lookupStatementString =
+                        "SELECT * FROM " + "(SELECT REQUEST_ID, EXTRACT(EPOCH FROM REQUEST_DATE) * 1000 AS TIMESTAMP "
+                                + "FROM RESULTS) items " + "WHERE TIMESTAMP < ?";
                 lookupStatement = PostgresDatabase.conn.prepareStatement(lookupStatementString);
                 lookupStatement.setLong(1, ageMillis);
                 rs = lookupStatement.executeQuery();
@@ -619,7 +652,6 @@ public class PostgresDatabase extends AbstractDatabase {
             return matchingRecords;
         }
     }
-
 
     @Override
     public String generateRetrieveResultURL(String id) {

@@ -35,12 +35,11 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class GenericFileParser extends AbstractParser{
+public class GenericFileParser extends AbstractParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
 
@@ -50,7 +49,9 @@ public class GenericFileParser extends AbstractParser{
     }
 
     @Override
-    public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
+    public GenericFileDataBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         GenericFileData theData = new GenericFileData(input, mimeType);
         LOGGER.info("Found File Input " + mimeType);

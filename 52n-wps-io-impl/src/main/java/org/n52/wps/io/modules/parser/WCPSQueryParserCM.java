@@ -39,7 +39,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class WCPSQueryParserCM extends ClassKnowingModule{
+public class WCPSQueryParserCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -47,7 +47,7 @@ public class WCPSQueryParserCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public WCPSQueryParserCM(){
+    public WCPSQueryParserCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

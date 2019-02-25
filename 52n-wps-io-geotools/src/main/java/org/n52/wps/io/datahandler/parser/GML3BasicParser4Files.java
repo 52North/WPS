@@ -59,9 +59,9 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
-
 /**
  * This parser handles XML files compliant to GML3.
+ * 
  * @author schaeffer
  *
  */
@@ -74,15 +74,17 @@ public class GML3BasicParser4Files extends AbstractParser {
         supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
     }
 
-    public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
+    public GenericFileDataWithGTBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
 
         FileOutputStream fos = null;
-        try{
+        try {
             File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml3");
             finalizeFiles.add(tempFile); // mark for final delete
             fos = new FileOutputStream(tempFile);
             int i = stream.read();
-            while(i != -1){
+            while (i != -1) {
                 fos.write(i);
                 i = stream.read();
             }
@@ -91,11 +93,12 @@ public class GML3BasicParser4Files extends AbstractParser {
             GenericFileDataWithGTBinding data = parseXML(tempFile);
 
             return data;
-        }
-        catch(IOException e) {
-            if (fos != null){
-                try { fos.close(); }
-                catch (Exception e1) { }
+        } catch (IOException e) {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (Exception e1) {
+                }
             }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }

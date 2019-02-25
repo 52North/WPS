@@ -37,9 +37,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.data.IData;
 
 /**
- * For some algorithms it is needed to intercept
- * the DataInputs before being processed. An algorithm
- * should provide implementations of these through this
+ * For some algorithms it is needed to intercept the DataInputs before being
+ * processed. An algorithm should provide implementations of these through this
  * interface and the corresponding annotation.
  *
  * @author matthes rieke
@@ -47,18 +46,18 @@ import org.n52.wps.io.data.IData;
  */
 public interface DataInputInterceptors {
 
-
     /**
      * @return a map where input identifiers are keys
      */
     public Map<String, InterceptorInstance> getInterceptors();
 
-
     public static interface InterceptorInstance {
 
         /**
          * applies the actual interception
-         * @param inputObject the input as provided in the Execute request
+         * 
+         * @param inputObject
+         *            the input as provided in the Execute request
          *
          * @return a list of <code>IData</code> elements
          */
@@ -67,9 +66,9 @@ public interface DataInputInterceptors {
     }
 
     /**
-     * Decorate your Algorithm implementation with this
-     * annotation. the value must be the fully qualified
-     * class name of the {@link DataInputInterceptors} implementation.
+     * Decorate your Algorithm implementation with this annotation. the value
+     * must be the fully qualified class name of the
+     * {@link DataInputInterceptors} implementation.
      *
      * @author matthes rieke
      *

@@ -75,10 +75,12 @@ import org.n52.wps.algorithm.annotation.LiteralDataInput;
 import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 
-@Algorithm(version = "1.1.0")
+@Algorithm(
+        version = "1.1.0")
 public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SimpleBufferAlgorithm.class);
+
     private Double percentage;
 
     public SimpleBufferAlgorithm() {
@@ -86,27 +88,34 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
     }
 
     private FeatureCollection result;
+
     private FeatureCollection data;
+
     private double width;
 
-    @ComplexDataOutput(identifier = "result", binding = GTVectorDataBinding.class)
+    @ComplexDataOutput(
+            identifier = "result",
+            binding = GTVectorDataBinding.class)
     public FeatureCollection getResult() {
         return result;
     }
 
-    @ComplexDataInput(identifier = "data", binding = GTVectorDataBinding.class)
+    @ComplexDataInput(
+            identifier = "data",
+            binding = GTVectorDataBinding.class)
     public void setData(FeatureCollection data) {
         this.data = data;
     }
 
-    @LiteralDataInput(identifier = "width")
+    @LiteralDataInput(
+            identifier = "width")
     public void setWidth(double width) {
         this.width = width;
     }
 
     @Execute
     public void runBuffer() {
-        //Collection resultColl = new ArrayList();
+        // Collection resultColl = new ArrayList();
         double i = 0;
         int totalNumberOfFeatures = data.size();
         String uuid = UUID.randomUUID().toString();
@@ -140,7 +149,8 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
             }
 
             if (geometryBuffered != null) {
-                SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(), geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
+                SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(),
+                        geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
                 feature.setDefaultGeometry(geometryBuffered);
                 featureList.add(createdFeature);
             } else {
@@ -150,7 +160,8 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
         result = GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
     }
 
-    private Geometry runBuffer(Geometry a, double width) {
+    private Geometry runBuffer(Geometry a,
+            double width) {
         Geometry buffered = null;
 
         try {

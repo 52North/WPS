@@ -24,9 +24,11 @@ import net.opengis.wps.x100.OutputDefinitionType;
 public class OutputTypeWrapper {
 
     private List<? extends OutputDefinitionType> wps100OutputDefinitionTypes = new ArrayList<>();
+
     private List<? extends net.opengis.wps.x20.OutputDefinitionType> wps200OutputDefinitionTypes = new ArrayList<>();
 
     private boolean isWPS100Execution = false;
+
     private boolean isWPS200Execution = false;
 
     public List<? extends OutputDefinitionType> getWps100OutputDefinitionTypes() {
@@ -63,6 +65,5 @@ public class OutputTypeWrapper {
     public void setWPS200Execution(boolean isWPS200Execution) {
         this.isWPS200Execution = isWPS200Execution;
     }
-
 
 }

@@ -33,7 +33,8 @@ import org.n52.wps.io.data.IComplexData;
 
 /**
  *
- * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and - Generator.
+ * This class holds an XMLObject as payload. It is used by the
+ * GenericXMLDataParser and - Generator.
  *
  * @author bpross-52n
  *
@@ -44,7 +45,7 @@ public class GenericXMLDataBinding implements IComplexData {
 
     private XmlObject payload;
 
-    public GenericXMLDataBinding(XmlObject payload){
+    public GenericXMLDataBinding(XmlObject payload) {
         this.payload = payload;
     }
 
@@ -59,6 +60,7 @@ public class GenericXMLDataBinding implements IComplexData {
     }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 
 }

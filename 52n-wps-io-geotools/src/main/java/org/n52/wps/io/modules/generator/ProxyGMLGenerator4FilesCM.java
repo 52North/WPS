@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class ProxyGMLGenerator4FilesCM extends ClassKnowingModule{
+public class ProxyGMLGenerator4FilesCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class ProxyGMLGenerator4FilesCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public ProxyGMLGenerator4FilesCM(){
+    public ProxyGMLGenerator4FilesCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

@@ -65,14 +65,16 @@ public interface UserDAO {
     /**
      * Insert new user
      *
-     * @param user the new user
+     * @param user
+     *            the new user
      */
     void insertUser(User user);
 
     /**
      * Update existing user
      *
-     * @param user the user to be updated
+     * @param user
+     *            the user to be updated
      */
     void updateUser(User user);
 

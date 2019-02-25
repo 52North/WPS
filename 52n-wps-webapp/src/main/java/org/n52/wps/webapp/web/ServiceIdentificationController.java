@@ -59,35 +59,43 @@ public class ServiceIdentificationController {
     /**
      * Display the service identification module
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The service identification view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String display(Model model) {
-        ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices()
-                .getServiceIdentification();
+        ServiceIdentification serviceIdentification =
+                configurationManager.getCapabilitiesServices().getServiceIdentification();
         model.addAttribute("serviceIdentification", serviceIdentification);
         LOGGER.info("Reterived '{}' configuration module.", serviceIdentification.getClass().getName());
         return "service_identification";
     }
 
     /**
-     * Process form submission. The method will return an HTTP 200 status code if there
-     * are no errors, else, it will return a 400 status code.
+     * Process form submission. The method will return an HTTP 200 status code
+     * if there are no errors, else, it will return a 400 status code.
      *
      * @param serviceIdentification
      *            The model holding the service identification values
-     * @param result the <code>BindingResult</code>
-     * @param model the model
-     * @param response the servlet response
-     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-     *         errors.
+     * @param result
+     *            the <code>BindingResult</code>
+     * @param model
+     *            the model
+     * @param response
+     *            the servlet response
+     * @return A {@code ValidationResponse} object with the list of form errors
+     *         which can be empty if there are no errors.
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(
+            method = RequestMethod.POST)
     @ResponseBody
     public ValidationResponse processPost(
             @ModelAttribute("serviceIdentification") @Valid ServiceIdentification serviceIdentification,
-            BindingResult result, Model model, HttpServletResponse response) {
+            BindingResult result,
+            Model model,
+            HttpServletResponse response) {
         ValidationResponse validationResponse = new ValidationResponse();
         if (result.hasErrors()) {
             validationResponse.setErrorMessageList(result.getFieldErrors());

@@ -38,7 +38,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericFileGeneratorCM extends ClassKnowingModule{
+public class GenericFileGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -46,7 +46,7 @@ public class GenericFileGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GenericFileGeneratorCM(){
+    public GenericFileGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

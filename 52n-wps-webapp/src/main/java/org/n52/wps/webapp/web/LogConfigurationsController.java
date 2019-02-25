@@ -62,13 +62,15 @@ public class LogConfigurationsController {
     /**
      * Display the log configuration module
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The log view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String display(Model model) {
-        LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices()
-                .getLogConfigurations();
+        LogConfigurations logConfigurations =
+                configurationManager.getLogConfigurationsServices().getLogConfigurations();
         List<String> logLevel = new ArrayList<String>();
         logLevel.add("DEBUG");
         logLevel.add("INFO");
@@ -80,22 +82,28 @@ public class LogConfigurationsController {
     }
 
     /**
-     * Process form submission. The method will return an HTTP 200 status code if there are no errors, else, it will
-     * return a 400 status code.
+     * Process form submission. The method will return an HTTP 200 status code
+     * if there are no errors, else, it will return a 400 status code.
      *
      * @param logConfigurations
      *            The model holding the log configuration values
-     * @param result the <code>BindingResult</code>
-     * @param model the model
-     * @param response the servlet response
-     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-     *         errors.
+     * @param result
+     *            the <code>BindingResult</code>
+     * @param model
+     *            the model
+     * @param response
+     *            the servlet response
+     * @return A {@code ValidationResponse} object with the list of form errors
+     *         which can be empty if there are no errors.
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(
+            method = RequestMethod.POST)
     @ResponseBody
     public ValidationResponse processPost(
-            @ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations, BindingResult result,
-            Model model, HttpServletResponse response) {
+            @ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations,
+            BindingResult result,
+            Model model,
+            HttpServletResponse response) {
         ValidationResponse res = new ValidationResponse();
         if (result.hasErrors()) {
             model.addAttribute("logConfigurations", logConfigurations);

@@ -80,15 +80,15 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(RAlgorithmRepository.class);
 
     /*
-     * instantiation is managed by IoC container (spring) and the RepositoryManager only
-     * has the name of the config module at hand to retrieve or instantiate (hard wiring
-     * via reflection) this instance.
+     * instantiation is managed by IoC container (spring) and the
+     * RepositoryManager only has the name of the config module at hand to
+     * retrieve or instantiate (hard wiring via reflection) this instance.
      *
-     * Using the repository's name instead of the config module everywhere would hinder
-     * the WPS to add configured algorithms to the config module though.
+     * Using the repository's name instead of the config module everywhere would
+     * hinder the WPS to add configured algorithms to the config module though.
      */
     static final String COMPONENT_NAME = "org.n52.wps.server.r.RConfigurationModule";
-//    static final String COMPONENT_NAME = "RAlgorithmRepository";
+    // static final String COMPONENT_NAME = "RAlgorithmRepository";
 
     private static final String DESCRPTION_VERSION_FOR_VALIDATION = WPSConfig.VERSION_100;
 
@@ -109,7 +109,8 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     private ResourceFileRepository resourceRepo;
 
     // needed to autowire before script registration starts
-    @Autowired private CustomDataTypeManager customDataTypes;
+    @Autowired
+    private CustomDataTypeManager customDataTypes;
 
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
@@ -122,18 +123,17 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     public void init() {
         LOGGER.info("Initializing Local*R*ConfigurationModule..");
 
-         // TODO tests expect a configuration manager injected here
-//        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
+        // TODO tests expect a configuration manager injected here
+        // SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
 
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
-                .getConfigurationModuleForClass(this.getClass().getName(),
-                        ConfigurationCategory.REPOSITORY);
+                .getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
         if (configModule == null || !configModule.isActive()) {
             LOGGER.info("*R*AlgorithmRepository is INACTIVE.");
         } else {
             config.setConfigModule(configModule);
 
-            if ( !isRServeAvailable()) {
+            if (!isRServeAvailable()) {
                 LOGGER.error("RServe is not available, not adding ANY algorithms!");
                 return;
             }
@@ -144,17 +144,16 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
         }
     }
 
-     /**
-      * Check if Rserve can be found
-      */
+    /**
+     * Check if Rserve can be found
+     */
     private boolean isRServeAvailable() {
         LOGGER.debug("Trying to connect to Rserve to verify startup conditions.");
         RConnection testcon = null;
         try {
             testcon = config.openRConnection();
             LOGGER.info("WPS successfully connected to Rserve.");
-        }
-        catch (RserveException e) {
+        } catch (RserveException e) {
             LOGGER.error("[Rserve] Could not connect to Rserve.", e);
             return false;
         } finally {
@@ -174,15 +173,13 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     private void intializeAvailableAlgorithms(RConfigurationModule configModule) {
         List<AlgorithmEntry> configuredAlgorithms = configModule.getAlgorithmEntries();
-        LOGGER.debug("Adding algorithms: {}", configuredAlgorithms.stream()
-                .map(a -> a.toString())
-                .collect(Collectors.joining(", ")));
+        LOGGER.debug("Adding algorithms: {}",
+                configuredAlgorithms.stream().map(a -> a.toString()).collect(Collectors.joining(", ")));
 
-        configuredAlgorithms.stream()
-                .forEach((entry) -> {
-            if ( !entry.isActive()) {
+        configuredAlgorithms.stream().forEach((entry) -> {
+            if (!entry.isActive()) {
                 LOGGER.warn("Inactive algorithm not added: {}", entry.toString());
-            } else{
+            } else {
                 final String algorithm = entry.getAlgorithm();
                 String publicId = config.getPublicScriptId(algorithm);
                 LOGGER.debug("Adding algorithm: {} with publicId: {}", algorithm, publicId);
@@ -193,7 +190,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     @Override
     public boolean addAlgorithm(Object item) {
-        if ( !canHandleItem(item)) {
+        if (!canHandleItem(item)) {
             LOGGER.debug("Ignore unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
@@ -243,8 +240,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
             addResourcesForGenericRProcess(p);
             addImportsForGenericRProcess(p);
             return true;
-        }
-        catch (RuntimeException | InvalidRScriptException e) {
+        } catch (RuntimeException | InvalidRScriptException e) {
             LOGGER.error("Could not load algorithm '{}'", processName, e);
             processInfos.remove(processName);
             rProcesses.remove(processName);
@@ -260,7 +256,8 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     private GenericRProcess createRProcess(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
-        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry, WPSConfig.getInstance().getServiceBaseUrl());
+        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry,
+                WPSConfig.getInstance().getServiceBaseUrl());
         SpringIntegrationHelper.autowireBean(algorithm);
         /*
          * weak inheritance implementation. When using injected singleton beans
@@ -272,9 +269,10 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     }
 
     private void validateProcessDescription(GenericRProcess algorithm) {
-        if ( !algorithm.processDescriptionIsValid(DESCRPTION_VERSION_FOR_VALIDATION)) {
+        if (!algorithm.processDescriptionIsValid(DESCRPTION_VERSION_FOR_VALIDATION)) {
             // collect the errors
-            ProcessDescriptionType description = (ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType(DESCRPTION_VERSION_FOR_VALIDATION);
+            ProcessDescriptionType description = (ProcessDescriptionType) algorithm.getDescription()
+                    .getProcessDescriptionType(DESCRPTION_VERSION_FOR_VALIDATION);
             XmlOptions validateOptions = new XmlOptions();
             ArrayList<XmlError> errorList = new ArrayList<>();
             validateOptions.setErrorListener(errorList);
@@ -292,36 +290,32 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
                 validationMessages.append(e.getMessage());
                 validationMessages.append("\n");
             }
-            LOGGER.warn("Algorithm description is not valid {}. Errors: {}",
-                        algorithm.getWellKnownName(),
-                        validationMessages.toString());
+            LOGGER.warn("Algorithm description is not valid {}. Errors: {}", algorithm.getWellKnownName(),
+                    validationMessages.toString());
 
-            throw new RuntimeException("Could not load algorithm " + algorithm.getWellKnownName() + ". ProcessDescription not valid: "
-                    + validationMessages.toString());
+            throw new RuntimeException("Could not load algorithm " + algorithm.getWellKnownName()
+                    + ". ProcessDescription not valid: " + validationMessages.toString());
         }
     }
 
     private void addResourcesForGenericRProcess(GenericRProcess process) {
         String algorithm_wkn = process.getWellKnownName();
         LOGGER.debug("Adding resources for algorithm {}", algorithm_wkn);
-        getResourceAnnotations(process).stream()
-                .forEach((rAnnotation) -> {
-                    if (resourceRepo.registerResources(rAnnotation)) {
-                        LOGGER.debug("Registered resources for algorithm {} based on annotation: {}",
-                                algorithm_wkn,
-                                rAnnotation);
-                    } else {
-                        LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
-                    }
-                });
+        getResourceAnnotations(process).stream().forEach((rAnnotation) -> {
+            if (resourceRepo.registerResources(rAnnotation)) {
+                LOGGER.debug("Registered resources for algorithm {} based on annotation: {}", algorithm_wkn,
+                        rAnnotation);
+            } else {
+                LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
+            }
+        });
 
     }
 
     private List<RAnnotation> getResourceAnnotations(GenericRProcess process) {
         try {
             return RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.RESOURCE);
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             LOGGER.error("Could not get resoure annotations for algorithm  {}", process.getWellKnownName(), e);
             return Collections.emptyList();
         }
@@ -331,23 +325,20 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
         String algorithm_wkn = process.getWellKnownName();
         LOGGER.debug("Adding imports for algorithm {}", algorithm_wkn);
         Path scriptParent = scriptRepo.getScriptFile(algorithm_wkn).toPath().getParent();
-        getImportAnnotations(process).stream()
-                .forEach((rAnnotation) -> {
-                    if (resourceRepo.registerImport(rAnnotation, scriptParent)) {
-                        LOGGER.debug("Registered import as resource for algorithm {} based on annotation: {}",
-                                algorithm_wkn,
-                                rAnnotation);
-                    } else {
-                        LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
-                    }
-                });
+        getImportAnnotations(process).stream().forEach((rAnnotation) -> {
+            if (resourceRepo.registerImport(rAnnotation, scriptParent)) {
+                LOGGER.debug("Registered import as resource for algorithm {} based on annotation: {}", algorithm_wkn,
+                        rAnnotation);
+            } else {
+                LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
+            }
+        });
     }
 
     private List<RAnnotation> getImportAnnotations(GenericRProcess process) {
         try {
             return RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.IMPORT);
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             LOGGER.error("Could not get import annotations for algorithm  {}", process.getWellKnownName(), e);
             return Collections.emptyList();
         }
@@ -355,14 +346,14 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     @Override
     public IAlgorithm getAlgorithm(String algorithmName) {
-        if ( !this.config.isCacheProcesses()) {
+        if (!this.config.isCacheProcesses()) {
             LOGGER.debug("Process cache disabled, creating new process for id '{}'", algorithmName);
-            if ( !addAlgorithm(algorithmName)) {
+            if (!addAlgorithm(algorithmName)) {
                 LOGGER.warn("Problem adding algorithm for deactivated cache.");
             }
         }
 
-        if ( !containsAlgorithm(algorithmName)) {
+        if (!containsAlgorithm(algorithmName)) {
             throw new RuntimeException("This repository does not contain an algorithm '" + algorithmName + "'");
         }
 
@@ -381,7 +372,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     @Override
     public boolean removeAlgorithm(Object item) {
-        if ( !canHandleItem(item)) {
+        if (!canHandleItem(item)) {
             LOGGER.debug("Ignore removing of unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
@@ -444,6 +435,5 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
         // builder.append("processInfos=").append(processInfos).append(", ");
         return builder.toString();
     }
-
 
 }

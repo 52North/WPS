@@ -46,13 +46,22 @@ import org.slf4j.LoggerFactory;
  */
 public class DerbyDatabase extends AbstractDatabase {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DerbyDatabase.class); // Get access to the global logger.
+    private static Logger LOGGER = LoggerFactory.getLogger(DerbyDatabase.class); // Get
+                                                                                 // access
+                                                                                 // to
+                                                                                 // the
+                                                                                 // global
+                                                                                 // logger.
+
     private static String connectionURL = null;
+
     private static Connection conn = null;
+
     private static DerbyDatabase db = new DerbyDatabase(); // Static loading.
 
     /**
-     * Static initialization is guaranteed to be thread-safe and no synchronization must be incurred.
+     * Static initialization is guaranteed to be thread-safe and no
+     * synchronization must be incurred.
      */
     private DerbyDatabase() {
         try {
@@ -60,31 +69,31 @@ public class DerbyDatabase extends AbstractDatabase {
             String dbDriverURI = "jdbc:derby";
             DerbyDatabase.connectionURL = dbDriverURI + ":" + getDatabasePath() + File.separator + getDatabaseName();
             LOGGER.debug("Database connection URL is: " + DerbyDatabase.connectionURL);
-        } catch(ClassNotFoundException cnf_ex) {
+        } catch (ClassNotFoundException cnf_ex) {
             LOGGER.error("Database cannot be loaded: " + connectionURL);
             throw new UnsupportedDatabaseException("The database class could not be loaded.");
         }
-        if(!DerbyDatabase.createConnection()) {
-                throw new RuntimeException("Creating database connection failed.");
+        if (!DerbyDatabase.createConnection()) {
+            throw new RuntimeException("Creating database connection failed.");
         }
-        if(!DerbyDatabase.createResultTable()) {
-                throw new RuntimeException("Creating result table failed.");
+        if (!DerbyDatabase.createResultTable()) {
+            throw new RuntimeException("Creating result table failed.");
         }
-        if(!DerbyDatabase.createPreparedStatements()) {
-                throw new RuntimeException("Creating prepared statements failed.");
+        if (!DerbyDatabase.createPreparedStatements()) {
+            throw new RuntimeException("Creating prepared statements failed.");
         }
     }
 
     public static synchronized DerbyDatabase getInstance() {
         if (DerbyDatabase.conn == null) {
-            if(!DerbyDatabase.createConnection()) {
-                    throw new RuntimeException("Creating database connection failed.");
+            if (!DerbyDatabase.createConnection()) {
+                throw new RuntimeException("Creating database connection failed.");
             }
-            if(!DerbyDatabase.createResultTable()) {
-                    throw new RuntimeException("Creating result table failed.");
+            if (!DerbyDatabase.createResultTable()) {
+                throw new RuntimeException("Creating result table failed.");
             }
-            if(!DerbyDatabase.createPreparedStatements()) {
-                    throw new RuntimeException("Creating prepared statements failed.");
+            if (!DerbyDatabase.createPreparedStatements()) {
+                throw new RuntimeException("Creating prepared statements failed.");
             }
         }
         return DerbyDatabase.db;
@@ -93,10 +102,10 @@ public class DerbyDatabase extends AbstractDatabase {
     private static boolean createConnection() {
         Properties props = new Properties();
         DerbyDatabase.conn = null;
-        // Try to connect to an existing database. Note that create is set to true.
+        // Try to connect to an existing database. Note that create is set to
+        // true.
         try {
-            DerbyDatabase.conn = DriverManager.getConnection(
-                    DerbyDatabase.connectionURL + ";create=true", props);
+            DerbyDatabase.conn = DriverManager.getConnection(DerbyDatabase.connectionURL + ";create=true", props);
             LOGGER.info("Connected to WPS database.");
         } catch (SQLException e) {
             LOGGER.error("Could not connect to or create the database.");
@@ -109,8 +118,7 @@ public class DerbyDatabase extends AbstractDatabase {
         try {
             ResultSet rs = null;
             DatabaseMetaData meta = DerbyDatabase.conn.getMetaData();
-            rs = meta.getTables(null, null, "RESULTS",
-                    new String[] { "TABLE" });
+            rs = meta.getTables(null, null, "RESULTS", new String[] { "TABLE" });
             if (!rs.next()) {
                 LOGGER.info("Table RESULTS does not yet exist.");
                 Statement st = DerbyDatabase.conn.createStatement();
@@ -119,8 +127,7 @@ public class DerbyDatabase extends AbstractDatabase {
 
                 rs = null;
                 meta = DerbyDatabase.conn.getMetaData();
-                rs = meta.getTables(null, null, "RESULTS",
-                        new String[] { "TABLE" });
+                rs = meta.getTables(null, null, "RESULTS", new String[] { "TABLE" });
                 if (rs.next()) {
                     LOGGER.info("Succesfully created table RESULTS.");
                 } else {
@@ -131,8 +138,7 @@ public class DerbyDatabase extends AbstractDatabase {
                 DerbyDatabase.conn.setAutoCommit(false);
             }
         } catch (SQLException e) {
-            LOGGER.error("Connection to the HSQL database failed: "
-                    + e.getMessage());
+            LOGGER.error("Connection to the HSQL database failed: " + e.getMessage());
             return false;
         }
         return true;
@@ -166,68 +172,57 @@ public class DerbyDatabase extends AbstractDatabase {
      * Shutdown the database in a clean, safe way.
      */
     /*
-
-     public void shutdown() {
-        boolean gotSQLExc = false;
-        try {
-            HSQLDatabase.conn.close();
-            DriverManager.getConnection(HSQLDatabase.connectionURL);
-            HSQLDatabase.db = null;
-            System.gc();
-        } catch (SQLException se) {
-            if (se.getSQLState().equals("XJ015")) {
-                gotSQLExc = true;
-            }
-        }
-        if (!gotSQLExc) {
-            LOGGER.error("Database did not shut down normally");
-        } else {
-            LOGGER.info("Database shut down normally");
-        }
-    }
-    */
+     * 
+     * public void shutdown() { boolean gotSQLExc = false; try {
+     * HSQLDatabase.conn.close();
+     * DriverManager.getConnection(HSQLDatabase.connectionURL); HSQLDatabase.db
+     * = null; System.gc(); } catch (SQLException se) { if
+     * (se.getSQLState().equals("XJ015")) { gotSQLExc = true; } } if
+     * (!gotSQLExc) { LOGGER.error("Database did not shut down normally"); }
+     * else { LOGGER.info("Database shut down normally"); } }
+     */
 
     /**
      * Shutdown the database in a clean, safe way.
      */
     @Override
     public void shutdown() {
-           boolean flag0 = false;
-           boolean flag1 = false;
-           try {
-           if (DerbyDatabase.conn != null) {
-               // Close PreparedStatements if needed.
-               flag0 = closePreparedStatements();
-               DerbyDatabase.conn = DriverManager.getConnection(DerbyDatabase.connectionURL + ";shutdown=true");
-               // Return to connection pool.
-               DerbyDatabase.conn.close();
-               DerbyDatabase.conn = null;
-               flag1 = true;
-               // Force garbage collection.
-               System.gc();
-               // Setting the database to null;
-               DerbyDatabase.db = null;
-           }
-       } catch (SQLException sql_ex) {
-               LOGGER.error("Error occured while closing connection: " +
-                       sql_ex.getMessage() + "::"
-                       + "closed prepared statements?" + flag0
-                       + ";closed connection?" + flag1);
-               return;
-       } catch(Exception exception) {
-               LOGGER.error("Error occured while closing connection: " +
-                       exception.getMessage() + "::"
-                       + "closed prepared statements?" + flag0
-                       + ";closed connection?" + flag1);
-               return;
-       } finally {
-               // Make sure the connection is returned to the pool.
-               if (DerbyDatabase.conn!= null) {
-                   try { DerbyDatabase.conn.close(); } catch (SQLException e) { ; }
-                   DerbyDatabase.conn = null;
-               }
-         }
-       LOGGER.info("Derby database connection is closed succesfully");
+        boolean flag0 = false;
+        boolean flag1 = false;
+        try {
+            if (DerbyDatabase.conn != null) {
+                // Close PreparedStatements if needed.
+                flag0 = closePreparedStatements();
+                DerbyDatabase.conn = DriverManager.getConnection(DerbyDatabase.connectionURL + ";shutdown=true");
+                // Return to connection pool.
+                DerbyDatabase.conn.close();
+                DerbyDatabase.conn = null;
+                flag1 = true;
+                // Force garbage collection.
+                System.gc();
+                // Setting the database to null;
+                DerbyDatabase.db = null;
+            }
+        } catch (SQLException sql_ex) {
+            LOGGER.error("Error occured while closing connection: " + sql_ex.getMessage() + "::"
+                    + "closed prepared statements?" + flag0 + ";closed connection?" + flag1);
+            return;
+        } catch (Exception exception) {
+            LOGGER.error("Error occured while closing connection: " + exception.getMessage() + "::"
+                    + "closed prepared statements?" + flag0 + ";closed connection?" + flag1);
+            return;
+        } finally {
+            // Make sure the connection is returned to the pool.
+            if (DerbyDatabase.conn != null) {
+                try {
+                    DerbyDatabase.conn.close();
+                } catch (SQLException e) {
+                    ;
+                }
+                DerbyDatabase.conn = null;
+            }
+        }
+        LOGGER.info("Derby database connection is closed succesfully");
     }
 
     /**
@@ -235,25 +230,24 @@ public class DerbyDatabase extends AbstractDatabase {
      */
     private static boolean closePreparedStatements() {
         try {
-        if(DerbyDatabase.insertSQL != null) {
-            DerbyDatabase.insertSQL.close();
-            DerbyDatabase.insertSQL = null;
-        }
-        if(DerbyDatabase.selectSQL != null) {
-            DerbyDatabase.selectSQL.close();
-            DerbyDatabase.selectSQL = null;
-        }
-        if(DerbyDatabase.updateSQL != null) {
-            DerbyDatabase.updateSQL.close();
-            DerbyDatabase.updateSQL = null;
-        }
-        } catch(SQLException sql_ex) {
+            if (DerbyDatabase.insertSQL != null) {
+                DerbyDatabase.insertSQL.close();
+                DerbyDatabase.insertSQL = null;
+            }
+            if (DerbyDatabase.selectSQL != null) {
+                DerbyDatabase.selectSQL.close();
+                DerbyDatabase.selectSQL = null;
+            }
+            if (DerbyDatabase.updateSQL != null) {
+                DerbyDatabase.updateSQL.close();
+                DerbyDatabase.updateSQL = null;
+            }
+        } catch (SQLException sql_ex) {
             LOGGER.error("Prepared statements could not be closed.");
             return false;
         }
         return true;
     }
-
 
     @Override
     public boolean deleteStoredResponse(String id) {

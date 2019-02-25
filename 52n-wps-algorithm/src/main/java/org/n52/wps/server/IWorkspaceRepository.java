@@ -20,5 +20,6 @@ import java.io.File;
 
 public interface IWorkspaceRepository {
     File getWorkspace();
+
     boolean createWorkspace();
 }

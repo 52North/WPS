@@ -62,26 +62,35 @@ import org.n52.wps.server.grass.io.GrassIOHandler;
  * @author Benjamin Pross (bpross-52n)
  *
  */
-public class GrassProcessDelegator extends GenericGrassAlgorithm{
+public class GrassProcessDelegator extends GenericGrassAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessDelegator.class);
 
     private String processID;
+
     private boolean isAddon;
+
     private ProcessDescription processDescription;
+
     private List<String> errors;
+
     private HashMap<String, Class<?>> complexInputTypes;
+
     private HashMap<String, Class<?>> literalInputTypes;
+
     private HashMap<String, String> outputTypeMimeTypeMap;
 
     private final String dataTypeFloat = "float";
+
     private final String dataTypeBoolean = "boolean";
+
     private final String dataTypeString = "string";
-    private final String dataTypeInteger ="integer";
+
+    private final String dataTypeInteger = "integer";
+
     private final String dataTypeDouble = "double";
 
-
-    public GrassProcessDelegator(String processID, ProcessDescription processDescriptionType, boolean isAddon){
+    public GrassProcessDelegator(String processID, ProcessDescription processDescriptionType, boolean isAddon) {
         this.processID = processID;
         this.isAddon = isAddon;
         this.processDescription = processDescriptionType;
@@ -89,7 +98,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
         mapInputAndOutputTypes((ProcessDescriptionType) processDescriptionType.getProcessDescriptionType("1.0.0"));
     }
 
-    private void mapInputAndOutputTypes(ProcessDescriptionType processDescriptionType){
+    private void mapInputAndOutputTypes(ProcessDescriptionType processDescriptionType) {
 
         complexInputTypes = new HashMap<String, Class<?>>();
         literalInputTypes = new HashMap<String, Class<?>>();
@@ -108,8 +117,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
             if (complexData != null) {
 
-                complexInputTypes.put(identifierString,
-                        GenericFileDataWithGTBinding.class);
+                complexInputTypes.put(identifierString, GenericFileDataWithGTBinding.class);
 
             } else if (input.getLiteralData() != null) {
 
@@ -117,15 +125,15 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
                 String datatype = literalType.getDataType().getStringValue();
 
-                if(datatype.equals(dataTypeFloat)){
+                if (datatype.equals(dataTypeFloat)) {
                     literalInputTypes.put(identifierString, LiteralFloatBinding.class);
-                }else if(datatype.equals(dataTypeBoolean)){
+                } else if (datatype.equals(dataTypeBoolean)) {
                     literalInputTypes.put(identifierString, LiteralBooleanBinding.class);
-                }else if(datatype.equals(dataTypeString)){
+                } else if (datatype.equals(dataTypeString)) {
                     literalInputTypes.put(identifierString, LiteralStringBinding.class);
-                }else if(datatype.equals(dataTypeInteger)){
+                } else if (datatype.equals(dataTypeInteger)) {
                     literalInputTypes.put(identifierString, LiteralIntBinding.class);
-                }else if(datatype.equals(dataTypeDouble)){
+                } else if (datatype.equals(dataTypeDouble)) {
                     literalInputTypes.put(identifierString, LiteralDoubleBinding.class);
                 }
 
@@ -160,11 +168,11 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
     @Override
     public Class<?> getInputDataType(String id) {
-        if(complexInputTypes.containsKey(id)){
+        if (complexInputTypes.containsKey(id)) {
             return complexInputTypes.get(id);
-        }else if(literalInputTypes.containsKey(id)){
+        } else if (literalInputTypes.containsKey(id)) {
             return literalInputTypes.get(id);
-        }else {
+        } else {
             return null;
         }
     }
@@ -196,10 +204,10 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
         OutputDefinitionType output = null;
         net.opengis.wps.x20.OutputDefinitionType wps200Output = null;
 
-        if(executionContext.getOutputs().isWPS200Execution()){
-            wps200Output =  executionContext.getOutputs().getWps200OutputDefinitionTypes().get(0);
-        }else{
-            output =  executionContext.getOutputs().getWps100OutputDefinitionTypes().get(0);
+        if (executionContext.getOutputs().isWPS200Execution()) {
+            wps200Output = executionContext.getOutputs().getWps200OutputDefinitionTypes().get(0);
+        } else {
+            output = executionContext.getOutputs().getWps100OutputDefinitionTypes().get(0);
         }
 
         String outputSchema = "";
@@ -210,7 +218,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
         String outputIdentifier = "";
 
-        if(output != null){
+        if (output != null) {
             outputSchema = output.getSchema();
 
             outputMimeType = output.getMimeType();
@@ -218,7 +226,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
             outputIdentifierCT = output.getIdentifier();
 
             outputIdentifier = outputIdentifierCT.getStringValue();
-        }else if(wps200Output != null){
+        } else if (wps200Output != null) {
             outputSchema = wps200Output.getSchema();
 
             outputMimeType = wps200Output.getMimeType();
@@ -244,14 +252,14 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
             }
         }
 
-        if(outputMimeType == null || outputMimeType.equals("")){
+        if (outputMimeType == null || outputMimeType.equals("")) {
             outputMimeType = outputTypeMimeTypeMap.get(outputIdentifier);
         }
 
-        IData outputFileDB = new GrassIOHandler().executeGrassProcess(
-                processID, firstInputMap, secondInputMap, outputIdentifier, outputMimeType, outputSchema, isAddon);
+        IData outputFileDB = new GrassIOHandler().executeGrassProcess(processID, firstInputMap, secondInputMap,
+                outputIdentifier, outputMimeType, outputSchema, isAddon);
 
-        if(outputIdentifier == null || outputIdentifier.equals("")){
+        if (outputIdentifier == null || outputIdentifier.equals("")) {
             outputIdentifier = "output";
         }
 

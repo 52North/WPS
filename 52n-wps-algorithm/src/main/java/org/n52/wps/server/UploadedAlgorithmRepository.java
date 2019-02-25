@@ -37,26 +37,27 @@ import org.slf4j.LoggerFactory;
  * @author foerster, Bastian Schaeffer, University of Muenster
  *
  */
-public class UploadedAlgorithmRepository implements
-        ITransactionalAlgorithmRepository {
+public class UploadedAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(LocalAlgorithmRepository.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LocalAlgorithmRepository.class);
+
     private Map<String, String> algorithmMap;
+
     private Map<String, ProcessDescription> processDescriptionMap;
 
     public UploadedAlgorithmRepository() {
         algorithmMap = new HashMap<String, String>();
         processDescriptionMap = new HashMap<String, ProcessDescription>();
 
-        ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+        ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance()
+                .getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 
         // check if the repository is active
-        if(uploadedAlgorithmRepoConfigModule.isActive()){
+        if (uploadedAlgorithmRepoConfigModule.isActive()) {
             List<AlgorithmEntry> algorithmEntries = uploadedAlgorithmRepoConfigModule.getAlgorithmEntries();
 
             for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-                if(algorithmEntry.isActive()){
+                if (algorithmEntry.isActive()) {
                     addAlgorithm(algorithmEntry.getAlgorithm());
                 }
             }
@@ -88,8 +89,7 @@ public class UploadedAlgorithmRepository implements
         Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
         try {
             for (String algorithmClasses : algorithmMap.values()) {
-                resultList
-                        .add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
+                resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -105,8 +105,7 @@ public class UploadedAlgorithmRepository implements
         return algorithmMap.containsKey(className);
     }
 
-    private IAlgorithm loadAlgorithm(String algorithmClassName)
-            throws Exception {
+    private IAlgorithm loadAlgorithm(String algorithmClassName) throws Exception {
 
         Class<?> algorithmClass = new CustomClassLoader("uploaded").loadClass(algorithmClassName);
         IAlgorithm algorithm = null;
@@ -117,18 +116,20 @@ public class UploadedAlgorithmRepository implements
             // wrap it in a proxy class
             algorithm = new AbstractAnnotatedAlgorithm.Proxy(algorithmClass);
         } else {
-            throw new Exception(
-                    "Could not load algorithm "
-                            + algorithmClassName
-                            + " does not implement IAlgorithm or have a Algorithm annotation.");
+            throw new Exception("Could not load algorithm " + algorithmClassName
+                    + " does not implement IAlgorithm or have a Algorithm annotation.");
         }
-
 
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
 
-            if(!algorithm.processDescriptionIsValid(supportedVersion)) {
-                LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
-                throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+            if (!algorithm.processDescriptionIsValid(supportedVersion)) {
+                LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);// TODO
+                                                                                         // add
+                                                                                         // version
+                                                                                         // to
+                                                                                         // exception/log
+                throw new Exception(
+                        "Could not load algorithm " + algorithmClassName + ". ProcessDescription Not Valid.");
             }
         }
         return algorithm;
@@ -136,7 +137,7 @@ public class UploadedAlgorithmRepository implements
 
     @Override
     public boolean addAlgorithm(Object item) {
-        if ( !(item instanceof String || item instanceof Class<?>)) {
+        if (!(item instanceof String || item instanceof Class<?>)) {
             return false;
         }
         String algorithmClassName;
@@ -176,6 +177,7 @@ public class UploadedAlgorithmRepository implements
     }
 
     @Override
-    public void shutdown() {}
+    public void shutdown() {
+    }
 
 }

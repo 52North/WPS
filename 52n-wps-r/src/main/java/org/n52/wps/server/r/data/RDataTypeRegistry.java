@@ -69,12 +69,10 @@ public class RDataTypeRegistry {
 
         // put process key, i.e. mimetype or xml-notation for literal type, as
         // alternative key (alias) into Hashmap:
-        if ( !containsKey(type.getMimeType())) {
+        if (!containsKey(type.getMimeType())) {
             this.rDataTypeAlias.put(type.getMimeType(), type);
         } else {
-            LOGGER.warn("Doubled definition of data type-key for notation: "
-                    + type.getMimeType()
-                    + "\n"
+            LOGGER.warn("Doubled definition of data type-key for notation: " + type.getMimeType() + "\n"
                     + "only the first definition will be used for this key.+"
                     + "(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
         }
@@ -85,12 +83,15 @@ public class RDataTypeRegistry {
     }
 
     /**
-     * This method is important for parsers to request the meaning of a specific key
+     * This method is important for parsers to request the meaning of a specific
+     * key
      *
      * @param key
-     *        process keys and self defined short keys are recognized as dataType keys
+     *            process keys and self defined short keys are recognized as
+     *            dataType keys
      * @return the <code>RTypeDefinition</code> belonging to the key
-     * @throws RAnnotationException if an invalid key was passed
+     * @throws RAnnotationException
+     *             if an invalid key was passed
      */
     public RTypeDefinition getType(String key) throws RAnnotationException {
         RTypeDefinition out = this.rDataTypeKeys.get(key);
@@ -119,7 +120,8 @@ public class RDataTypeRegistry {
     }
 
     /**
-     * Deletes all registered custom type definitions (Useful for instance, if the config file was changed)
+     * Deletes all registered custom type definitions (Useful for instance, if
+     * the config file was changed)
      */
     public void clearCustomDataTypes() {
         this.customDataTypes.clear();
@@ -154,7 +156,7 @@ public class RDataTypeRegistry {
 
         sb.append("\n");
         int tablewidth = sb.length();
-        for (int i = 0 ; i < tablewidth ; i++) {
+        for (int i = 0; i < tablewidth; i++) {
             sb.append("-"); // underlines header
         }
         sb.append("\n");
@@ -183,7 +185,8 @@ public class RDataTypeRegistry {
         return text != null ? text.length() : 4; // null -> 4 characters
     }
 
-    private String getSpacesToFillGapFor(String text, int columnWidth) {
+    private String getSpacesToFillGapFor(String text,
+            int columnWidth) {
         if (text == null) {
             text = "null";
         }
@@ -193,7 +196,7 @@ public class RDataTypeRegistry {
 
         String spaces = "";
         int countSpaces = columnWidth - text.length();
-        for (int i = 0 ; i < countSpaces ; i++) {
+        for (int i = 0; i < countSpaces; i++) {
             spaces += " ";
         }
         spaces += "  "; // separate columns

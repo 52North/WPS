@@ -64,7 +64,8 @@ public interface BackupService {
      *            the backup archive inputstream
      * @return the number of items restored
      * @throws IOException
-     *             if the archive cannot be extracted or the content cannot be written
+     *             if the archive cannot be extracted or the content cannot be
+     *             written
      * @throws WPSConfigurationException
      *             if the archive contains invalid configuration files
      */

@@ -31,11 +31,13 @@ package org.n52.wps.webapp.dao;
 import org.n52.wps.webapp.entities.LogConfigurations;
 
 /**
- * Read and write to/from the log configuration file to/from {@link LogConfigurations} object.
+ * Read and write to/from the log configuration file to/from
+ * {@link LogConfigurations} object.
  */
 public interface LogConfigurationsDAO {
     /**
-     * Get the log configuration file and parse it to a {@code LogConfigurations} object
+     * Get the log configuration file and parse it to a
+     * {@code LogConfigurations} object
      *
      * @return Log configurations object
      */

@@ -55,8 +55,7 @@ public class RequestExecutor extends ThreadPoolExecutor {
      */
     public RequestExecutor() {
         super(serverConfig.getMinPoolSize(), serverConfig.getMaxPoolSize(), serverConfig.getKeepAliveSeconds(),
-                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(
-                        serverConfig.getMaxQueuedTasks()));
+                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(serverConfig.getMaxQueuedTasks()));
     }
 
 }

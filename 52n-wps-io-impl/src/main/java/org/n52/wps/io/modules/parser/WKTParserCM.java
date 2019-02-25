@@ -39,7 +39,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class WKTParserCM extends ClassKnowingModule{
+public class WKTParserCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -47,7 +47,7 @@ public class WKTParserCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public WKTParserCM(){
+    public WKTParserCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

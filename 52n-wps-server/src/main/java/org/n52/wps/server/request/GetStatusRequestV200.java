@@ -61,16 +61,14 @@ public class GetStatusRequestV200 extends Request {
     public GetStatusRequestV200(Document doc) throws ExceptionReport {
         super(doc);
 
-        if(!validate()){
-            throw new ExceptionReport("GetStatusRequest not valid",
-                    ExceptionReport.NO_APPLICABLE_CODE);
+        if (!validate()) {
+            throw new ExceptionReport("GetStatusRequest not valid", ExceptionReport.NO_APPLICABLE_CODE);
         }
-        if(getStatusDocument.getGetStatus() != null){
+        if (getStatusDocument.getGetStatus() != null) {
             jobID = getStatusDocument.getGetStatus().getJobID();
         }
-        if(jobID == null || jobID.equals("")){
-            throw new ExceptionReport("JobID not valid",
-                    ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+        if (jobID == null || jobID.equals("")) {
+            throw new ExceptionReport("JobID not valid", ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
         }
     }
 

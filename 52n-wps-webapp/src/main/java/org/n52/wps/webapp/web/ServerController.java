@@ -45,13 +45,15 @@ public class ServerController extends BaseConfigurationsController {
     /**
      * Display the server configuration module
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The server view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String display(Model model) {
-        ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-                Server.class.getName());
+        ConfigurationModule module =
+                configurationManager.getConfigurationServices().getConfigurationModule(Server.class.getName());
         model.addAttribute("configurationModule", module);
         LOGGER.info("Reterived '{}' configuration module.", module.getClass().getName());
         return "server";

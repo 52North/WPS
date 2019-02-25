@@ -56,7 +56,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GRASSXMLGeneratorCM extends ClassKnowingModule{
+public class GRASSXMLGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -64,7 +64,7 @@ public class GRASSXMLGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GRASSXMLGeneratorCM(){
+    public GRASSXMLGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

@@ -87,14 +87,15 @@ import net.opengis.gml.PolygonType;
 
 public class SimpleGMLGenerator extends AbstractGenerator {
 
-
     public SimpleGMLGenerator() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
         File tempFile = null;
         InputStream stream = null;
@@ -108,77 +109,76 @@ public class SimpleGMLGenerator extends AbstractGenerator {
             outputStream.close();
 
             stream = new FileInputStream(tempFile);
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new IOException("Unable to generate GML");
         }
 
         return stream;
     }
 
-    public Node generateXML(IData coll, String schema) {
+    public Node generateXML(IData coll,
+            String schema) {
         return generateXMLObj(coll, schema).getDomNode();
     }
 
-    public void write(IData coll, Writer writer) {
+    public void write(IData coll,
+            Writer writer) {
         GMLPacketDocument doc = generateXMLObj(coll, null);
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
             bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             doc.save(bufferedWriter);
             bufferedWriter.close();
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private GMLPacketDocument generateXMLObj(IData coll, String schema2) {
+    private GMLPacketDocument generateXMLObj(IData coll,
+            String schema2) {
         GMLPacketDocument doc = GMLPacketDocument.Factory.newInstance();
         GMLPacketType packet = doc.addNewGMLPacket();
-        if(coll == null) {
+        if (coll == null) {
             return doc;
         }
-        FeatureIterator<?> iter = ((GTVectorDataBinding)coll).getPayload().features();
-        while(iter.hasNext()) {
+        FeatureIterator<?> iter = ((GTVectorDataBinding) coll).getPayload().features();
+        while (iter.hasNext()) {
             SimpleFeature feature = (SimpleFeature) iter.next();
             StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();
             Geometry geom = (Geometry) feature.getDefaultGeometry();
             String geomType = geom.getGeometryType();
-            if(geomType.equals("Point")) {
-                Point point = (Point)geom;
+            if (geomType.equals("Point")) {
+                Point point = (Point) geom;
                 Coordinate coord = point.getCoordinate();
                 if (coord != null) {
                     PointPropertyType pointType = staticFeature.addNewPointProperty();
                     pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
                     generateAttribute(feature, staticFeature);
-                    }
-            }
-            else if(geomType.equals("LineString")) {
-                LineString ls = (LineString)geom;
+                }
+            } else if (geomType.equals("LineString")) {
+                LineString ls = (LineString) geom;
                 CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
-                if(coords != null) {
+                if (coords != null) {
                     ls.getCoordinates();
                     LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
                     lsType.addNewLineString().setCoordArray(coords);
 
                     generateAttribute(feature, staticFeature);
                 }
-            }
-            else if(geomType.equals("Polygon")) {
-                Polygon polygon = (Polygon)geom;
+            } else if (geomType.equals("Polygon")) {
+                Polygon polygon = (Polygon) geom;
                 PolygonType xmlPolygon = staticFeature.addNewPolygonProperty().addNewPolygon();
                 xmlPolygon.setOuterBoundaryIs(convertToXMLLinearRing(polygon.getExteriorRing()));
                 LinearRingMemberType innerBoundary = xmlPolygon.addNewInnerBoundaryIs();
-                for(int i = 0; i < polygon.getNumInteriorRing(); i++) {
+                for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                     LinearRingType innerRing = innerBoundary.addNewLinearRing();
                     innerRing.setCoordArray(convertToXMLCoordType(polygon.getInteriorRingN(i).getCoordinates()));
                 }
                 generateAttribute(feature, staticFeature);
-            }
-            else if (geomType.equals("MultiPolygon")) {
-                MultiPolygon mp = (MultiPolygon)geom;
-                for(int i = 0; i < mp.getNumGeometries(); i++) {
-                    if(i > 0) {
+            } else if (geomType.equals("MultiPolygon")) {
+                MultiPolygon mp = (MultiPolygon) geom;
+                for (int i = 0; i < mp.getNumGeometries(); i++) {
+                    if (i > 0) {
                         staticFeature = packet.addNewPacketMember().addNewStaticFeature();
                     }
                     Polygon p = (Polygon) (geom.getGeometryN(i));
@@ -186,7 +186,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                     PolygonType pType = staticFeature.addNewPolygonProperty().addNewPolygon();
                     pType.setOuterBoundaryIs(convertToXMLLinearRing(p.getExteriorRing()));
                     LinearRingMemberType innerBoundary = pType.addNewInnerBoundaryIs();
-                    for(int j = 0; j < p.getNumInteriorRing(); j++) {
+                    for (int j = 0; j < p.getNumInteriorRing(); j++) {
                         LinearRingType innerRing = innerBoundary.addNewLinearRing();
                         innerRing.setCoordArray(convertToXMLCoordType(p.getInteriorRingN(j).getCoordinates()));
                     }
@@ -195,10 +195,10 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                 generateAttribute(feature, staticFeature);
             }
             // THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs,
-            else if(geomType.equals("MultiLineString")) {
-                MultiLineString mls = (MultiLineString)geom;
-                for(int i = 0; i < mls.getNumGeometries(); i++) {
-                    if(i > 0) {
+            else if (geomType.equals("MultiLineString")) {
+                MultiLineString mls = (MultiLineString) geom;
+                for (int i = 0; i < mls.getNumGeometries(); i++) {
+                    if (i > 0) {
                         staticFeature = packet.addNewPacketMember().addNewStaticFeature();
                     }
                     LineString ls = (LineString) (geom.getGeometryN(i));
@@ -207,15 +207,14 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                 }
                 generateAttribute(feature, staticFeature);
             }
-//            else if(geomType.equals("GeometryCollection")) {
-//                GeometryCollection geomColl = (GeometryCollection)geom;
-//                geomColl.get
-//            }
-            else if(geom.isEmpty()) {
-                //GEOMETRY is empty, do nothing
+            // else if(geomType.equals("GeometryCollection")) {
+            // GeometryCollection geomColl = (GeometryCollection)geom;
+            // geomColl.get
+            // }
+            else if (geom.isEmpty()) {
+                // GEOMETRY is empty, do nothing
 
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("geometryType not supported: " + geomType);
             }
         }
@@ -224,30 +223,30 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 
     private void generateAttribute(SimpleFeature feature,
             StaticFeatureType staticFeature) {
-        if(feature.getFeatureType().getAttributeCount()>1){
+        if (feature.getFeatureType().getAttributeCount() > 1) {
 
             PropertyType propertyType;
             Value value;
-            int attributePosCounter=0;
-            for (Object o: feature.getAttributes()) {
+            int attributePosCounter = 0;
+            for (Object o : feature.getAttributes()) {
                 DataType.Enum dataType;
-                if(o instanceof Integer){
+                if (o instanceof Integer) {
                     dataType = DataType.INTEGER;
-                }else if(o instanceof String){
+                } else if (o instanceof String) {
                     dataType = DataType.STRING;
-                }else if(o instanceof Boolean){
+                } else if (o instanceof Boolean) {
                     dataType = DataType.BOOLEAN;
-                }else if(o instanceof Long){
+                } else if (o instanceof Long) {
                     dataType = DataType.LONG;
-                }else if(o instanceof Double){
+                } else if (o instanceof Double) {
                     dataType = DataType.DECIMAL;
-                }
-                else {
-                    continue;    //Don't create anything
+                } else {
+                    continue; // Don't create anything
                 }
 
                 propertyType = staticFeature.addNewProperty();
-                propertyType.setPropertyName(feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
+                propertyType.setPropertyName(
+                        feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
                 value = propertyType.addNewValue();
                 value.setDataType(dataType);
                 value.setStringValue(String.valueOf(o));
@@ -260,7 +259,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
         LinearRingMemberType ringMember = LinearRingMemberType.Factory.newInstance();
         LinearRingType ring = LinearRingType.Factory.newInstance();
         CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
-        if(coords == null) {
+        if (coords == null) {
             return null;
         }
         ring.setCoordArray(coords);
@@ -270,13 +269,13 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 
     private CoordType[] convertToXMLCoordType(Coordinate[] coords) {
         ArrayList<CoordType> coordsList = new ArrayList<CoordType>();
-        for(int i = 0; i < coords.length; i++) {
+        for (int i = 0; i < coords.length; i++) {
             CoordType tempCoord = convertToXMLCoordType(coords[i]);
-            if(tempCoord != null) {
+            if (tempCoord != null) {
                 coordsList.add(tempCoord);
             }
         }
-        if(coordsList.isEmpty()) {
+        if (coordsList.isEmpty()) {
             return null;
         }
         CoordType[] returnCoords = new CoordType[coordsList.size()];
@@ -285,26 +284,26 @@ public class SimpleGMLGenerator extends AbstractGenerator {
     }
 
     private CoordType convertToXMLCoordType(Coordinate coord) {
-        if(Double.isNaN(coord.x) || Double.isNaN(coord.y)) {
+        if (Double.isNaN(coord.x) || Double.isNaN(coord.y)) {
             return null;
         }
         CoordType xmlCoord = CoordType.Factory.newInstance();
         try {
             xmlCoord.setX(new BigDecimal(Double.toString(coord.x)));
             xmlCoord.setY(new BigDecimal(Double.toString(coord.y)));
-        }
-        catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException(e);
         }
-        if(!Double.isNaN(coord.z)) {
+        if (!Double.isNaN(coord.z)) {
             xmlCoord.setZ(BigDecimal.valueOf(coord.z));
         }
         return xmlCoord;
     }
 
-    public void writeToStream(IData coll, OutputStream os) {
+    public void writeToStream(IData coll,
+            OutputStream os) {
         OutputStreamWriter w = new OutputStreamWriter(os);
-        write (coll, w);
+        write(coll, w);
     }
 
 }

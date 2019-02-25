@@ -31,6 +31,7 @@ package org.n52.wps.webapp.service;
 import java.util.List;
 
 import org.n52.wps.webapp.entities.User;
+
 /**
  * Used for configuring and managing users.
  */
@@ -64,14 +65,16 @@ public interface UserService {
     /**
      * Insert new user
      *
-     * @param user the user to be inserted
+     * @param user
+     *            the user to be inserted
      */
     void insertUser(User user);
 
     /**
      * Update existing user
      *
-     * @param user the user to be updated
+     * @param user
+     *            the user to be updated
      */
     void updateUser(User user);
 

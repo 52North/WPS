@@ -40,6 +40,7 @@ import java.util.Properties;
 public class DefaultConnectionHandler implements ConnectionHandler {
 
     private final String dbConnectionURL;
+
     private final Properties dbProps;
 
     public DefaultConnectionHandler(String dbConnectionURL, Properties dbProps) {

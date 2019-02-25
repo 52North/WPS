@@ -32,8 +32,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * The listener sets a property to the root path of the application. This property is used to configure the save path of
- * the HSQLDB database.
+ * The listener sets a property to the root path of the application. This
+ * property is used to configure the save path of the HSQLDB database.
  */
 public class WebAppPropertiesListener implements ServletContextListener {
 

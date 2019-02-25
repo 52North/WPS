@@ -31,10 +31,12 @@ package org.n52.wps.webapp.api;
 import java.util.Objects;
 
 /**
- * Used by repository {@link ConfigurationModule} implementations to create a list of algorithms they contain.
+ * Used by repository {@link ConfigurationModule} implementations to create a
+ * list of algorithms they contain.
  */
 public class AlgorithmEntry {
     private String algorithm;
+
     private boolean active;
 
     public AlgorithmEntry(String algorithm, boolean active) {

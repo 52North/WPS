@@ -41,19 +41,24 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 
 /**
- * This class can be used to test asynchronous requests with literal and BBOX output data.
- * It is basically the same as the DummyTestClass, only it lets the Thread sleep 5 seconds
- * to allow the test client to request a status update.
+ * This class can be used to test asynchronous requests with literal and BBOX
+ * output data. It is basically the same as the DummyTestClass, only it lets the
+ * Thread sleep 5 seconds to allow the test client to request a status update.
  *
  * @author Benjamin Pross(bpross-52n)
  *
  */
 public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
     private final String inputID1 = "ComplexInputData";
+
     private final String inputID2 = "LiteralInputData";
+
     private final String inputID3 = "BBOXInputData";
+
     private final String outputID1 = "ComplexOutputData";
+
     private final String outputID2 = "LiteralOutputData";
+
     private final String outputID3 = "BBOXOutputData";
 
     private List<String> errors = new ArrayList<String>();
@@ -75,8 +80,9 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
         return null;
 
     }
+
     @Override
-    public BigInteger getMinOccurs(String identifier){
+    public BigInteger getMinOccurs(String identifier) {
         return new BigInteger("0");
     }
 
@@ -95,7 +101,7 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
 
     @Override
     public List<String> getInputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add(inputID1);
         identifierList.add(inputID2);
         identifierList.add(inputID3);
@@ -104,7 +110,7 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
 
     @Override
     public List<String> getOutputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add(outputID1);
         identifierList.add(outputID2);
         identifierList.add(outputID3);
@@ -113,14 +119,14 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
 
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
-        HashMap<String,IData> result = new HashMap<String,IData>();
-        if(inputData.containsKey(inputID1)){
+        HashMap<String, IData> result = new HashMap<String, IData>();
+        if (inputData.containsKey(inputID1)) {
             result.put(outputID1, inputData.get(inputID1).get(0));
         }
-        if(inputData.containsKey(inputID2)){
+        if (inputData.containsKey(inputID2)) {
             result.put(outputID2, inputData.get(inputID2).get(0));
         }
-        if(inputData.containsKey(inputID3)){
+        if (inputData.containsKey(inputID3)) {
             result.put(outputID3, inputData.get(inputID3).get(0));
         }
 
@@ -134,7 +140,7 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
     }
 
     @Override
-    public String[] getSupportedCRSForBBOXInput(String identifier){
+    public String[] getSupportedCRSForBBOXInput(String identifier) {
         String[] supportedCRS = new String[2];
         supportedCRS[0] = "EPSG:4328";
         supportedCRS[1] = "EPSG:5628";
@@ -143,14 +149,12 @@ public class LongRunningDummyTestClass extends AbstractSelfDescribingAlgorithm {
     }
 
     @Override
-    public String[] getSupportedCRSForBBOXOutput(String identifier){
+    public String[] getSupportedCRSForBBOXOutput(String identifier) {
         String[] supportedCRS = new String[2];
         supportedCRS[0] = "EPSG:4328";
         supportedCRS[1] = "EPSG:5628";
 
         return supportedCRS;
     }
-
-
 
 }

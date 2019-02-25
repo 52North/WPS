@@ -29,7 +29,8 @@
 package org.n52.wps.webapp.api;
 
 /**
- * Used to throw custom exceptions. The class can hold the field that caused the exception.
+ * Used to throw custom exceptions. The class can hold the field that caused the
+ * exception.
  */
 public class WPSConfigurationException extends Exception {
 

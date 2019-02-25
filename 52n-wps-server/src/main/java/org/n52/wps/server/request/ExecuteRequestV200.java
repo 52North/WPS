@@ -69,11 +69,14 @@ import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
  */
 public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(ExecuteRequestV200.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequestV200.class);
+
     private ExecuteDocument execDom;
+
     private Map<String, IData> returnResults;
+
     private ExecuteResponseBuilderV200 execRespType;
+
     private boolean rawData;
 
     /**
@@ -81,7 +84,8 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
      *
      * @param doc
      *            The clients submission
-     * @throws ExceptionReport if an exception occurred during construction
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
     public ExecuteRequestV200(Document doc) throws ExceptionReport {
         super(doc);
@@ -91,12 +95,10 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             this.execDom = ExecuteDocument.Factory.parse(doc, option);
             if (this.execDom == null) {
                 LOGGER.error("ExecuteDocument is null");
-                throw new ExceptionReport("Error while parsing post data",
-                        ExceptionReport.MISSING_PARAMETER_VALUE);
+                throw new ExceptionReport("Error while parsing post data", ExceptionReport.MISSING_PARAMETER_VALUE);
             }
         } catch (XmlException e) {
-            throw new ExceptionReport("Error while parsing post data",
-                    ExceptionReport.MISSING_PARAMETER_VALUE, e);
+            throw new ExceptionReport("Error while parsing post data", ExceptionReport.MISSING_PARAMETER_VALUE, e);
         }
 
         // validate the client input
@@ -112,46 +114,42 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
      * Validates the client request
      *
      * @return True if the input is valid, False otherwise
-     * @throws ExceptionReport if an exception occurred during construction
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
     public boolean validate() throws ExceptionReport {
         // Identifier must be specified.
-        if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute()
-                .getVersion())) {
-            throw new ExceptionReport("Specified version is not supported.",
-                    ExceptionReport.INVALID_PARAMETER_VALUE, "version="
-                            + getExecute().getVersion());
+        if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
+            throw new ExceptionReport("Specified version is not supported.", ExceptionReport.INVALID_PARAMETER_VALUE,
+                    "version=" + getExecute().getVersion());
         }
 
         // Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
         String identifier = getAlgorithmIdentifier();
 
         if (identifier == null) {
-            throw new ExceptionReport("No process identifier supplied.",
-                    ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");
+            throw new ExceptionReport("No process identifier supplied.", ExceptionReport.MISSING_PARAMETER_VALUE,
+                    "identifier");
         }
 
         // check if the algorithm is in our repository
         if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(identifier)) {
-            throw new ExceptionReport(
-                    "Specified process identifier does not exist",
-                    ExceptionReport.INVALID_PARAMETER_VALUE, "identifier="
-                            + identifier);
+            throw new ExceptionReport("Specified process identifier does not exist",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "identifier=" + identifier);
         }
 
         // validate if the process can be executed
-        ProcessOffering desc = (ProcessOffering) RepositoryManagerSingletonWrapper
-                .getInstance().getProcessDescription(getAlgorithmIdentifier())
-                .getProcessDescriptionType(WPSConfig.VERSION_200);
+        ProcessOffering desc = (ProcessOffering) RepositoryManagerSingletonWrapper.getInstance()
+                .getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_200);
         // We need a description of the inputs for the algorithm
         if (desc == null) {
             LOGGER.warn("desc == null");
             return false;
         }
 
-        //TODO validate in-/outputs
+        // TODO validate in-/outputs
 
-        //TODO check for null
+        // TODO check for null
         rawData = execDom.getExecute().getResponse().equals(ExecuteRequestType.Response.RAW);
 
         return true;
@@ -169,7 +167,8 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * @throws ExceptionReport
+     *             if an exception occurred while handling the request
      */
     public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
@@ -195,14 +194,12 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             if (getExecute().getInputArray() != null) {
                 inputs = getExecute().getInputArray();
             }
-            InputHandler parser = new InputHandler.Builder(new Input(inputs),
-                    getAlgorithmIdentifier()).build();
+            InputHandler parser = new InputHandler.Builder(new Input(inputs), getAlgorithmIdentifier()).build();
 
             // we got so far:
             // get the algorithm, and run it with the clients input
 
-            algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(
-                    getAlgorithmIdentifier());
+            algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(getAlgorithmIdentifier());
 
             if (algorithm instanceof ISubject) {
                 ISubject subject = (ISubject) algorithm;
@@ -215,16 +212,15 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             List<String> errorList = algorithm.getErrors();
             if (errorList != null && !errorList.isEmpty()) {
                 String errorMessage = errorList.get(0);
-                LOGGER.error("Error reported while handling ExecuteRequest for "
-                        + getAlgorithmIdentifier() + ": " + errorMessage);
+                LOGGER.error("Error reported while handling ExecuteRequest for " + getAlgorithmIdentifier() + ": "
+                        + errorMessage);
                 updateStatusError(errorMessage);
             } else {
                 updateStatusSuccess();
             }
         } catch (Throwable e) {
             String errorMessage = null;
-            if (algorithm != null && algorithm.getErrors() != null
-                    && !algorithm.getErrors().isEmpty()) {
+            if (algorithm != null && algorithm.getErrors() != null && !algorithm.getErrors().isEmpty()) {
                 errorMessage = algorithm.getErrors().get(0);
             }
             if (errorMessage == null) {
@@ -233,8 +229,8 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             if (errorMessage == null) {
                 errorMessage = "UNKNOWN ERROR";
             }
-            LOGGER.error("Exception/Error while executing ExecuteRequest for "
-                    + getAlgorithmIdentifier() + ": " + errorMessage);
+            LOGGER.error("Exception/Error while executing ExecuteRequest for " + getAlgorithmIdentifier() + ": "
+                    + errorMessage);
             updateStatusError(errorMessage);
             if (e instanceof Error) {
                 // This is required when catching Error
@@ -243,9 +239,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             if (e instanceof ExceptionReport) {
                 throw (ExceptionReport) e;
             } else {
-                throw new ExceptionReport(
-                        "Error while executing the embedded process for: "
-                                + getAlgorithmIdentifier(),
+                throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(),
                         ExceptionReport.NO_APPLICABLE_CODE, e);
             }
         } finally {
@@ -341,17 +335,16 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         getExecuteResponseBuilder().setStatus(status);
         try {
             getExecuteResponseBuilder().update();
-//            if (isStoreResponse()) {
-                ExecuteResponse executeResponse = new ExecuteResponse(this);
-                InputStream is = null;
-                try {
-                    is = executeResponse.getAsStream();
-                    DatabaseFactory.getDatabase().storeResponse(
-                            getUniqueId().toString(), is);
-                } finally {
-                    IOUtils.closeQuietly(is);
-                }
-//            }
+            // if (isStoreResponse()) {
+            ExecuteResponse executeResponse = new ExecuteResponse(this);
+            InputStream is = null;
+            try {
+                is = executeResponse.getAsStream();
+                DatabaseFactory.getDatabase().storeResponse(getUniqueId().toString(), is);
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+            // }
         } catch (ExceptionReport e) {
             LOGGER.error("Update of process status failed.", e);
             throw new RuntimeException(e);
@@ -362,14 +355,14 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         InputStream is = null;
         try {
             is = executeDocument.newInputStream();
-            DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, true);
+            DatabaseFactory.getDatabase().insertRequest(getUniqueId().toString(), is, true);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {
             IOUtils.closeQuietly(is);
         }
     }
+
     @Override
     public boolean isStoreResponse() {
         return getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC);
@@ -388,7 +381,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         ExceptionType excType = excRep.addNewException();
         excType.addNewExceptionText().setStringValue(errorMessage);
         excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
-        //TODO update Result
+        // TODO update Result
         DatabaseFactory.getDatabase().storeResponse(id.toString(), exceptionReportDocument.newInputStream());
     }
 }

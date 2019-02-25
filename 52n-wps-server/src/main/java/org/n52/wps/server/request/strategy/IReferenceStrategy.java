@@ -33,5 +33,6 @@ import org.n52.wps.server.request.InputReference;
 
 public interface IReferenceStrategy {
     public boolean isApplicable(InputReference input);
+
     public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport;
 }

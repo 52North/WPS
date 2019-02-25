@@ -33,8 +33,11 @@ import java.util.Objects;
 public class FormatEntry {
 
     private String mimeType;
+
     private String schema;
+
     private String encoding;
+
     private boolean active;
 
     public FormatEntry(String mimeType, String schema, String encoding, boolean active) {
@@ -79,30 +82,30 @@ public class FormatEntry {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj instanceof FormatEntry){
-            FormatEntry formatEntry = (FormatEntry)obj;
+        if (obj instanceof FormatEntry) {
+            FormatEntry formatEntry = (FormatEntry) obj;
 
             boolean mimeTypesEqual = false;
             boolean schemasEqual = false;
             boolean encodingsEqual = false;
 
-            if(mimeType != null){
+            if (mimeType != null) {
                 mimeTypesEqual = mimeType.equals(formatEntry.getMimeType());
-                if(!mimeTypesEqual){
+                if (!mimeTypesEqual) {
                     return false;
                 }
             }
 
-            if(schema != null){
+            if (schema != null) {
                 schemasEqual = schema.equals(formatEntry.getSchema());
-                if(!schemasEqual){
+                if (!schemasEqual) {
                     return false;
                 }
             }
 
-            if(encoding != null){
+            if (encoding != null) {
                 encodingsEqual = encoding.equals(formatEntry.getEncoding());
-                if(!encodingsEqual){
+                if (!encodingsEqual) {
                     return false;
                 }
             }
@@ -124,9 +127,8 @@ public class FormatEntry {
 
     @Override
     public String toString() {
-        return "FormatEntry{" + "mimeType=" + mimeType + ", schema=" + schema + ", encoding=" + encoding + ", active=" + active + '}';
+        return "FormatEntry{" + "mimeType=" + mimeType + ", schema=" + schema + ", encoding=" + encoding + ", active="
+                + active + '}';
     }
-
-
 
 }

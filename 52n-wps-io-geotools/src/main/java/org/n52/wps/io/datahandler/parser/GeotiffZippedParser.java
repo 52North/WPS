@@ -70,8 +70,10 @@ public class GeotiffZippedParser extends AbstractParser {
     }
 
     @Override
-    public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
-        //unzip
+    public GTRasterDataBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
+        // unzip
         File zippedFile;
         try {
             zippedFile = IOUtils.writeStreamToFile(input, "zip");
@@ -80,8 +82,8 @@ public class GeotiffZippedParser extends AbstractParser {
             List<File> files = IOUtils.unzipAll(zippedFile);
             finalizeFiles.addAll(files); // mark for final delete
 
-            for(File file : files){
-                if(file.getName().toLowerCase().endsWith(".tif") || file.getName().toLowerCase().endsWith(".tiff")){
+            for (File file : files) {
+                if (file.getName().toLowerCase().endsWith(".tif") || file.getName().toLowerCase().endsWith(".tiff")) {
                     return parseTiff(file);
                 }
             }
@@ -92,9 +94,8 @@ public class GeotiffZippedParser extends AbstractParser {
         throw new RuntimeException("Could not parse zipped geotiff.");
     }
 
-    private GTRasterDataBinding parseTiff(File file){
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                Boolean.TRUE);
+    private GTRasterDataBinding parseTiff(File file) {
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         GeoTiffReader reader;
         try {
             reader = new GeoTiffReader(file, hints);

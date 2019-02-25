@@ -41,11 +41,14 @@ import org.n52.wps.webapp.service.UserService;
 public class User {
     private int userId;
 
-    @NotBlank(message = "Username must not be blank.")
+    @NotBlank(
+            message = "Username must not be blank.")
     private String username;
 
-    @NotBlank(message = "Password must not be blank.")
+    @NotBlank(
+            message = "Password must not be blank.")
     private String password;
+
     private String role;
 
     public int getUserId() {

@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public class SelfCleaningFileInputStream extends FileInputStream {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SelfCleaningFileInputStream.class);
+
     private File file;
 
     public SelfCleaningFileInputStream(File file) throws FileNotFoundException {

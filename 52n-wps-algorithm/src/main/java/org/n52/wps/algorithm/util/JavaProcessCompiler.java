@@ -45,21 +45,20 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaProcessCompiler {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(JavaProcessCompiler.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(JavaProcessCompiler.class);
 
     /**
-     * Static method for compiling source files
-     * TODO: return possible compile errors
+     * Static method for compiling source files TODO: return possible compile
+     * errors
      *
-     * @param fileName source file name
+     * @param fileName
+     *            source file name
      */
-    public static void compile(String fileName)
-    {
+    public static void compile(String fileName) {
         ClassLoader cl = JavaProcessCompiler.class.getClassLoader();
         List<URL> classpath = new ArrayList<URL>();
         if (cl instanceof URLClassLoader) {
-            for (URL jar : ((URLClassLoader)cl).getURLs()) {
+            for (URL jar : ((URLClassLoader) cl).getURLs()) {
                 classpath.add(jar);
                 LOGGER.debug("Using " + jar.toString());
             }
@@ -100,7 +99,8 @@ public class JavaProcessCompiler {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
-        Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files1));
+        Iterable<? extends JavaFileObject> compilationUnits1 =
+                fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files1));
 
         compiler.getTask(null, fileManager, null, opsIter, null, compilationUnits1).call();
 

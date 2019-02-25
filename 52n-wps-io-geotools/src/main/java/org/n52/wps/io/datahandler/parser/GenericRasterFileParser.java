@@ -58,7 +58,7 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class GenericRasterFileParser extends AbstractParser{
+public class GenericRasterFileParser extends AbstractParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericRasterFileParser.class);
 
@@ -68,7 +68,9 @@ public class GenericRasterFileParser extends AbstractParser{
     }
 
     @Override
-    public GenericFileDataWithGTBinding parse(InputStream input, String mimeType, String schema) {
+    public GenericFileDataWithGTBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         GenericFileDataWithGT theData = new GenericFileDataWithGT(input, mimeType);
         LOGGER.info("Found File Input " + mimeType);

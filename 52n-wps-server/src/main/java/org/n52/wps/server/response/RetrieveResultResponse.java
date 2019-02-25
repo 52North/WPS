@@ -40,9 +40,7 @@ public class RetrieveResultResponse extends Response {
     }
 
     public InputStream getAsStream() throws ExceptionReport {
-        return (InputStream)request.getAttachedResult();
+        return (InputStream) request.getAttachedResult();
     }
-
-
 
 }

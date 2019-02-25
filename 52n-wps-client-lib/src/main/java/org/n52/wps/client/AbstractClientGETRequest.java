@@ -28,7 +28,6 @@
  */
 package org.n52.wps.client;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,9 +36,13 @@ public abstract class AbstractClientGETRequest {
     protected Map<String, String> requestParams;
 
     private static String SERVICE_REQ_PARAM_NAME = "Service";
+
     private static String REQUEST_REQ_PARAM_NAME = "Request";
+
     private static String SERVICE_REQ_PARAM_VALUE = "WPS";
+
     private static String VERSION_REQ_PARAM_NAME = "version";
+
     private static String VERSION_REQ_PARAM_VALUE = "1.0.0";
 
     public AbstractClientGETRequest() {
@@ -53,15 +56,18 @@ public abstract class AbstractClientGETRequest {
     }
 
     /**
-     * adds to the url the designated parameter names and values, as configured before.
-     * @param url enriches the given URL with additional parameters
+     * adds to the url the designated parameter names and values, as configured
+     * before.
+     * 
+     * @param url
+     *            enriches the given URL with additional parameters
      * @return the URL enriched with additional parameters
      */
     public String getRequest(String url) {
-        if(! url.contains("?")) {
+        if (!url.contains("?")) {
             url = url + "?";
         }
-        for(Entry<String, String> entry : requestParams.entrySet()) {
+        for (Entry<String, String> entry : requestParams.entrySet()) {
             url = url + entry.getKey() + "=" + entry.getValue() + "&";
         }
         return url;

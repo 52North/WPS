@@ -63,12 +63,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * An implementation for the {@link ConfigurationService} interface. This implementation initialize and sync the
- * configurations, register configuration modules with Spring, and pass configuration entries values to configuration
+ * An implementation for the {@link ConfigurationService} interface. This
+ * implementation initialize and sync the configurations, register configuration
+ * modules with Spring, and pass configuration entries values to configuration
  * modules setter methods.
  * <p>
- * The class uses the {@link ConfigurationDAO} for database operations and {@link ValueParser} for values validation and
- * parsing.
+ * The class uses the {@link ConfigurationDAO} for database operations and
+ * {@link ValueParser} for values validation and parsing.
  * </p>
  */
 @Service("configurationService")
@@ -121,15 +122,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /*
-     * Scan Spring context and register all beans that implement the {@code ConfigurationModule} interface
+     * Scan Spring context and register all beans that implement the {@code
+     * ConfigurationModule} interface
      */
     private void buildConfigurationModulesMap() {
-        Map<String, ConfigurationModule> initialModulesMap = listableBeanFactory
-                .getBeansOfType(ConfigurationModule.class);
+        Map<String, ConfigurationModule> initialModulesMap =
+                listableBeanFactory.getBeansOfType(ConfigurationModule.class);
 
         allConfigurationModules = new HashMap<String, ConfigurationModule>();
 
-        // build a map with the full class name as the key, and the object as the value
+        // build a map with the full class name as the key, and the object as
+        // the value
         for (ConfigurationModule module : initialModulesMap.values()) {
             allConfigurationModules.put(module.getClass().getName(), module);
         }
@@ -178,7 +181,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void updateConfigurationModuleStatus(String moduleClassName, boolean status) {
+    public void updateConfigurationModuleStatus(String moduleClassName,
+            boolean status) {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         module.setActive(status);
         configurationDAO.updateConfigurationModuleStatus(module);
@@ -186,11 +190,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public ConfigurationEntry<?> getConfigurationEntry(ConfigurationModule module, String entryKey) {
+    public ConfigurationEntry<?> getConfigurationEntry(ConfigurationModule module,
+            String entryKey) {
         for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
             if (entry.getKey().equals(entryKey)) {
-                LOGGER.debug("Configuration entry '{}' in module '{}' is retrieved.", entryKey, module.getClass()
-                        .getName());
+                LOGGER.debug("Configuration entry '{}' in module '{}' is retrieved.", entryKey,
+                        module.getClass().getName());
                 return entry;
             }
         }
@@ -199,19 +204,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getConfigurationEntryValue(ConfigurationModule module, ConfigurationEntry<?> entry,
+    public <T> T getConfigurationEntryValue(ConfigurationModule module,
+            ConfigurationEntry<?> entry,
             Class<T> requiredType) throws WPSConfigurationException {
         Object value = entry.getValue();
         String errorMessage = null;
         if (value == null) {
             errorMessage = "Value is null.";
-        }else if (requiredType == null) {
+        } else if (requiredType == null) {
             errorMessage = "Required type is null.";
-        }else if (!requiredType.isAssignableFrom(value.getClass())) {
-            errorMessage = "The value '" + value + "' cannot be assigned to a/an '"
-                    + requiredType.getSimpleName() + "' type.";
+        } else if (!requiredType.isAssignableFrom(value.getClass())) {
+            errorMessage =
+                    "The value '" + value + "' cannot be assigned to a/an '" + requiredType.getSimpleName() + "' type.";
         }
-        if(errorMessage != null){
+        if (errorMessage != null) {
             throw new WPSConfigurationException(errorMessage);
         }
         LOGGER.debug("Value '{}' of type '{}' for configuration entry '{}' in module '{}' is retrieved.", value,
@@ -220,8 +226,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void setConfigurationModuleValues(String moduleClassName, String[] entryKeys, Object[] values)
-            throws WPSConfigurationException {
+    public void setConfigurationModuleValues(String moduleClassName,
+            String[] entryKeys,
+            Object[] values) throws WPSConfigurationException {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         try {
             for (int i = 0; i < entryKeys.length; i++) {
@@ -251,14 +258,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /*
-     * Set the values of a module from the database. If the module contains an entry that it doesn't exist in the
-     * database, the method will insert the new entry into the database
+     * Set the values of a module from the database. If the module contains an
+     * entry that it doesn't exist in the database, the method will insert the
+     * new entry into the database
      */
     private void setConfigurationModuleValuesFromDatabase(ConfigurationModule module) {
         if (module.getConfigurationEntries() != null) {
             for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
-                Object storedValue = configurationDAO.getConfigurationEntryValue(module.getClass().getName(),
-                        entry.getKey());
+                Object storedValue =
+                        configurationDAO.getConfigurationEntryValue(module.getClass().getName(), entry.getKey());
                 if (storedValue != null) {
                     try {
                         setConfigurationEntryValue(module, entry, storedValue);
@@ -268,7 +276,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                         LOGGER.error("Error setting value from the database: ", e);
                     }
                 } else {
-                    // save a new entry which has been added to an existing module, but not yet saved in the database
+                    // save a new entry which has been added to an existing
+                    // module, but not yet saved in the database
                     saveConfigurationEntryValueToDatabase(module, entry);
                 }
             }
@@ -276,10 +285,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /*
-     * Process and save an entry value to the database. The method will convert file and URI values to string for
-     * database storage
+     * Process and save an entry value to the database. The method will convert
+     * file and URI values to string for database storage
      */
-    private void saveConfigurationEntryValueToDatabase(ConfigurationModule module, ConfigurationEntry<?> entry) {
+    private void saveConfigurationEntryValueToDatabase(ConfigurationModule module,
+            ConfigurationEntry<?> entry) {
         Object value = entry.getValue();
         if (value != null) {
             if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
@@ -298,8 +308,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /*
-     * If the entry exists in the database, update the module's entry from the database, otherwise, insert the module's
-     * entry into the database
+     * If the entry exists in the database, update the module's entry from the
+     * database, otherwise, insert the module's entry into the database
      */
     private void syncConfigurationModuleAlgorithmEntries(ConfigurationModule module) {
 
@@ -308,8 +318,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (module.getAlgorithmEntries() != null) {
 
             for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
-                AlgorithmEntry storedEntry = configurationDAO.getAlgorithmEntry(module.getClass().getName(),
-                        entry.getAlgorithm());
+                AlgorithmEntry storedEntry =
+                        configurationDAO.getAlgorithmEntry(module.getClass().getName(), entry.getAlgorithm());
                 if (storedEntry != null) {
                     entry.setActive(storedEntry.isActive());
                     moduleAlgorithmNames.add(entry.getAlgorithm());
@@ -328,19 +338,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         for (AlgorithmEntry entry : configurationDAO.getAlgorithmEntries(module.getClass().getName())) {
 
-            if(!moduleAlgorithmNames.contains(entry.getAlgorithm())){
+            if (!moduleAlgorithmNames.contains(entry.getAlgorithm())) {
                 try {
                     module.getAlgorithmEntries().add(entry);
                 } catch (Exception e) {
-                    LOGGER.info("Could not add algorithm " + entry.getAlgorithm() + " to repository " + module.getClass().getName(), e.getClass());
+                    LOGGER.info("Could not add algorithm " + entry.getAlgorithm() + " to repository "
+                            + module.getClass().getName(), e.getClass());
                 }
             }
         }
     }
 
     /*
-     * If the entry exists in the database, update the module's entry from the database, otherwise, insert the module's
-     * entry into the database
+     * If the entry exists in the database, update the module's entry from the
+     * database, otherwise, insert the module's entry into the database
      */
     private void syncConfigurationModuleFormatEntries(ConfigurationModule module) {
 
@@ -355,28 +366,31 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     entry.setActive(storedEntry.isActive());
                     moduleFormats.add(entry);
                     LOGGER.debug("Format '{}', '{}', '{}' in module '{}' has been set to '{}' from the database.",
-                            entry.getMimeType(), entry.getSchema(), entry.getEncoding(), module.getClass().getName(), storedEntry.isActive());
+                            entry.getMimeType(), entry.getSchema(), entry.getEncoding(), module.getClass().getName(),
+                            storedEntry.isActive());
                 } else {
                     // save a new entry to the database
-                    configurationDAO.insertFormatEntry(module.getClass().getName(), entry.getMimeType(), entry.getSchema(), entry.getEncoding(),
-                            entry.isActive());
+                    configurationDAO.insertFormatEntry(module.getClass().getName(), entry.getMimeType(),
+                            entry.getSchema(), entry.getEncoding(), entry.isActive());
                     LOGGER.debug(
                             "Format '{}', '{}', '{}' with active status '{}' in module '{}' has been saved to the database.",
-                            entry.getMimeType(), entry.getSchema(), entry.getEncoding(), entry.isActive(), module.getClass().getName());
+                            entry.getMimeType(), entry.getSchema(), entry.getEncoding(), entry.isActive(),
+                            module.getClass().getName());
                 }
             }
 
         }
         for (FormatEntry entry : configurationDAO.getFormatEntries(module.getClass().getName())) {
 
-            if(!moduleFormats.contains(entry)){
+            if (!moduleFormats.contains(entry)) {
                 module.getFormatEntries().add(entry);
             }
         }
     }
 
     /*
-     * Loop through a module configuration entries and pass the values to setter methods annotated with the entry's key
+     * Loop through a module configuration entries and pass the values to setter
+     * methods annotated with the entry's key
      */
     private void passConfigurationModuleValuesToMembers(ConfigurationModule module) {
         if (module.getConfigurationEntries() != null) {
@@ -424,11 +438,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     /*
-     * Cast an entry to the correct configuration entry type, parse the passed value, and set the entry with the parsed
-     * value.
+     * Cast an entry to the correct configuration entry type, parse the passed
+     * value, and set the entry with the parsed value.
      */
-    private void setConfigurationEntryValue(ConfigurationModule module, ConfigurationEntry<?> entry, Object value)
-            throws WPSConfigurationException {
+    private void setConfigurationEntryValue(ConfigurationModule module,
+            ConfigurationEntry<?> entry,
+            Object value) throws WPSConfigurationException {
         try {
             switch (entry.getType()) {
             case STRING:
@@ -452,18 +467,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             default:
                 break;
             }
-            LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(), module
-                    .getClass().getName());
+            LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(),
+                    module.getClass().getName());
         } catch (WPSConfigurationException e) {
-            // only show an error if the entry is required "not allowed to be empty"
+            // only show an error if the entry is required "not allowed to be
+            // empty"
             if (e.getMessage() != null && e.getMessage().equals("The field cannot be empty.")) {
                 if (entry.isRequired()) {
                     e.setField(entry.getKey());
                     throw e;
                 } else {
                     entry.setValue(null);
-                    LOGGER.debug("Entry '{}' in module '{}' has been cleared and set to null.", entry.getKey(), module
-                            .getClass().getName());
+                    LOGGER.debug("Entry '{}' in module '{}' has been cleared and set to null.", entry.getKey(),
+                            module.getClass().getName());
                 }
             } else {
                 e.setField(entry.getKey());
@@ -473,7 +489,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public AlgorithmEntry getAlgorithmEntry(ConfigurationModule module, String algorithm) {
+    public AlgorithmEntry getAlgorithmEntry(ConfigurationModule module,
+            String algorithm) {
         for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
             if (entry.getAlgorithm().equals(algorithm)) {
                 LOGGER.debug("Algorithm '{}' with status '{}' in module '{}' is retrieved.", entry.getAlgorithm(),
@@ -485,7 +502,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void setAlgorithmEntry(String moduleClassName, String algorithm, boolean status) {
+    public void setAlgorithmEntry(String moduleClassName,
+            String algorithm,
+            boolean status) {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         AlgorithmEntry entry = getAlgorithmEntry(module, algorithm);
         if (entry != null) {
@@ -496,44 +515,49 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
     }
 
-    private void setStringValue(ConfigurationEntry<String> entry, Object value) throws WPSConfigurationException {
+    private void setStringValue(ConfigurationEntry<String> entry,
+            Object value) throws WPSConfigurationException {
         String parsedValue = valueParser.parseString(value);
         entry.setValue(parsedValue);
     }
 
-    private void setIntegerValue(ConfigurationEntry<Integer> entry, Object value) throws WPSConfigurationException {
+    private void setIntegerValue(ConfigurationEntry<Integer> entry,
+            Object value) throws WPSConfigurationException {
         Integer parsedValue = valueParser.parseInteger(value);
         entry.setValue(parsedValue);
     }
 
-    private void setDoubleValue(ConfigurationEntry<Double> entry, Object value) throws WPSConfigurationException {
+    private void setDoubleValue(ConfigurationEntry<Double> entry,
+            Object value) throws WPSConfigurationException {
         Double parsedValue = valueParser.parseDouble(value);
         entry.setValue(parsedValue);
     }
 
-    private void setBooleanValue(ConfigurationEntry<Boolean> entry, Object value) throws WPSConfigurationException {
+    private void setBooleanValue(ConfigurationEntry<Boolean> entry,
+            Object value) throws WPSConfigurationException {
         Boolean parsedValue = valueParser.parseBoolean(value);
         entry.setValue(parsedValue);
     }
 
-    private void setFileValue(ConfigurationEntry<File> entry, Object value) throws WPSConfigurationException {
+    private void setFileValue(ConfigurationEntry<File> entry,
+            Object value) throws WPSConfigurationException {
         File parsedValue = valueParser.parseFile(value);
         entry.setValue(parsedValue);
     }
 
-    private void setURIValue(ConfigurationEntry<URI> entry, Object value) throws WPSConfigurationException {
+    private void setURIValue(ConfigurationEntry<URI> entry,
+            Object value) throws WPSConfigurationException {
         URI parsedValue = valueParser.parseURI(value);
         entry.setValue(parsedValue);
     }
 
     @Override
-    public void addAlgorithmEntry(String moduleClassName, String algorithmName) {
+    public void addAlgorithmEntry(String moduleClassName,
+            String algorithmName) {
         boolean status = true;
-        configurationDAO.insertAlgorithmEntry(moduleClassName, algorithmName,
-                status);
-            syncConfigurationModuleAlgorithmEntries(getConfigurationModule(moduleClassName));
-        LOGGER.debug(
-                "Algorithm '{}' with status '{}' has been added to module '{}' and saved to the database.",
+        configurationDAO.insertAlgorithmEntry(moduleClassName, algorithmName, status);
+        syncConfigurationModuleAlgorithmEntries(getConfigurationModule(moduleClassName));
+        LOGGER.debug("Algorithm '{}' with status '{}' has been added to module '{}' and saved to the database.",
                 algorithmName, status, moduleClassName);
     }
 
@@ -545,9 +569,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();
 
         while (algorithmEntryIterator.hasNext()) {
-            AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator
-                    .next();
-            if(algorithmEntry.getAlgorithm().equals(algorithmName)){
+            AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator.next();
+            if (algorithmEntry.getAlgorithm().equals(algorithmName)) {
                 algorithmEntryIterator.remove();
                 break;
             }
@@ -555,8 +578,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void setFormatEntry(String moduleClassName, String mimeType, String schema,
-            String encoding, boolean status) {
+    public void setFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding,
+            boolean status) {
         configurationDAO.updateFormatEntry(moduleClassName, mimeType, schema, encoding, status);
         LOGGER.debug(
                 "Format with mime type '{}', schema '{}', encoding '{}' and status '{}' of module '{}' has been updated.",
@@ -564,7 +590,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void addFormatEntry(String moduleClassName, String mimeType, String schema,
+    public void addFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
             String encoding) {
         boolean status = true;
         configurationDAO.insertFormatEntry(moduleClassName, mimeType, schema, encoding, status);
@@ -577,18 +605,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public void deleteFormatEntry(String moduleClassName, String mimeType, String schema, String encoding) {
+    public void deleteFormatEntry(String moduleClassName,
+            String mimeType,
+            String schema,
+            String encoding) {
         configurationDAO.deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         Iterator<FormatEntry> formatEntryIterator = module.getFormatEntries().iterator();
         /*
-         * FormatEntry class has a built-in method for comparison including checks for null values
+         * FormatEntry class has a built-in method for comparison including
+         * checks for null values
          */
         FormatEntry tempFormatEntryForComparison = new FormatEntry(mimeType, schema, encoding, true);
         while (formatEntryIterator.hasNext()) {
-            FormatEntry formatEntry = (FormatEntry) formatEntryIterator
-                    .next();
-            if(formatEntry.equals(tempFormatEntryForComparison)){
+            FormatEntry formatEntry = (FormatEntry) formatEntryIterator.next();
+            if (formatEntry.equals(tempFormatEntryForComparison)) {
                 formatEntryIterator.remove();
                 break;
             }
@@ -602,17 +633,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();
         while (algorithmEntryIterator.hasNext()) {
-            AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator
-                            .next();
-            if(algorithmEntry.getAlgorithm().equals(oldAlgorithmName)){
-                    algorithmEntryIterator.remove();
-                    break;
+            AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator.next();
+            if (algorithmEntry.getAlgorithm().equals(oldAlgorithmName)) {
+                algorithmEntryIterator.remove();
+                break;
             }
         }
         configurationDAO.updateAlgorithmEntry(moduleClassName, newAlgorithmName, oldAlgorithmName);
         syncConfigurationModuleAlgorithmEntries(module);
-        LOGGER.debug(
-                "Algorithm '{}' of module '{}' has been renamed to '{}' and saved to the database.",
+        LOGGER.debug("Algorithm '{}' of module '{}' has been renamed to '{}' and saved to the database.",
                 oldAlgorithmName, moduleClassName, newAlgorithmName);
     }
 
@@ -624,7 +653,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             String newMimeType,
             String newSchema,
             String newEncoding) {
-        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
+        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema,
+                newEncoding);
 
     }
 }

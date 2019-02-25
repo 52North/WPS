@@ -53,19 +53,26 @@ public class RawData extends ResponseData {
     public static final Joiner SPACE_JOINER = Joiner.on(" ");
 
     /**
-     * @param obj the <code>IData</code> object
-     * @param id the id of the data
-     * @param schema the schema of the data
-     * @param encoding the encoding of the data
-     * @param mimeType the mimeType of the data
-     * @param algorithmIdentifier the id of the data
-     * @param description the process description that the <code>RawData</code> belongs to
-     * @throws ExceptionReport if an exception occurred during construction
+     * @param obj
+     *            the <code>IData</code> object
+     * @param id
+     *            the id of the data
+     * @param schema
+     *            the schema of the data
+     * @param encoding
+     *            the encoding of the data
+     * @param mimeType
+     *            the mimeType of the data
+     * @param algorithmIdentifier
+     *            the id of the data
+     * @param description
+     *            the process description that the <code>RawData</code> belongs
+     *            to
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
-    public RawData(IData obj, String id, String schema, String encoding,
-                   String mimeType, String algorithmIdentifier,
-                   ProcessDescription description)
-            throws ExceptionReport {
+    public RawData(IData obj, String id, String schema, String encoding, String mimeType, String algorithmIdentifier,
+            ProcessDescription description) throws ExceptionReport {
         super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
         if (obj instanceof IComplexData) {
             prepareGenerator();
@@ -74,11 +81,11 @@ public class RawData extends ResponseData {
 
     public InputStream getAsStream() throws ExceptionReport {
         try {
-            if(obj instanceof ILiteralData){
+            if (obj instanceof ILiteralData) {
                 return new ByteArrayInputStream(String.valueOf(obj.getPayload()).getBytes(Charsets.UTF_8));
             }
-            if(obj instanceof IBBOXData){
-                IBBOXData bbox  = (IBBOXData) obj;
+            if (obj instanceof IBBOXData) {
+                IBBOXData bbox = (IBBOXData) obj;
                 StringBuilder builder = new StringBuilder();
 
                 builder.append("<wps:BoundingBoxData");
@@ -101,30 +108,29 @@ public class RawData extends ResponseData {
                 builder.append("</wps:BoundingBoxData>");
                 return new ByteArrayInputStream(builder.toString().getBytes(Charsets.UTF_8));
             }
-            //complexdata
-            if(encoding == null || "".equals(encoding) || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+            // complexdata
+            if (encoding == null || "".equals(encoding) || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
                 return generator.generateStream(obj, mimeType, schema);
-            }
-            else if(encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+            } else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
                 return generator.generateBase64Stream(obj, mimeType, schema);
 
             }
         } catch (IOException e) {
-            throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+            throw new ExceptionReport("Error while generating Complex Data out of the process result",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
-        throw new ExceptionReport("Could not determine encoding. Use default (=not set) or base64", ExceptionReport.NO_APPLICABLE_CODE);
+        throw new ExceptionReport("Could not determine encoding. Use default (=not set) or base64",
+                ExceptionReport.NO_APPLICABLE_CODE);
     }
 
-    private StringBuilder appendAttr(StringBuilder builder, String key, Object value) {
-        return builder.append(' ').append(key).append('=')
-                .append('"').append(value).append('"');
+    private StringBuilder appendAttr(StringBuilder builder,
+            String key,
+            Object value) {
+        return builder.append(' ').append(key).append('=').append('"').append(value).append('"');
     }
 
     private static String escape(String s) {
-        return s.replaceAll("&", "&amp;")
-                .replaceAll("\"", "&quot;")
-                .replaceAll("'", "&apos;")
-                .replaceAll("<", "&lt;")
+        return s.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;").replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;");
     }
 }

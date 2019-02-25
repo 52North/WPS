@@ -20,8 +20,8 @@ package org.n52.wps.server;
  * @author Bastian Schaeffer, University of Muenster
  *
  */
-public interface ITransactionalAlgorithmRepository extends IAlgorithmRepository{
+public interface ITransactionalAlgorithmRepository extends IAlgorithmRepository {
     boolean addAlgorithm(Object className);
+
     boolean removeAlgorithm(Object className);
 }
-

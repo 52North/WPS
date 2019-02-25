@@ -29,9 +29,11 @@
 package org.n52.wps.webapp.api;
 
 /**
- * Used by {@link ConfigurationModule} implementations to specify the category they belong to. Selecting REPOSITORY,
- * GENERATOR, PARSER or DATABASE will display the module with other modules in the repositories, generators, or parsers pages in
- * the interface. GENERAL category is standalone and need to be given a specific page to display.
+ * Used by {@link ConfigurationModule} implementations to specify the category
+ * they belong to. Selecting REPOSITORY, GENERATOR, PARSER or DATABASE will
+ * display the module with other modules in the repositories, generators, or
+ * parsers pages in the interface. GENERAL category is standalone and need to be
+ * given a specific page to display.
  */
 public enum ConfigurationCategory {
     REPOSITORY, GENERATOR, PARSER, GENERAL, DATABASE;

@@ -43,11 +43,11 @@ public class Input {
 
     private DataInputType[] inputsV200;
 
-    public Input(InputType[] inputs){
+    public Input(InputType[] inputs) {
         inputsV100 = inputs;
     }
 
-    public Input(DataInputType[] inputs){
+    public Input(DataInputType[] inputs) {
         inputsV200 = inputs;
     }
 

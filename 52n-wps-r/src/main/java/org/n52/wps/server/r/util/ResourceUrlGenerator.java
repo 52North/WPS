@@ -65,9 +65,11 @@ public class ResourceUrlGenerator {
 
     /**
      *
-     * @param resource the <code>R_Resource</code>
+     * @param resource
+     *            the <code>R_Resource</code>
      * @return a publicly available URL to retrieve the resource
-     * @throws ExceptionReport if the resource URL could not be created
+     * @throws ExceptionReport
+     *             if the resource URL could not be created
      */
     public URL getResourceURL(R_Resource resource) throws ExceptionReport {
         StringBuilder sb = new StringBuilder();
@@ -87,10 +89,12 @@ public class ResourceUrlGenerator {
     /**
      *
      * @param wkn
-     *        well-known name for a process
+     *            well-known name for a process
      * @return a publicly available URL to retrieve the process script
-     * @throws MalformedURLException if the URL was malformed
-     * @throws ExceptionReport if the script URL could not be created
+     * @throws MalformedURLException
+     *             if the URL was malformed
+     * @throws ExceptionReport
+     *             if the script URL could not be created
      */
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
         StringBuilder sb = new StringBuilder();
@@ -102,9 +106,10 @@ public class ResourceUrlGenerator {
     /**
      *
      * @param resource
-     *        the <code>R_Resource</code>
+     *            the <code>R_Resource</code>
      * @return a publicly available URL to retrieve the imported script
-     * @throws ExceptionReport if the import URL could not be created
+     * @throws ExceptionReport
+     *             if the import URL could not be created
      */
     public URL getImportURL(R_Resource resource) throws ExceptionReport {
         StringBuilder sb = new StringBuilder();
@@ -121,7 +126,8 @@ public class ResourceUrlGenerator {
     }
 
     /**
-     * @return the service endpoint to retrieve a textual representation of the sessionInfo() function in R.
+     * @return the service endpoint to retrieve a textual representation of the
+     *         sessionInfo() function in R.
      */
     public URL getSessionInfoURL() {
         StringBuilder sb = new StringBuilder();

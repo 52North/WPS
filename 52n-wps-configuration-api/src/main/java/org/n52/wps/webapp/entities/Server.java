@@ -43,56 +43,86 @@ import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
 /**
- * A {@link ConfigurationModule} implementation. This configuration module is used to configure the server.
+ * A {@link ConfigurationModule} implementation. This configuration module is
+ * used to configure the server.
  */
 public class Server implements ConfigurationModule {
 
-    private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",
-            true, "localhost");
-    private ConfigurationEntry<String> protocolEntry = new StringConfigurationEntry("protocol", "Server protocol", "",
-            true, "http");
-    private ConfigurationEntry<Integer> hostportEntry = new IntegerConfigurationEntry("hostport", "Server Host Port",
-            "", true, 8080);
-    private ConfigurationEntry<Boolean> includeDataInputsInResponseEntry = new BooleanConfigurationEntry(
-            "data_inputs_in_response", "Include Data Inputs", "", true, false);
-    private ConfigurationEntry<Integer> computationTimeoutEntry = new IntegerConfigurationEntry("computation_timeout",
-            "Computation Timeout", "In milli seconds", true, 5);
-    private ConfigurationEntry<Boolean> cacheCapabilitesEntry = new BooleanConfigurationEntry("cache_capabilites",
-            "Cache Capabilities", "", true, false);
-    private ConfigurationEntry<String> weppappPathEntry = new StringConfigurationEntry("weppapp_path", "Webapp Path",
-            "", true, "wps");
+    private ConfigurationEntry<String> hostnameEntry =
+            new StringConfigurationEntry("hostname", "Server Host Name", "", true, "localhost");
+
+    private ConfigurationEntry<String> protocolEntry =
+            new StringConfigurationEntry("protocol", "Server protocol", "", true, "http");
+
+    private ConfigurationEntry<Integer> hostportEntry =
+            new IntegerConfigurationEntry("hostport", "Server Host Port", "", true, 8080);
+
+    private ConfigurationEntry<Boolean> includeDataInputsInResponseEntry =
+            new BooleanConfigurationEntry("data_inputs_in_response", "Include Data Inputs", "", true, false);
+
+    private ConfigurationEntry<Integer> computationTimeoutEntry =
+            new IntegerConfigurationEntry("computation_timeout", "Computation Timeout", "In milli seconds", true, 5);
+
+    private ConfigurationEntry<Boolean> cacheCapabilitesEntry =
+            new BooleanConfigurationEntry("cache_capabilites", "Cache Capabilities", "", true, false);
+
+    private ConfigurationEntry<String> weppappPathEntry =
+            new StringConfigurationEntry("weppapp_path", "Webapp Path", "", true, "wps");
+
     private ConfigurationEntry<Double> repoReloadIntervalEntry = new DoubleConfigurationEntry("repo_reload_interval",
             "Repo Reload Interval", "(In hours. 0 = No Auto Reload)", true, 0.0);
+
     private ConfigurationEntry<Boolean> responseURLFilterEnabledEntry = new BooleanConfigurationEntry(
             "response_url_filter_enabled", "Response URL Filter Enabled", "", true, false);
-    private ConfigurationEntry<Integer> minPoolSizeEntry = new IntegerConfigurationEntry("min_pool_size", "Minimum thread pool size",
-            "Request executor core thread pool size", true, 10);
-    private ConfigurationEntry<Integer> maxPoolSizeEntry = new IntegerConfigurationEntry("max_pool_size", "Maxmum thread pool size",
-            "Request executor maximum thread pool size", true, 20);
-    private ConfigurationEntry<Integer> keepAliveSecondsEntry = new IntegerConfigurationEntry("keep_alive_seconds", "Keep alive seconds",
-            "Maximum time that excess idle threads are kept alive", true, 1000);
-    private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
-            "Maximum queued tasks of the work queue", true, 100);
-    private ConfigurationEntry<Boolean> addProcessDescriptionLinkToProcessSummaryEntry = new BooleanConfigurationEntry("add_process_description_Link_to_process_summary",
-            "Add ProcessDescriptionl ink to ProcessSummary", "Add ProcessDescriptionl ink to ProcessSummary in the Capabilities", false, true);
 
-    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
-            computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
-            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry, addProcessDescriptionLinkToProcessSummaryEntry);
+    private ConfigurationEntry<Integer> minPoolSizeEntry = new IntegerConfigurationEntry("min_pool_size",
+            "Minimum thread pool size", "Request executor core thread pool size", true, 10);
+
+    private ConfigurationEntry<Integer> maxPoolSizeEntry = new IntegerConfigurationEntry("max_pool_size",
+            "Maxmum thread pool size", "Request executor maximum thread pool size", true, 20);
+
+    private ConfigurationEntry<Integer> keepAliveSecondsEntry = new IntegerConfigurationEntry("keep_alive_seconds",
+            "Keep alive seconds", "Maximum time that excess idle threads are kept alive", true, 1000);
+
+    private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks",
+            "Maximum queued tasks", "Maximum queued tasks of the work queue", true, 100);
+
+    private ConfigurationEntry<Boolean> addProcessDescriptionLinkToProcessSummaryEntry = new BooleanConfigurationEntry(
+            "add_process_description_Link_to_process_summary", "Add ProcessDescriptionl ink to ProcessSummary",
+            "Add ProcessDescriptionl ink to ProcessSummary in the Capabilities", false, true);
+
+    private List<? extends ConfigurationEntry<?>> configurationEntries =
+            Arrays.asList(protocolEntry, hostnameEntry, hostportEntry, computationTimeoutEntry, weppappPathEntry,
+                    repoReloadIntervalEntry, includeDataInputsInResponseEntry, cacheCapabilitesEntry,
+                    responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry,
+                    maxQueuedTasksEntry, addProcessDescriptionLinkToProcessSummaryEntry);
 
     private String hostname;
+
     private String protocol;
+
     private int hostport;
+
     private boolean includeDataInputsInResponse;
+
     private int computationTimeout;
+
     private boolean cacheCapabilites;
+
     private String webappPath;
+
     private double repoReloadInterval;
+
     private boolean responseURLFilterEnabled;
+
     private int minPoolSize;
+
     private int maxPoolSize;
+
     private int keepAliveSeconds;
+
     private int maxQueuedTasks;
+
     private boolean addProcessDescriptionLinkToProcessSummary;
 
     public Server() {
@@ -141,7 +171,8 @@ public class Server implements ConfigurationModule {
         return hostname;
     }
 
-    @ConfigurationKey(key = "hostname")
+    @ConfigurationKey(
+            key = "hostname")
     public void setHostname(String hostname) {
         this.hostname = hostname;
     }
@@ -150,7 +181,8 @@ public class Server implements ConfigurationModule {
         return hostport;
     }
 
-    @ConfigurationKey(key = "hostport")
+    @ConfigurationKey(
+            key = "hostport")
     public void setHostport(int hostport) {
         this.hostport = hostport;
     }
@@ -159,7 +191,8 @@ public class Server implements ConfigurationModule {
         return protocol;
     }
 
-    @ConfigurationKey(key = "protocol")
+    @ConfigurationKey(
+            key = "protocol")
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
@@ -168,7 +201,8 @@ public class Server implements ConfigurationModule {
         return includeDataInputsInResponse;
     }
 
-    @ConfigurationKey(key = "data_inputs_in_response")
+    @ConfigurationKey(
+            key = "data_inputs_in_response")
     public void setIncludeDataInputsInResponse(boolean includeDataInputsInResponse) {
         this.includeDataInputsInResponse = includeDataInputsInResponse;
     }
@@ -177,7 +211,8 @@ public class Server implements ConfigurationModule {
         return computationTimeout;
     }
 
-    @ConfigurationKey(key = "computation_timeout")
+    @ConfigurationKey(
+            key = "computation_timeout")
     public void setComputationTimeout(int computationTimeout) {
         this.computationTimeout = computationTimeout;
     }
@@ -186,7 +221,8 @@ public class Server implements ConfigurationModule {
         return cacheCapabilites;
     }
 
-    @ConfigurationKey(key = "cache_capabilites")
+    @ConfigurationKey(
+            key = "cache_capabilites")
     public void setCacheCapabilites(boolean cacheCapabilites) {
         this.cacheCapabilites = cacheCapabilites;
     }
@@ -195,7 +231,8 @@ public class Server implements ConfigurationModule {
         return webappPath;
     }
 
-    @ConfigurationKey(key = "weppapp_path")
+    @ConfigurationKey(
+            key = "weppapp_path")
     public void setWebappPath(String webappPath) {
         this.webappPath = webappPath;
     }
@@ -204,7 +241,8 @@ public class Server implements ConfigurationModule {
         return repoReloadInterval;
     }
 
-    @ConfigurationKey(key = "repo_reload_interval")
+    @ConfigurationKey(
+            key = "repo_reload_interval")
     public void setRepoReloadInterval(double repoReloadInterval) {
         this.repoReloadInterval = repoReloadInterval;
     }
@@ -213,7 +251,8 @@ public class Server implements ConfigurationModule {
         return responseURLFilterEnabled;
     }
 
-    @ConfigurationKey(key = "response_url_filter_enabled")
+    @ConfigurationKey(
+            key = "response_url_filter_enabled")
     public void setResponseURLFilterEnabled(boolean responseURLFilterEnabled) {
         this.responseURLFilterEnabled = responseURLFilterEnabled;
     }
@@ -240,22 +279,26 @@ public class Server implements ConfigurationModule {
         return maxQueuedTasks;
     }
 
-    @ConfigurationKey(key = "min_pool_size")
+    @ConfigurationKey(
+            key = "min_pool_size")
     public void setMinPoolSize(int minPoolSize) {
         this.minPoolSize = minPoolSize;
     }
 
-    @ConfigurationKey(key = "max_pool_size")
+    @ConfigurationKey(
+            key = "max_pool_size")
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
-    @ConfigurationKey(key = "keep_alive_seconds")
+    @ConfigurationKey(
+            key = "keep_alive_seconds")
     public void setKeepAliveSeconds(int keepAliveSeconds) {
         this.keepAliveSeconds = keepAliveSeconds;
     }
 
-    @ConfigurationKey(key = "max_queued_tasks")
+    @ConfigurationKey(
+            key = "max_queued_tasks")
     public void setMaxQueuedTasks(int maxQueuedTasks) {
         this.maxQueuedTasks = maxQueuedTasks;
     }
@@ -264,7 +307,8 @@ public class Server implements ConfigurationModule {
         return addProcessDescriptionLinkToProcessSummary;
     }
 
-    @ConfigurationKey(key = "add_process_description_Link_to_process_summary")
+    @ConfigurationKey(
+            key = "add_process_description_Link_to_process_summary")
     public void setAddProcessDescriptionLinkToProcessSummary(boolean addProcessDescriptionLinkToProcessSummary) {
         this.addProcessDescriptionLinkToProcessSummary = addProcessDescriptionLinkToProcessSummary;
     }

@@ -73,16 +73,20 @@ import org.opengis.referencing.operation.MathTransform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CoordinateTransformAlgorithm extends
-        AbstractSelfDescribingAlgorithm {
+public class CoordinateTransformAlgorithm extends AbstractSelfDescribingAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(CoordinateTransformAlgorithm.class);
 
     private final String inputIdentifierFeatures = "InputData";
+
     private final String inputIdentifierTransformation = "Transformation";
+
     private final String inputIdentifierTargetReferenceSystem = "TargetCRS";
+
     private final String inputIdentifierSourceReferenceSystem = "SourceCRS";
+
     private final String outputIdentifierResult = "TransformedData";
+
     private SimpleFeatureType featureType;
 
     @Override
@@ -106,9 +110,8 @@ public class CoordinateTransformAlgorithm extends
     public Class<?> getInputDataType(String id) {
         if (id.equalsIgnoreCase(inputIdentifierFeatures)) {
             return GTVectorDataBinding.class;
-        } else if (id.equals(inputIdentifierTargetReferenceSystem)||
-                id.equals(inputIdentifierSourceReferenceSystem)||
-                id.equals(inputIdentifierTransformation)) {
+        } else if (id.equals(inputIdentifierTargetReferenceSystem) || id.equals(inputIdentifierSourceReferenceSystem)
+                || id.equals(inputIdentifierTransformation)) {
             return LiteralStringBinding.class;
         }
         return null;
@@ -119,35 +122,29 @@ public class CoordinateTransformAlgorithm extends
         return GTVectorDataBinding.class;
     }
 
-    @SuppressWarnings( { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
 
-        if (inputData == null
-                || !inputData.containsKey(inputIdentifierFeatures)
+        if (inputData == null || !inputData.containsKey(inputIdentifierFeatures)
                 || !inputData.containsKey(inputIdentifierTargetReferenceSystem)) {
             LOGGER.error("Error while allocating input parameters");
-            throw new RuntimeException(
-                    "Error while allocating input parameters");
+            throw new RuntimeException("Error while allocating input parameters");
         }
 
         List<IData> dataList = inputData.get(inputIdentifierFeatures);
         if (dataList == null || dataList.size() != 1) {
-            throw new RuntimeException(
-                    "Error while allocating input parameters");
+            throw new RuntimeException("Error while allocating input parameters");
         }
 
         IData firstInputData = dataList.get(0);
-        FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData)
-                .getPayload();
+        FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
         FeatureIterator<?> featureIterator = featureCollection.features();
 
-        List<IData> secondDataList = inputData
-                .get(inputIdentifierTargetReferenceSystem);
+        List<IData> secondDataList = inputData.get(inputIdentifierTargetReferenceSystem);
         if (secondDataList == null || secondDataList.size() != 1) {
-            throw new RuntimeException(
-                    "Error while allocating input parameters");
+            throw new RuntimeException("Error while allocating input parameters");
         }
 
         IData secondInputData = secondDataList.get(0);
@@ -162,21 +159,16 @@ public class CoordinateTransformAlgorithm extends
             toCRS = CRS.decode(crs);
 
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Could not determine target CRS. Valid EPSG code needed.",
-                    e);
+            throw new RuntimeException("Could not determine target CRS. Valid EPSG code needed.", e);
         }
 
         if (toCRS == null) {
-            throw new RuntimeException(
-                    "Could not determine target CRS. Valid EPSG code needed.");
+            throw new RuntimeException("Could not determine target CRS. Valid EPSG code needed.");
         }
 
-        List<IData> thirdDataList = inputData
-                .get(inputIdentifierSourceReferenceSystem);
+        List<IData> thirdDataList = inputData.get(inputIdentifierSourceReferenceSystem);
         if (thirdDataList == null || thirdDataList.size() != 1) {
-            throw new RuntimeException(
-                    "Error while allocating input parameters");
+            throw new RuntimeException("Error while allocating input parameters");
         }
 
         IData thirdInputData = thirdDataList.get(0);
@@ -191,16 +183,12 @@ public class CoordinateTransformAlgorithm extends
             fromCRS = CRS.decode(fromCRSString);
 
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Could not determine target CRS. Valid EPSG code needed.",
-                    e);
+            throw new RuntimeException("Could not determine target CRS. Valid EPSG code needed.", e);
         }
 
         if (fromCRS == null) {
-            throw new RuntimeException(
-                    "Could not determine target CRS. Valid EPSG code needed.");
+            throw new RuntimeException("Could not determine target CRS. Valid EPSG code needed.");
         }
-
 
         List<SimpleFeature> featureList = new ArrayList<>();
 
@@ -223,17 +211,15 @@ public class CoordinateTransformAlgorithm extends
                 for (Coordinate coordinate : coords) {
                     Coordinate k = new Coordinate();
                     k = JTS.transform(coordinate, k, tx);
-//                    System.out.println(k);
+                    // System.out.println(k);
                 }
 
                 Geometry newGeometry = JTS.transform(geometry, tx);
 
-                SimpleFeature newFeature = createFeature(feature.getID(),
-                        newGeometry, toCRS, feature.getProperties());
+                SimpleFeature newFeature = createFeature(feature.getID(), newGeometry, toCRS, feature.getProperties());
 
                 featureList.add(newFeature);
             }
-
 
         } catch (Exception e) {
             throw new RuntimeException("Error while transforming", e);
@@ -241,22 +227,23 @@ public class CoordinateTransformAlgorithm extends
 
         HashMap<String, IData> result = new HashMap<String, IData>();
 
-        result.put(outputIdentifierResult, new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
+        result.put(outputIdentifierResult,
+                new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
         return result;
     }
 
-    private SimpleFeature createFeature(String id, Geometry geometry,
-            CoordinateReferenceSystem crs, Collection<Property> properties) {
+    private SimpleFeature createFeature(String id,
+            Geometry geometry,
+            CoordinateReferenceSystem crs,
+            Collection<Property> properties) {
         String uuid = UUID.randomUUID().toString();
 
-        if(featureType == null){
-        featureType = GTHelper.createFeatureType(properties,
-                geometry, uuid, crs);
-        GTHelper.createGML3SchemaForFeatureType(featureType);
+        if (featureType == null) {
+            featureType = GTHelper.createFeatureType(properties, geometry, uuid, crs);
+            GTHelper.createGML3SchemaForFeatureType(featureType);
         }
 
-        SimpleFeature feature = GTHelper.createFeature(id, geometry, featureType,
-                properties);
+        SimpleFeature feature = GTHelper.createFeature(id, geometry, featureType, properties);
 
         return feature;
     }

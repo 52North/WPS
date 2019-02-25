@@ -44,14 +44,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
- * An implementation for the {@link CapabilitiesDAO} interface. This implementation uses {@code JDom} to parse the
+ * An implementation for the {@link CapabilitiesDAO} interface. This
+ * implementation uses {@code JDom} to parse the
  * {@code wpsCapabilitiesSkeleton.xml} file.
  */
 @Repository("capabilitiesDAO")
 public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 
     public static final String FILE_NAME = "config/wpsCapabilitiesSkeleton.xml";
+
     public static final String NAMESPACE = "http://www.opengis.net/ows/1.1";
+
     private static Logger LOGGER = LoggerFactory.getLogger(XmlCapabilitiesDAO.class);
 
     @Autowired
@@ -67,21 +70,22 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
         String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
         document = jDomUtil.parse(absolutePath);
         Element root = document.getRootElement();
-        Element serviceIdentificationElement = root
-                .getChild("ServiceIdentification", Namespace.getNamespace(NAMESPACE));
+        Element serviceIdentificationElement =
+                root.getChild("ServiceIdentification", Namespace.getNamespace(NAMESPACE));
         serviceIdentification.setTitle(getValue(serviceIdentificationElement, "Title"));
         serviceIdentification.setServiceAbstract(getValue(serviceIdentificationElement, "Abstract"));
         serviceIdentification.setServiceType(getValue(serviceIdentificationElement, "ServiceType"));
 
         // versions
-        List<?> versions = serviceIdentificationElement.getChildren("ServiceTypeVersion", Namespace.getNamespace(NAMESPACE));
+        List<?> versions =
+                serviceIdentificationElement.getChildren("ServiceTypeVersion", Namespace.getNamespace(NAMESPACE));
         if (versions != null) {
             StringBuilder sb = new StringBuilder();
             Iterator<?> versionIterator = versions.iterator();
             while (versionIterator.hasNext()) {
                 Object version = versionIterator.next();
                 String suffix = "";
-                if(versionIterator.hasNext()){
+                if (versionIterator.hasNext()) {
                     suffix = "; ";
                 }
                 sb.append(((Element) version).getValue() + suffix);
@@ -100,7 +104,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
             while (keywordIterator.hasNext()) {
                 Object keyword = keywordIterator.next();
                 String suffix = "";
-                if(keywordIterator.hasNext()){
+                if (keywordIterator.hasNext()) {
                     suffix = "; ";
                 }
                 sb.append(((Element) keyword).getValue() + suffix);
@@ -125,10 +129,13 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 
         serviceIdentificationElement.removeChildren("ServiceTypeVersion", Namespace.getNamespace(NAMESPACE));
 
-        String[] versionArray = serviceIdentification.getServiceTypeVersions() != null ? serviceIdentification.getServiceTypeVersions().split(";") : new String[0];
+        String[] versionArray = serviceIdentification.getServiceTypeVersions() != null
+                ? serviceIdentification.getServiceTypeVersions().split(";")
+                : new String[0];
 
         for (String version : versionArray) {
-            Element versionElement = new Element("ServiceTypeVersion", Namespace.getNamespace("ows", NAMESPACE)).setText(version);
+            Element versionElement =
+                    new Element("ServiceTypeVersion", Namespace.getNamespace("ows", NAMESPACE)).setText(version);
             serviceIdentificationElement.addContent(versionElement);
         }
 
@@ -165,9 +172,9 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
         serviceProvider.setProviderName(getValue(serviceProviderElement, "ProviderName"));
 
         // a special case, an attribute with a namespace
-        serviceProvider.setProviderSite(serviceProviderElement.getChild("ProviderSite",
-                Namespace.getNamespace(NAMESPACE)).getAttributeValue("href",
-                Namespace.getNamespace("http://www.w3.org/1999/xlink")));
+        serviceProvider
+                .setProviderSite(serviceProviderElement.getChild("ProviderSite", Namespace.getNamespace(NAMESPACE))
+                        .getAttributeValue("href", Namespace.getNamespace("http://www.w3.org/1999/xlink")));
 
         // contact info
         Element serviceContact = getElement(serviceProviderElement, "ServiceContact");
@@ -224,7 +231,8 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
         LOGGER.info("ServiceProvider values written to '{}'", absolutePath);
     }
 
-    private String getValue(Element element, String child) {
+    private String getValue(Element element,
+            String child) {
         if (element != null) {
             Element childElement = element.getChild(child, Namespace.getNamespace(NAMESPACE));
             if (childElement != null) {
@@ -234,14 +242,16 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
         return null;
     }
 
-    private Element getElement(Element element, String child) {
+    private Element getElement(Element element,
+            String child) {
         if (element != null) {
             return element.getChild(child, Namespace.getNamespace(NAMESPACE));
         }
         return null;
     }
 
-    private void setElement(Element element, String value) {
+    private void setElement(Element element,
+            String value) {
         if (element != null) {
             element.setText(value);
         }

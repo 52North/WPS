@@ -23,10 +23,10 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 
 /**
- * @author Bastian Schaeffer, University of Muenster,    Theodor Foerster, ITC
+ * @author Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
  *
  */
-public interface IAlgorithm  {
+public interface IAlgorithm {
 
     Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport;
 
@@ -34,25 +34,28 @@ public interface IAlgorithm  {
 
     ProcessDescription getDescription();
 
-    /** Returns some well-known name for the process.
+    /**
+     * Returns some well-known name for the process.
      *
-     *  @return Returns some well-known name for the process or algorithm
-     *  if that exists, else returns an empty String, never null.
-     *  <b>Note:</b> The fully-qualified class name is gotten via getName();
+     * @return Returns some well-known name for the process or algorithm if that
+     *         exists, else returns an empty String, never null. <b>Note:</b>
+     *         The fully-qualified class name is gotten via getName();
      */
     String getWellKnownName();
 
     /**
      *
-     * Checks if the processDescription complies to the process itself and fits any schema or other dependencies.
+     * Checks if the processDescription complies to the process itself and fits
+     * any schema or other dependencies.
      *
-     * @param version the desired version of the process description to be validated
+     * @param version
+     *            the desired version of the process description to be validated
      * @return true if the processdescription is valid
      */
     boolean processDescriptionIsValid(String version);
 
-    Class< ? > getInputDataType(String id);
+    Class<?> getInputDataType(String id);
 
-    Class< ? > getOutputDataType(String id);
+    Class<?> getOutputDataType(String id);
 
 }

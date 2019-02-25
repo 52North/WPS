@@ -68,10 +68,13 @@ public class UsersController {
     /**
      * Display the list of all users.
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return Users view
      */
-    @RequestMapping(value = "users", method = RequestMethod.GET)
+    @RequestMapping(
+            value = "users",
+            method = RequestMethod.GET)
     public String getUsers(Model model) {
         model.addAttribute("users", configurationManager.getUserServices().getAllUsers());
         return "users";
@@ -82,24 +85,36 @@ public class UsersController {
      *
      * @return Change password view
      */
-    @RequestMapping(value = "change_password", method = RequestMethod.GET)
+    @RequestMapping(
+            value = "change_password",
+            method = RequestMethod.GET)
     public String getChangePasswordForm() {
         return "change_password";
     }
 
     /**
-     * Process password change request. The method will decode the password and check with the user's supplied current
-     * password before changing the password.
+     * Process password change request. The method will decode the password and
+     * check with the user's supplied current password before changing the
+     * password.
      *
-     * @param model the model
-     * @param principal the principal
-     * @param currentPassword the current password
-     * @param newPassword the new password
-     * @return change password view if there is an error, or homepage if the change is successful.
+     * @param model
+     *            the model
+     * @param principal
+     *            the principal
+     * @param currentPassword
+     *            the current password
+     * @param newPassword
+     *            the new password
+     * @return change password view if there is an error, or homepage if the
+     *         change is successful.
      */
-    @RequestMapping(value = "change_password", method = RequestMethod.POST)
-    public String processChangePasswordForm(Model model, Principal principal,
-            @RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword) {
+    @RequestMapping(
+            value = "change_password",
+            method = RequestMethod.POST)
+    public String processChangePasswordForm(Model model,
+            Principal principal,
+            @RequestParam("currentPassword") String currentPassword,
+            @RequestParam("newPassword") String newPassword) {
         User user = configurationManager.getUserServices().getUser(principal.getName());
         if (passwordEncoder.matches(currentPassword, user.getPassword())) {
             if (newPassword.trim().isEmpty()) {
@@ -118,13 +133,17 @@ public class UsersController {
     /**
      * Display user edit page.
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @param userId
      *            The id of the user to be edited
      * @return
      */
-    @RequestMapping(value = "users/{userId}/edit", method = RequestMethod.GET)
-    public String getEditUserForm(Model model, @PathVariable("userId") int userId) {
+    @RequestMapping(
+            value = "users/{userId}/edit",
+            method = RequestMethod.GET)
+    public String getEditUserForm(Model model,
+            @PathVariable("userId") int userId) {
         model.addAttribute("user", configurationManager.getUserServices().getUser(userId));
         return "edit_user";
     }
@@ -136,7 +155,9 @@ public class UsersController {
      *            The user to be edited
      * @return The users view.
      */
-    @RequestMapping(value = "users/{userId}/edit", method = RequestMethod.POST)
+    @RequestMapping(
+            value = "users/{userId}/edit",
+            method = RequestMethod.POST)
     public String processEditUserForm(User user) {
         configurationManager.getUserServices().updateUser(user);
         return "redirect:/users";
@@ -148,8 +169,11 @@ public class UsersController {
      * @param userId
      *            The id of the user to be deleted
      */
-    @RequestMapping(value = "users/{userId}/delete", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(
+            value = "users/{userId}/delete",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
     public void deleteUser(@PathVariable("userId") int userId) {
         configurationManager.getUserServices().deleteUser(userId);
     }
@@ -157,29 +181,40 @@ public class UsersController {
     /**
      * Display the add user form.
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return Add user view
      */
-    @RequestMapping(value = "users/add_user", method = RequestMethod.GET)
+    @RequestMapping(
+            value = "users/add_user",
+            method = RequestMethod.GET)
     public String getAddUserForm(Model model) {
         model.addAttribute("user", new User());
         return "add_user";
     }
 
     /**
-     * Process add user form submission. The method will return an HTTP 200 status code if there are no errors, else, it
-     * will return a 400 status code.
+     * Process add user form submission. The method will return an HTTP 200
+     * status code if there are no errors, else, it will return a 400 status
+     * code.
      *
      * @param user
      *            The user to be added
-     * @param model the model
-     * @param response the servlet response
-     * @return A {@code ValidationResponse} object which contains the list of errors, if any.
+     * @param model
+     *            the model
+     * @param response
+     *            the servlet response
+     * @return A {@code ValidationResponse} object which contains the list of
+     *         errors, if any.
      */
-    @RequestMapping(value = "users/add_user", method = RequestMethod.POST)
+    @RequestMapping(
+            value = "users/add_user",
+            method = RequestMethod.POST)
     @ResponseBody
-    public ValidationResponse processAddUserForm(@ModelAttribute("user") @Valid User user, BindingResult result,
-            Model model, HttpServletResponse response) {
+    public ValidationResponse processAddUserForm(@ModelAttribute("user") @Valid User user,
+            BindingResult result,
+            Model model,
+            HttpServletResponse response) {
         ValidationResponse validationResponse = new ValidationResponse();
         if (result.hasErrors()) {
             validationResponse.setErrorMessageList(result.getFieldErrors());
@@ -193,20 +228,23 @@ public class UsersController {
     }
 
     /**
-     * Handles {@code DuplicateKeyException} which is thrown when the username already exists when adding a new user.
-     * The method returns a 400 status code along with a JSON object containing the error message.
+     * Handles {@code DuplicateKeyException} which is thrown when the username
+     * already exists when adding a new user. The method returns a 400 status
+     * code along with a JSON object containing the error message.
      *
-     * @param e The DuplicateKeyException
+     * @param e
+     *            The DuplicateKeyException
      * @return A {@code ValidationResponse} object containing the error
      */
     @ExceptionHandler(DuplicateKeyException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(
+            value = HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationResponse hanleException(DuplicateKeyException e) {
         ValidationResponse validationResponse = new ValidationResponse();
         List<FieldError> listOfErros = new ArrayList<FieldError>();
-        FieldError error = new FieldError("User", "username",
-                "Username already exist. Please choose a different username.");
+        FieldError error =
+                new FieldError("User", "username", "Username already exist. Please choose a different username.");
         listOfErros.add(error);
         validationResponse.setErrorMessageList(listOfErros);
         return validationResponse;

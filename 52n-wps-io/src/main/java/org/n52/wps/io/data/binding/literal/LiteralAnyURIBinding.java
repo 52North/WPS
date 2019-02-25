@@ -25,6 +25,7 @@ public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
      *
      */
     private static final long serialVersionUID = -1148340565647119514L;
+
     private transient URI uri;
 
     public LiteralAnyURIBinding(URI uri) {
@@ -45,16 +46,15 @@ public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
         return URI.class;
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-    {
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         oos.writeObject(uri.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-    {
+    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         try {
             uri = new URI((String) oos.readObject());
-        } catch (URISyntaxException ex) { }
+        } catch (URISyntaxException ex) {
+        }
     }
 
 }

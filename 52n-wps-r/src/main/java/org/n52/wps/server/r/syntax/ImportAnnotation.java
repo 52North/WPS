@@ -51,9 +51,8 @@ public class ImportAnnotation extends RAnnotation {
 
     private List<R_Resource> imports = new ArrayList<R_Resource>();
 
-    public ImportAnnotation(List<R_Resource> resources,
-                              RDataTypeRegistry dataTypeRegistry) throws IOException,
-            RAnnotationException {
+    public ImportAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry)
+            throws IOException, RAnnotationException {
         super(RAnnotationType.IMPORT, new HashMap<RAttribute, Object>(), dataTypeRegistry);
         this.imports.addAll(resources);
         log.trace("NEW {}", this);
@@ -81,8 +80,7 @@ public class ImportAnnotation extends RAnnotation {
         builder.append("ImportAnnotation [imports=");
         if (this.imports != null) {
             builder.append(Arrays.toString(this.imports.toArray()));
-        }
-        else {
+        } else {
             builder.append("<null>");
         }
         builder.append("]");

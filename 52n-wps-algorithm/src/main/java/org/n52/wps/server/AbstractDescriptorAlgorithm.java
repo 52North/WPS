@@ -76,6 +76,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractDescriptorAlgorithm.class);
 
     private AlgorithmDescriptor descriptor;
+
     private ProcessDescription description;
 
     public AbstractDescriptorAlgorithm() {
@@ -101,19 +102,23 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
         ProcessDescription superProcessDescription = new ProcessDescription();
 
-        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription100(algorithmDescriptor), WPSConfig.VERSION_100);
+        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription100(algorithmDescriptor),
+                WPSConfig.VERSION_100);
 
-        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription200(algorithmDescriptor), WPSConfig.VERSION_200);
+        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription200(algorithmDescriptor),
+                WPSConfig.VERSION_200);
 
         return superProcessDescription;
     }
 
-    private void describeComplexDataInputType(SupportedComplexDataType complexData, Class dataTypeClass) {
+    private void describeComplexDataInputType(SupportedComplexDataType complexData,
+            Class dataTypeClass) {
         List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
         for (IParser parser : parsers) {
-// /*2.0*/    Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
- /*3.0*/    Class[] supportedClasses = parser.getSupportedDataBindings();
+            // /*2.0*/ Class[] supportedClasses =
+            // parser.getSupportedInternalOutputDataType();
+            /* 3.0 */ Class[] supportedClasses = parser.getSupportedDataBindings();
             for (Class clazz : supportedClasses) {
                 if (dataTypeClass.isAssignableFrom(clazz)) {
                     foundParsers.add(parser);
@@ -123,13 +128,16 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         describeComplexDataType(complexData, foundParsers);
     }
 
-    private void describeComplexDataOutputType(SupportedComplexDataType complexData, Class dataTypeClass) {
+    private void describeComplexDataOutputType(SupportedComplexDataType complexData,
+            Class dataTypeClass) {
 
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
-// /*2.0*/    Class[] supportedClasses = generator.getSupportedInternalInputDataType(); // appears to have been removed in 52n WPS 3.0
- /*3.0*/    Class[] supportedClasses = generator.getSupportedDataBindings();
+            // /*2.0*/ Class[] supportedClasses =
+            // generator.getSupportedInternalInputDataType(); // appears to have
+            // been removed in 52n WPS 3.0
+            /* 3.0 */ Class[] supportedClasses = generator.getSupportedDataBindings();
             for (Class clazz : supportedClasses) {
                 if (clazz.isAssignableFrom(dataTypeClass)) {
                     foundGenerators.add(generator);
@@ -139,10 +147,8 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         describeComplexDataType(complexData, foundGenerators);
     }
 
-    private void describeComplexDataType(
-            SupportedComplexDataType complexData,
-            List<? extends IOHandler> handlers)
-    {
+    private void describeComplexDataType(SupportedComplexDataType complexData,
+            List<? extends IOHandler> handlers) {
         ComplexDataCombinationType defaultFormatType = complexData.addNewDefault();
         ComplexDataCombinationsType supportedFormatType = complexData.addNewSupported();
 
@@ -153,14 +159,10 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             if (fullFormats != null && fullFormats.size() > 0) {
                 if (needDefault) {
                     needDefault = false;
-                    describeComplexDataFormat(
-                            defaultFormatType.addNewFormat(),
-                            fullFormats.get(0));
+                    describeComplexDataFormat(defaultFormatType.addNewFormat(), fullFormats.get(0));
                 }
                 for (int formatIndex = 0, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
-                    describeComplexDataFormat(
-                            supportedFormatType.addNewFormat(),
-                            fullFormats.get(formatIndex));
+                    describeComplexDataFormat(supportedFormatType.addNewFormat(), fullFormats.get(formatIndex));
                 }
             } else {
 
@@ -168,12 +170,14 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                 if (formats == null || formats.length == 0) {
                     LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
-                            handler.getClass().getSimpleName(),
-                            getWellKnownName());
+                            handler.getClass().getSimpleName(), getWellKnownName());
                 } else {
-                    // if formats, encodings or schemas arrays are 'null' or empty, create
-                    // new array with single 'null' element.  We do this so we can utilize
-                    // a single set of nested loops to process all permutations.  'null'
+                    // if formats, encodings or schemas arrays are 'null' or
+                    // empty, create
+                    // new array with single 'null' element. We do this so we
+                    // can utilize
+                    // a single set of nested loops to process all permutations.
+                    // 'null'
                     // values will not be output...
                     String[] encodings = handler.getSupportedEncodings();
                     if (encodings == null || encodings.length == 0) {
@@ -189,13 +193,10 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                             for (String schema : schemas) {
                                 if (needDefault) {
                                     needDefault = false;
-                                    describeComplexDataFormat(
-                                            defaultFormatType.addNewFormat(),
-                                            format, encoding, schema);
+                                    describeComplexDataFormat(defaultFormatType.addNewFormat(), format, encoding,
+                                            schema);
                                 }
-                                describeComplexDataFormat(
-                                        supportedFormatType.addNewFormat(),
-                                        format, encoding, schema);
+                                describeComplexDataFormat(supportedFormatType.addNewFormat(), format, encoding, schema);
                             }
                         }
                     }
@@ -204,37 +205,34 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
     }
 
-    private void describeComplexDataFormat(
-            ComplexDataDescriptionType description,
-            FormatEntry format)
-    {
-        describeComplexDataFormat(description,
-                format.getMimeType(),
-                format.getEncoding(),
-                format.getSchema());
+    private void describeComplexDataFormat(ComplexDataDescriptionType description,
+            FormatEntry format) {
+        describeComplexDataFormat(description, format.getMimeType(), format.getEncoding(), format.getSchema());
     }
 
     private void describeComplexDataFormat(ComplexDataDescriptionType description,
-                                           String format,
-                                           String encoding,
-                                           String schema) {
-        if ( !Strings.isNullOrEmpty(format)) {
+            String format,
+            String encoding,
+            String schema) {
+        if (!Strings.isNullOrEmpty(format)) {
             description.setMimeType(format);
         }
-        if ( !Strings.isNullOrEmpty(encoding)) {
+        if (!Strings.isNullOrEmpty(encoding)) {
             description.setEncoding(encoding);
         }
-        if ( !Strings.isNullOrEmpty(schema)) {
+        if (!Strings.isNullOrEmpty(schema)) {
             description.setSchema(schema);
         }
     }
 
-    private void describeComplexDataInputType200(ComplexDataType complexDataType, Class dataTypeClass) {
+    private void describeComplexDataInputType200(ComplexDataType complexDataType,
+            Class dataTypeClass) {
         List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
         for (IParser parser : parsers) {
-// /*2.0*/    Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
-            /*3.0*/    Class[] supportedClasses = parser.getSupportedDataBindings();
+            // /*2.0*/ Class[] supportedClasses =
+            // parser.getSupportedInternalOutputDataType();
+            /* 3.0 */ Class[] supportedClasses = parser.getSupportedDataBindings();
             for (Class clazz : supportedClasses) {
                 if (dataTypeClass.isAssignableFrom(clazz)) {
                     foundParsers.add(parser);
@@ -244,13 +242,16 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         describeComplexDataType200(complexDataType, foundParsers);
     }
 
-    private void describeComplexDataOutputType200(ComplexDataType complexData, Class dataTypeClass) {
+    private void describeComplexDataOutputType200(ComplexDataType complexData,
+            Class dataTypeClass) {
 
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
-// /*2.0*/    Class[] supportedClasses = generator.getSupportedInternalInputDataType(); // appears to have been removed in 52n WPS 3.0
-            /*3.0*/    Class[] supportedClasses = generator.getSupportedDataBindings();
+            // /*2.0*/ Class[] supportedClasses =
+            // generator.getSupportedInternalInputDataType(); // appears to have
+            // been removed in 52n WPS 3.0
+            /* 3.0 */ Class[] supportedClasses = generator.getSupportedDataBindings();
             for (Class clazz : supportedClasses) {
                 if (clazz.isAssignableFrom(dataTypeClass)) {
                     foundGenerators.add(generator);
@@ -260,10 +261,8 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         describeComplexDataType200(complexData, foundGenerators);
     }
 
-    private void describeComplexDataType200(
-            ComplexDataType complexDataType,
-            List<? extends IOHandler> handlers)
-    {
+    private void describeComplexDataType200(ComplexDataType complexDataType,
+            List<? extends IOHandler> handlers) {
         net.opengis.wps.x20.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
 
         defaultFormatType.setDefault(true);
@@ -276,15 +275,12 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 int start = 0;
                 if (needDefault) {
                     needDefault = false;
-                    describeComplexDataFormat200(
-                            defaultFormatType,
-                            fullFormats.get(0));
+                    describeComplexDataFormat200(defaultFormatType, fullFormats.get(0));
                     start = 1;
                 }
-                for (int formatIndex = start, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
-                    describeComplexDataFormat200(
-                            complexDataType.addNewFormat(),
-                            fullFormats.get(formatIndex));
+                for (int formatIndex = start, formatCount =
+                        fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
+                    describeComplexDataFormat200(complexDataType.addNewFormat(), fullFormats.get(formatIndex));
                 }
             } else {
 
@@ -292,12 +288,14 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                 if (formats == null || formats.length == 0) {
                     LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
-                            handler.getClass().getSimpleName(),
-                            getWellKnownName());
+                            handler.getClass().getSimpleName(), getWellKnownName());
                 } else {
-                    // if formats, encodings or schemas arrays are 'null' or empty, create
-                    // new array with single 'null' element.  We do this so we can utilize
-                    // a single set of nested loops to process all permutations.  'null'
+                    // if formats, encodings or schemas arrays are 'null' or
+                    // empty, create
+                    // new array with single 'null' element. We do this so we
+                    // can utilize
+                    // a single set of nested loops to process all permutations.
+                    // 'null'
                     // values will not be output...
                     String[] encodings = handler.getSupportedEncodings();
                     if (encodings == null || encodings.length == 0) {
@@ -313,13 +311,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                             for (String schema : schemas) {
                                 if (needDefault) {
                                     needDefault = false;
-                                    describeComplexDataFormat200(
-                                            defaultFormatType,
-                                            format, encoding, schema);
+                                    describeComplexDataFormat200(defaultFormatType, format, encoding, schema);
                                 }
-                                describeComplexDataFormat200(
-                                        complexDataType.addNewFormat(),
-                                        format, encoding, schema);
+                                describeComplexDataFormat200(complexDataType.addNewFormat(), format, encoding, schema);
                             }
                         }
                     }
@@ -328,13 +322,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
     }
 
-    private void describeComplexDataFormat200(
-            net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
-            FormatEntry format)
-    {
-        describeComplexDataFormat200(supportedFormatType,
-                format.getMimeType(),
-                format.getEncoding(),
+    private void describeComplexDataFormat200(net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
+            FormatEntry format) {
+        describeComplexDataFormat200(supportedFormatType, format.getMimeType(), format.getEncoding(),
                 format.getSchema());
     }
 
@@ -342,13 +332,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             String format,
             String encoding,
             String schema) {
-        if ( !Strings.isNullOrEmpty(format)) {
+        if (!Strings.isNullOrEmpty(format)) {
             supportedFormatType.setMimeType(format);
         }
-        if ( !Strings.isNullOrEmpty(encoding)) {
+        if (!Strings.isNullOrEmpty(encoding)) {
             supportedFormatType.setEncoding(encoding);
         }
-        if ( !Strings.isNullOrEmpty(schema)) {
+        if (!Strings.isNullOrEmpty(schema)) {
             supportedFormatType.setSchema(schema);
         }
     }
@@ -357,14 +347,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     public boolean processDescriptionIsValid(String version) {
         XmlOptions xmlOptions = new XmlOptions();
         List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();
-            xmlOptions.setErrorListener(xmlValidationErrorList);
+        xmlOptions.setErrorListener(xmlValidationErrorList);
         boolean valid = getDescription().getProcessDescriptionType(version).validate(xmlOptions);
         if (!valid) {
             LOGGER.error("Error validating process description for " + getClass().getCanonicalName());
             for (XmlValidationError xmlValidationError : xmlValidationErrorList) {
                 LOGGER.error("\tMessage: {}", xmlValidationError.getMessage());
-                LOGGER.error("\tLocation of invalid XML: {}",
-                     xmlValidationError.getCursorLocation().xmlText());
+                LOGGER.error("\tLocation of invalid XML: {}", xmlValidationError.getCursorLocation().xmlText());
             }
         }
         return valid;
@@ -379,7 +368,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
     protected abstract AlgorithmDescriptor createAlgorithmDescriptor();
 
-    private ProcessDescriptionType createProcessDescription100(AlgorithmDescriptor algorithmDescriptor){
+    private ProcessDescriptionType createProcessDescription100(AlgorithmDescriptor algorithmDescriptor) {
 
         ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
         ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
@@ -394,9 +383,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             processDescription.setStoreSupported(algorithmDescriptor.getStoreSupported());
             processDescription.setProcessVersion(algorithmDescriptor.getVersion());
             processDescription.addNewIdentifier().setStringValue(algorithmDescriptor.getIdentifier());
-            processDescription.addNewTitle().setStringValue( algorithmDescriptor.hasTitle() ?
-                    algorithmDescriptor.getTitle() :
-                    algorithmDescriptor.getIdentifier());
+            processDescription.addNewTitle()
+                    .setStringValue(algorithmDescriptor.hasTitle() ? algorithmDescriptor.getTitle()
+                            : algorithmDescriptor.getIdentifier());
             if (algorithmDescriptor.hasAbstract()) {
                 processDescription.addNewAbstract().setStringValue(algorithmDescriptor.getAbstract());
             }
@@ -414,15 +403,14 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 dataInput.setMaxOccurs(inputDescriptor.getMaxOccurs());
 
                 dataInput.addNewIdentifier().setStringValue(inputDescriptor.getIdentifier());
-                dataInput.addNewTitle().setStringValue( inputDescriptor.hasTitle() ?
-                        inputDescriptor.getTitle() :
-                        inputDescriptor.getIdentifier());
+                dataInput.addNewTitle().setStringValue(
+                        inputDescriptor.hasTitle() ? inputDescriptor.getTitle() : inputDescriptor.getIdentifier());
                 if (inputDescriptor.hasAbstract()) {
                     dataInput.addNewAbstract().setStringValue(inputDescriptor.getAbstract());
                 }
 
                 if (inputDescriptor instanceof LiteralDataInputDescriptor) {
-                    LiteralDataInputDescriptor<?> literalDescriptor = (LiteralDataInputDescriptor)inputDescriptor;
+                    LiteralDataInputDescriptor<?> literalDescriptor = (LiteralDataInputDescriptor) inputDescriptor;
 
                     LiteralInputType literalData = dataInput.addNewLiteralData();
                     literalData.addNewDataType().setReference(literalDescriptor.getDataType());
@@ -441,8 +429,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                 } else if (inputDescriptor instanceof ComplexDataInputDescriptor) {
                     SupportedComplexDataInputType complexDataType = dataInput.addNewComplexData();
-                    ComplexDataInputDescriptor complexInputDescriptor =
-                            (ComplexDataInputDescriptor)inputDescriptor;
+                    ComplexDataInputDescriptor complexInputDescriptor = (ComplexDataInputDescriptor) inputDescriptor;
                     if (complexInputDescriptor.hasMaximumMegaBytes()) {
                         complexDataType.setMaximumMegabytes(complexInputDescriptor.getMaximumMegaBytes());
                     }
@@ -454,26 +441,24 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
             Collection<OutputDescriptor> outputDescriptors = algorithmDescriptor.getOutputDescriptors();
             if (outputDescriptors.size() < 1) {
-               LOGGER.error("No outputs found for algorithm {}", algorithmDescriptor.getIdentifier());
+                LOGGER.error("No outputs found for algorithm {}", algorithmDescriptor.getIdentifier());
             }
             for (OutputDescriptor outputDescriptor : outputDescriptors) {
 
                 OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
                 dataOutput.addNewIdentifier().setStringValue(outputDescriptor.getIdentifier());
-                dataOutput.addNewTitle().setStringValue( outputDescriptor.hasTitle() ?
-                        outputDescriptor.getTitle() :
-                        outputDescriptor.getIdentifier());
+                dataOutput.addNewTitle().setStringValue(
+                        outputDescriptor.hasTitle() ? outputDescriptor.getTitle() : outputDescriptor.getIdentifier());
                 if (outputDescriptor.hasAbstract()) {
                     dataOutput.addNewAbstract().setStringValue(outputDescriptor.getAbstract());
                 }
 
                 if (outputDescriptor instanceof LiteralDataOutputDescriptor) {
-                    LiteralDataOutputDescriptor<?> literalDescriptor = (LiteralDataOutputDescriptor)outputDescriptor;
-                    dataOutput.addNewLiteralOutput().addNewDataType().
-                            setReference(literalDescriptor.getDataType());
+                    LiteralDataOutputDescriptor<?> literalDescriptor = (LiteralDataOutputDescriptor) outputDescriptor;
+                    dataOutput.addNewLiteralOutput().addNewDataType().setReference(literalDescriptor.getDataType());
                 } else if (outputDescriptor instanceof ComplexDataOutputDescriptor) {
                     describeComplexDataOutputType(dataOutput.addNewComplexOutput(), outputDescriptor.getBinding());
-               }
+                }
             }
         }
 
@@ -481,11 +466,12 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
     }
 
-    private ProcessOffering createProcessDescription200(AlgorithmDescriptor algorithmDescriptor){
+    private ProcessOffering createProcessDescription200(AlgorithmDescriptor algorithmDescriptor) {
 
         /*
-         * We need to use the ProcessOffering here, because it holds some information that will be
-         * shown in the ProcessSummary of the Capabilities
+         * We need to use the ProcessOffering here, because it holds some
+         * information that will be shown in the ProcessSummary of the
+         * Capabilities
          */
         ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 
@@ -497,12 +483,12 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
             processOffering.setProcessVersion(algorithmDescriptor.getVersion());
 
-            //TODO check options
+            // TODO check options
             List<String> jobControlOptions = new ArrayList<>();
 
             jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_SYNC_EXECUTE);
 
-            if(algorithmDescriptor.getStatusSupported()){
+            if (algorithmDescriptor.getStatusSupported()) {
                 jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_ASYNC_EXECUTE);
             }
 
@@ -516,9 +502,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             processOffering.setOutputTransmission(outputTransmissionModes);
             // 1. Identifier
             processDescription.addNewIdentifier().setStringValue(algorithmDescriptor.getIdentifier());
-            processDescription.addNewTitle().setStringValue( algorithmDescriptor.hasTitle() ?
-                    algorithmDescriptor.getTitle() :
-                    algorithmDescriptor.getIdentifier());
+            processDescription.addNewTitle()
+                    .setStringValue(algorithmDescriptor.hasTitle() ? algorithmDescriptor.getTitle()
+                            : algorithmDescriptor.getIdentifier());
             if (algorithmDescriptor.hasAbstract()) {
                 processDescription.addNewAbstract().setStringValue(algorithmDescriptor.getAbstract());
             }
@@ -541,25 +527,24 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 dataInput.setMaxOccurs(inputDescriptor.getMaxOccurs());
 
                 dataInput.addNewIdentifier().setStringValue(inputDescriptor.getIdentifier());
-                dataInput.addNewTitle().setStringValue( inputDescriptor.hasTitle() ?
-                        inputDescriptor.getTitle() :
-                        inputDescriptor.getIdentifier());
+                dataInput.addNewTitle().setStringValue(
+                        inputDescriptor.hasTitle() ? inputDescriptor.getTitle() : inputDescriptor.getIdentifier());
                 if (inputDescriptor.hasAbstract()) {
                     dataInput.addNewAbstract().setStringValue(inputDescriptor.getAbstract());
                 }
 
                 if (inputDescriptor instanceof LiteralDataInputDescriptor) {
-                    LiteralDataInputDescriptor<?> literalDescriptor = (LiteralDataInputDescriptor)inputDescriptor;
+                    LiteralDataInputDescriptor<?> literalDescriptor = (LiteralDataInputDescriptor) inputDescriptor;
 
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance();
 
-                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat = literalData.addNewFormat();
 
                     defaultFormat.setDefault(true);
 
                     defaultFormat.setMimeType("text/plain");
 
-                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat = literalData.addNewFormat();
 
                     textXMLFormat.setMimeType("text/xml");
 
@@ -578,7 +563,8 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                         literalDataDomain.setDefaultValue(defaultValue);
                     }
                     if (literalDescriptor.hasAllowedValues()) {
-                        net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed = literalDataDomain.addNewAllowedValues();
+                        net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed =
+                                literalDataDomain.addNewAllowedValues();
                         for (String allowedValue : literalDescriptor.getAllowedValues()) {
                             allowed.addNewValue().setStringValue(allowedValue);
                         }
@@ -588,32 +574,33 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                     dataInput.setDataDescription(literalData);
 
-                    XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
+                    XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(),
+                            LiteralDataDocument.type.getDocumentElementName(), null);
 
                 } else if (inputDescriptor instanceof ComplexDataInputDescriptor) {
 
                     ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();
 
-                    ComplexDataInputDescriptor complexInputDescriptor =
-                            (ComplexDataInputDescriptor)inputDescriptor;
+                    ComplexDataInputDescriptor complexInputDescriptor = (ComplexDataInputDescriptor) inputDescriptor;
 
-                    //TODO this is now defined per format..
-//                    if (complexInputDescriptor.hasMaximumMegaBytes()) {
-//                        dataInput.setMaximumMegabytes(complexInputDescriptor.getMaximumMegaBytes());
-//                    }
+                    // TODO this is now defined per format..
+                    // if (complexInputDescriptor.hasMaximumMegaBytes()) {
+                    // dataInput.setMaximumMegabytes(complexInputDescriptor.getMaximumMegaBytes());
+                    // }
                     describeComplexDataInputType200(complexDataType, inputDescriptor.getBinding());
 
                     dataInput.setDataDescription(complexDataType);
 
-                    XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
+                    XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(),
+                            ComplexDataDocument.type.getDocumentElementName(), null);
                 }
 
                 List<?> inputParameterMetadataDescriptors = inputDescriptor.getMetadataDescriptors();
 
                 for (Object object : inputParameterMetadataDescriptors) {
 
-                    if(object instanceof MetadataDescriptor){
-                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;
+                    if (object instanceof MetadataDescriptor) {
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor) object;
                         MetadataType metadata = dataInput.addNewMetadata();
                         metadata.setRole(metadataDescriptor.getRole());
                         metadata.setHref(metadataDescriptor.getHref());
@@ -624,31 +611,30 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             // 3. Outputs
             Collection<OutputDescriptor> outputDescriptors = algorithmDescriptor.getOutputDescriptors();
             if (outputDescriptors.size() < 1) {
-               LOGGER.error("No outputs found for algorithm {}", algorithmDescriptor.getIdentifier());
+                LOGGER.error("No outputs found for algorithm {}", algorithmDescriptor.getIdentifier());
             }
             for (OutputDescriptor outputDescriptor : outputDescriptors) {
 
                 net.opengis.wps.x20.OutputDescriptionType dataOutput = processDescription.addNewOutput();
                 dataOutput.addNewIdentifier().setStringValue(outputDescriptor.getIdentifier());
-                dataOutput.addNewTitle().setStringValue( outputDescriptor.hasTitle() ?
-                        outputDescriptor.getTitle() :
-                        outputDescriptor.getIdentifier());
+                dataOutput.addNewTitle().setStringValue(
+                        outputDescriptor.hasTitle() ? outputDescriptor.getTitle() : outputDescriptor.getIdentifier());
                 if (outputDescriptor.hasAbstract()) {
                     dataOutput.addNewAbstract().setStringValue(outputDescriptor.getAbstract());
                 }
 
                 if (outputDescriptor instanceof LiteralDataOutputDescriptor) {
-                    LiteralDataOutputDescriptor<?> literalDescriptor = (LiteralDataOutputDescriptor)outputDescriptor;
+                    LiteralDataOutputDescriptor<?> literalDescriptor = (LiteralDataOutputDescriptor) outputDescriptor;
 
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance();
 
-                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat = literalData.addNewFormat();
 
                     defaultFormat.setDefault(true);
 
                     defaultFormat.setMimeType("text/plain");
 
-                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat = literalData.addNewFormat();
 
                     textXMLFormat.setMimeType("text/xml");
 
@@ -660,7 +646,8 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                     dataOutput.setDataDescription(literalData);
 
-                    XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
+                    XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(),
+                            LiteralDataDocument.type.getDocumentElementName(), null);
 
                 } else if (outputDescriptor instanceof ComplexDataOutputDescriptor) {
 
@@ -669,15 +656,16 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                     dataOutput.setDataDescription(complexDataType);
 
-                    XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
+                    XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(),
+                            ComplexDataDocument.type.getDocumentElementName(), null);
                 }
 
                 List<?> outputParameterMetadataDescriptors = outputDescriptor.getMetadataDescriptors();
 
                 for (Object object : outputParameterMetadataDescriptors) {
 
-                    if(object instanceof MetadataDescriptor){
-                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;
+                    if (object instanceof MetadataDescriptor) {
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor) object;
                         MetadataType metadata = dataOutput.addNewMetadata();
                         metadata.setRole(metadataDescriptor.getRole());
                         metadata.setHref(metadataDescriptor.getHref());
@@ -710,6 +698,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
 
     private List observers = new ArrayList();
+
     private Object state = null;
 
     @Override
@@ -742,6 +731,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
 
     List<String> errorList = new ArrayList();
+
     protected List<String> addError(String error) {
         errorList.add(error);
         return errorList;

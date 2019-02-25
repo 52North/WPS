@@ -73,14 +73,15 @@ public class GeotiffParser extends AbstractParser {
         supportedIDataTypes.add(GTRasterDataBinding.class);
     }
 
-
     @Override
-    public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
+    public GTRasterDataBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         File tempFile;
 
         try {
-            tempFile = File.createTempFile("tempfile" + UUID.randomUUID(),"tmp");
+            tempFile = File.createTempFile("tempfile" + UUID.randomUUID(), "tmp");
             finalizeFiles.add(tempFile); // mark for final delete
             FileOutputStream outputStream = new FileOutputStream(tempFile);
             byte buf[] = new byte[4096];
@@ -104,11 +105,10 @@ public class GeotiffParser extends AbstractParser {
 
     }
 
-    private GTRasterDataBinding parseTiff(File file){
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
+    private GTRasterDataBinding parseTiff(File file) {
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256 * 1024 * 1024);
 
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                Boolean.TRUE);
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         GeoTiffReader reader;
         try {
             reader = new GeoTiffReader(file, hints);

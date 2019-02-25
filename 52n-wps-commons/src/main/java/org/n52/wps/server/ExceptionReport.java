@@ -29,41 +29,65 @@ import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 
 /**
- * encapsulates a exception, which occured by service execution and which has to lead to a service Exception as
- * specified in the spec.
+ * encapsulates a exception, which occured by service execution and which has to
+ * lead to a service Exception as specified in the spec.
+ * 
  * @author foerster
  *
  */
 public class ExceptionReport extends Exception {
     // Universal version identifier for a Serializable class.
-    // Should be used here, because HttpServlet implements the java.io.Serializable
+    // Should be used here, because HttpServlet implements the
+    // java.io.Serializable
     private static final long serialVersionUID = 5784360334341938021L;
+
     /*
      * Error Codes specified by the OGC Common Document.
      */
     public static final String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
-    /** Operation request does not include a parameter value, and this server did not declare a default value for that parameter */
+
+    /**
+     * Operation request does not include a parameter value, and this server did
+     * not declare a default value for that parameter
+     */
     public static final String MISSING_PARAMETER_VALUE = "MissingParameterValue";
+
     /** Operation request contains an invalid parameter value */
     public static final String INVALID_PARAMETER_VALUE = "InvalidParameterValue";
+
     public static final String VERSION_NEGOTIATION_FAILED = "VersionNegotiationFailed";
+
     public static final String INVALID_UPDATE_SEQUENCE = "InvalidUpdateSequence";
-    /** No other exceptionCode specified by this service and server applies to this exception */
+
+    /**
+     * No other exceptionCode specified by this service and server applies to
+     * this exception
+     */
     public static final String NO_APPLICABLE_CODE = "NoApplicableCode";
+
     /** The server is too busy to accept and queue the request at this time. */
     public static final String SERVER_BUSY = "ServerBusy";
-    /** The file size of one of the input parameters was too large for this process to handle. */
+
+    /**
+     * The file size of one of the input parameters was too large for this
+     * process to handle.
+     */
     public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
+
     /** An error occurs during remote and distributed computation process. */
     public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
-    /** WPS 2.0 async execute, result is not available yet  */
+
+    /** WPS 2.0 async execute, result is not available yet */
     public static final String RESULT_NOT_READY = "ResultNotReady";
 
-
-    /** A GetStatus request was send with a JobID of a synchronous job, or if the JobID doesn't exist at all. */
+    /**
+     * A GetStatus request was send with a JobID of a synchronous job, or if the
+     * JobID doesn't exist at all.
+     */
     public static final String NO_SUCH_JOB = "NoSuchJob";
 
     protected String errorKey;
+
     protected String locator;
 
     public ExceptionReport(String message, String errorKey) {
@@ -82,13 +106,13 @@ public class ExceptionReport extends Exception {
     }
 
     public ExceptionReport(String message, String errorKey, String locator, Throwable e) {
-        this(message,errorKey, e);
+        this(message, errorKey, e);
         this.locator = locator;
     }
 
     public XmlObject getExceptionDocument(String version) {
 
-        if(version == null){
+        if (version == null) {
             return createExceptionReportV200();
         }
         switch (version) {
@@ -110,12 +134,15 @@ public class ExceptionReport extends Exception {
         return w.toString();
     }
 
-    private net.opengis.ows.x20.ExceptionReportDocument createExceptionReportV200(){
+    private net.opengis.ows.x20.ExceptionReportDocument createExceptionReportV200() {
 
         // Printing service Exception
-        net.opengis.ows.x20.ExceptionReportDocument reportV200 = net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
-        net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 = reportV200.addNewExceptionReport();
-        XMLBeansHelper.addSchemaLocationToXMLObject(reportV200, "http://www.opengis.net/ows/2.0 http://schemas.opengis.net/ows/2.0/owsAll.xsd");
+        net.opengis.ows.x20.ExceptionReportDocument reportV200 =
+                net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
+        net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 =
+                reportV200.addNewExceptionReport();
+        XMLBeansHelper.addSchemaLocationToXMLObject(reportV200,
+                "http://www.opengis.net/ows/2.0 http://schemas.opengis.net/ows/2.0/owsAll.xsd");
         exceptionReportV200.setVersion(WPSConfig.VERSION_200);
         net.opengis.ows.x20.ExceptionType exV200 = exceptionReportV200.addNewException();
         exV200.setExceptionCode(errorKey);
@@ -124,7 +151,7 @@ public class ExceptionReport extends Exception {
         net.opengis.ows.x20.ExceptionType stackTraceV200 = exceptionReportV200.addNewException();
         stackTraceV200.addExceptionText(encodeStackTrace(this));
         stackTraceV200.setExceptionCode("JAVA_StackTrace");
-        //    adding Rootcause
+        // adding Rootcause
         net.opengis.ows.x20.ExceptionType stackTraceRootExceptionV200 = exceptionReportV200.addNewException();
         if (getCause() != null) {
             stackTraceRootExceptionV200.addExceptionText(getCause().getMessage());
@@ -137,12 +164,13 @@ public class ExceptionReport extends Exception {
         return reportV200;
     }
 
-    private ExceptionReportDocument createExceptionReportV100(){
+    private ExceptionReportDocument createExceptionReportV100() {
 
         // Printing service Exception
         ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
         net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
-        XMLBeansHelper.addSchemaLocationToXMLObject(report, "http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsAll.xsd");
+        XMLBeansHelper.addSchemaLocationToXMLObject(report,
+                "http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsAll.xsd");
         exceptionReport.setVersion(WPSConfig.VERSION_100);
         ExceptionType ex = exceptionReport.addNewException();
         ex.setExceptionCode(errorKey);
@@ -151,7 +179,7 @@ public class ExceptionReport extends Exception {
         ExceptionType stackTrace = exceptionReport.addNewException();
         stackTrace.addExceptionText(encodeStackTrace(this));
         stackTrace.setExceptionCode("JAVA_StackTrace");
-        //    adding Rootcause
+        // adding Rootcause
         ExceptionType stackTraceRootException = exceptionReport.addNewException();
         if (getCause() != null) {
             stackTraceRootException.addExceptionText(getCause().getMessage());
@@ -165,7 +193,7 @@ public class ExceptionReport extends Exception {
 
     }
 
-    public int getHTTPStatusCode(){
+    public int getHTTPStatusCode() {
 
         switch (errorKey) {
         case OPERATION_NOT_SUPPORTED:

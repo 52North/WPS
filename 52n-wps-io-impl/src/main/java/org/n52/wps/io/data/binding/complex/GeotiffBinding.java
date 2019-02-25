@@ -32,14 +32,15 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.data.IComplexData;
 
-
-public class GeotiffBinding implements IComplexData{
+public class GeotiffBinding implements IComplexData {
 
     private static final long serialVersionUID = 1L;
+
     protected File geotiff;
+
     protected String mimeType;
 
-    public GeotiffBinding(File geotiff){
+    public GeotiffBinding(File geotiff) {
         this.geotiff = geotiff;
         mimeType = "image/tiff";
     }
@@ -59,7 +60,7 @@ public class GeotiffBinding implements IComplexData{
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         FileUtils.deleteQuietly(geotiff);
     }
 }

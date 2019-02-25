@@ -45,11 +45,11 @@ public class InputReference {
 
     private DataInputType inputV200;
 
-    public InputReference(InputType inputs){
+    public InputReference(InputType inputs) {
         inputV100 = inputs;
     }
 
-    public InputReference(DataInputType inputs){
+    public InputReference(DataInputType inputs) {
         inputV200 = inputs;
     }
 
@@ -90,11 +90,13 @@ public class InputReference {
     }
 
     public boolean isSetBodyReference() {
-        return inputV100 != null ? inputV100.getReference().isSetBodyReference() : inputV200.getReference().isSetBodyReference();
+        return inputV100 != null ? inputV100.getReference().isSetBodyReference()
+                : inputV200.getReference().isSetBodyReference();
     }
 
     public String getBodyReferenceHref() {
-        return inputV100 != null ? inputV100.getReference().getBodyReference().getHref() : inputV200.getReference().getBodyReference().getHref();
+        return inputV100 != null ? inputV100.getReference().getBodyReference().getHref()
+                : inputV200.getReference().getBodyReference().getHref();
     }
 
     public boolean isSetBody() {

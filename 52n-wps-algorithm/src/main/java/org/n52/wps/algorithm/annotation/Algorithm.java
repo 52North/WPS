@@ -26,12 +26,17 @@ import java.lang.annotation.Target;
  * @author tkunicki
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface Algorithm {
     String identifier() default "";
+
     String title() default "";
-    String abstrakt() default "";  // 'abstract' is java reserved keyword
+
+    String abstrakt() default ""; // 'abstract' is java reserved keyword
+
     String version();
+
     boolean storeSupported() default true;
+
     boolean statusSupported() default true;
 }

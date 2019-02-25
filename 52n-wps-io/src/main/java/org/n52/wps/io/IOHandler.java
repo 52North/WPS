@@ -22,23 +22,30 @@ import org.n52.wps.webapp.api.FormatEntry;
 
 public interface IOHandler {
 
+    public static final String DEFAULT_ENCODING = "UTF-8";
 
-    public static final String DEFAULT_ENCODING="UTF-8";
     public static final String ENCODING_BASE64 = "base64";
 
-    //public static final String DEFAULT_MIMETYPE = "text/xml";
+    // public static final String DEFAULT_MIMETYPE = "text/xml";
 
     public static final String MIME_TYPE_ZIPPED_SHP = "application/x-zipped-shp";
 
     public boolean isSupportedSchema(String schema);
+
     public boolean isSupportedFormat(String format);
+
     public boolean isSupportedEncoding(String encoding);
+
     public boolean isSupportedDataBinding(Class<?> clazz);
 
     public String[] getSupportedSchemas();
+
     public String[] getSupportedFormats();
+
     public String[] getSupportedEncodings();
+
     public List<FormatEntry> getSupportedFullFormats();
+
     public Class<?>[] getSupportedDataBindings();
 
 }

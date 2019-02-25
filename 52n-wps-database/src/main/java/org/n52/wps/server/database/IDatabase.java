@@ -34,12 +34,13 @@ import java.io.InputStream;
 import org.n52.wps.server.ExceptionReport;
 
 /**
-* An interface-layer to the databases.
-*
-* <b>Note:</b> All implementing classes have to be singletons!
-* @author Janne Kovanen
-*
-*/
+ * An interface-layer to the databases.
+ *
+ * <b>Note:</b> All implementing classes have to be singletons!
+ * 
+ * @author Janne Kovanen
+ *
+ */
 public interface IDatabase {
     // Closes the database connections etc.
     public void shutdown();
@@ -48,17 +49,22 @@ public interface IDatabase {
     public String getDatabaseName();
 
     // Insert a new Request into the Database.
-    public void insertRequest(String id, InputStream request, boolean xml);
+    public void insertRequest(String id,
+            InputStream request,
+            boolean xml);
 
     // Insert a new Response into the Database.
-    public String insertResponse(String id, InputStream reponse);
+    public String insertResponse(String id,
+            InputStream reponse);
 
     // Update the Response in the Database, based on the Identifier.
-    public void updateResponse(String id, InputStream reponse);
+    public void updateResponse(String id,
+            InputStream reponse);
 
     // Store the Response of a deferred Request. It either gets inserted into
     // the databse, or it updates a previous Response, based on the identifier.
-    public String storeResponse(String id, InputStream reponse);
+    public String storeResponse(String id,
+            InputStream reponse);
 
     // Retrieve the Request on a previous Request, based on an unique
     // identifier, which was already given to the client for reference.
@@ -72,19 +78,33 @@ public interface IDatabase {
     // identifier, which was already given to the client for reference.
     public InputStream lookupStatus(String request_id) throws ExceptionReport;
 
-    public String storeComplexValue(String id, InputStream stream, String type, String mimeType);
+    public String storeComplexValue(String id,
+            InputStream stream,
+            String type,
+            String mimeType);
 
-    // The URL referencing the location from which the ExecuteResponse can be retrieved.
-    // If "status" is "true" in the Execute request, the ExecuteResponse should also be
-    // found here as soon as the process returns the initial response to the client.
-    // It should persist at this location as long as the outputs are accessible from the server.
-    // The outputs may be stored for as long as the implementer of the server decides.
-    // If the process takes a long time, this URL can be repopulated on an ongoing basis in
-    // order to keep the client updated on progress. Before the process has succeeded,
-    // the ExecuteResponse contains information about the status of the process, including
-    // whether or not processing has started, and the percentage completed. It may also
-    // optionally contain the inputs and any ProcessStartedType interim results. When the
-    // process has succeeded, the ExecuteResponse found at this URL shall contain the output
+    // The URL referencing the location from which the ExecuteResponse can be
+    // retrieved.
+    // If "status" is "true" in the Execute request, the ExecuteResponse should
+    // also be
+    // found here as soon as the process returns the initial response to the
+    // client.
+    // It should persist at this location as long as the outputs are accessible
+    // from the server.
+    // The outputs may be stored for as long as the implementer of the server
+    // decides.
+    // If the process takes a long time, this URL can be repopulated on an
+    // ongoing basis in
+    // order to keep the client updated on progress. Before the process has
+    // succeeded,
+    // the ExecuteResponse contains information about the status of the process,
+    // including
+    // whether or not processing has started, and the percentage completed. It
+    // may also
+    // optionally contain the inputs and any ProcessStartedType interim results.
+    // When the
+    // process has succeeded, the ExecuteResponse found at this URL shall
+    // contain the output
     // values or references to them.
     public String generateRetrieveResultURL(String id);
 

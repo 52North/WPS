@@ -56,14 +56,17 @@ public class FlatFileDatabaseConfigurationModule implements ConfigurationModule 
 
     private final String wipeThresholdKey = "wipe.threshold";
 
-    private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey, "Database wipe enabled", "Enable database wiping based on values below",
-            false, true);
+    private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey,
+            "Database wipe enabled", "Enable database wiping based on values below", false, true);
+
     private ConfigurationEntry<String> wipePeriodEntry = new StringConfigurationEntry(wipePeriodKey, "Wipe period",
             "How often to scan database (PT1H = every hour)", false, "PT1H");
-    private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey, "Wipe threshold",
-            "Delete files older than this period (P7D = 7 days)", false, "P7D");
 
-    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry);
+    private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey,
+            "Wipe threshold", "Delete files older than this period (P7D = 7 days)", false, "P7D");
+
+    private List<? extends ConfigurationEntry<?>> configurationEntries =
+            Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry);
 
     @Override
     public String getModuleName() {
@@ -104,7 +107,8 @@ public class FlatFileDatabaseConfigurationModule implements ConfigurationModule 
         return isWipeEnabled;
     }
 
-    @ConfigurationKey(key = isWipeEnabledKey)
+    @ConfigurationKey(
+            key = isWipeEnabledKey)
     public void setWipeEnabled(boolean isWipeEnabled) {
         this.isWipeEnabled = isWipeEnabled;
     }
@@ -113,7 +117,8 @@ public class FlatFileDatabaseConfigurationModule implements ConfigurationModule 
         return wipePeriod;
     }
 
-    @ConfigurationKey(key = wipePeriodKey)
+    @ConfigurationKey(
+            key = wipePeriodKey)
     public void setWipePeriod(String wipePeriod) {
         this.wipePeriod = wipePeriod;
     }
@@ -122,7 +127,8 @@ public class FlatFileDatabaseConfigurationModule implements ConfigurationModule 
         return wipeThreshold;
     }
 
-    @ConfigurationKey(key = wipeThresholdKey)
+    @ConfigurationKey(
+            key = wipeThresholdKey)
     public void setWipeThreshold(String wipeThreshold) {
         this.wipeThreshold = wipeThreshold;
     }

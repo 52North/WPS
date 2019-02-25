@@ -82,10 +82,10 @@ import edu.umn.gis.mapscript.styleObj;
  *
  * @author Jacob Mendt
  *
- * TODO better solution for replacing the old with the new mapfile.
- * TODO Giving the ShapefileRepository as an external Input in the method
- *       addFeatureCollectionToMapfile is maybe not the best way.
- * TODO check if layer is already in mapfile.
+ *         TODO better solution for replacing the old with the new mapfile. TODO
+ *         Giving the ShapefileRepository as an external Input in the method
+ *         addFeatureCollectionToMapfile is maybe not the best way. TODO check
+ *         if layer is already in mapfile.
  *
  */
 public final class MSMapfileBinding {
@@ -127,16 +127,16 @@ public final class MSMapfileBinding {
      * @return The name of the layer of featureCollection which was added to the
      *         mapfile.
      */
-    public synchronized String addFeatureCollectionToMapfile(
-            SimpleFeatureCollection ftColl, String workspacePath, String mapfilePath,
+    public synchronized String addFeatureCollectionToMapfile(SimpleFeatureCollection ftColl,
+            String workspacePath,
+            String mapfilePath,
             String dataRepPath) {
 
         // saves the featureCollection as a shapefile in the dataRepository of
         // the mapfile
         String shapefilePath = null;
         try {
-            shapefilePath = this.saveFeatureCollectionToShapefile(ftColl,
-                    workspacePath, dataRepPath);
+            shapefilePath = this.saveFeatureCollectionToShapefile(ftColl, workspacePath, dataRepPath);
             LOGGER.debug("Saving FeatureCollection as a Shapefile to the data repository of the mapfile successful.");
         } catch (IOException e1) {
             LOGGER.error("Error while saving FeatureCollection as a Shapefile to the data repository of the mapfile.");
@@ -151,8 +151,7 @@ public final class MSMapfileBinding {
 
         // makes a temporary copy of the mapfile
         String orgMapfilePath = workspacePath + mapfilePath;
-        String tmpMapfilePath = workspacePath + System.currentTimeMillis()
-                + ".map";
+        String tmpMapfilePath = workspacePath + System.currentTimeMillis() + ".map";
         try {
             if (copyMapfile(orgMapfilePath, tmpMapfilePath)) {
                 LOGGER.debug("Creating of a temporary copy of the mapfile successful.");
@@ -168,8 +167,7 @@ public final class MSMapfileBinding {
         // adds a the shapefile as a layer to the mapfile
         String layerName = null;
         try {
-            layerName = this.addShapefileAsLayerToMapfile(shapefilePath,
-                    tmpMapfilePath, workspacePath);
+            layerName = this.addShapefileAsLayerToMapfile(shapefilePath, tmpMapfilePath, workspacePath);
             LOGGER.debug("Adding shapefile as a layer to the mapfile successful.");
         } catch (Exception e) {
             LOGGER.error("Error while adding shapefile as a layer to the mapfile.");
@@ -209,8 +207,9 @@ public final class MSMapfileBinding {
      *
      * @TODO Check if layer already exist in the mapfile.
      */
-    private synchronized String addShapefileAsLayerToMapfile(
-            String shapefilePath, String tmpMapfilePath, String workspacePath) {
+    private synchronized String addShapefileAsLayerToMapfile(String shapefilePath,
+            String tmpMapfilePath,
+            String workspacePath) {
 
         // initalize mapfile object
         mapObj mapfileObj = new mapObj(tmpMapfilePath);
@@ -237,7 +236,7 @@ public final class MSMapfileBinding {
                  */
                 layer.setData(msLayer.getDataSourcePath());
                 layer.setDump(1); // True -> Switch to allow MapServer to return
-                                    // data in GML format
+                                  // data in GML format
                 layer.setName(msLayer.getMdTitle());
                 layer.setProjection(msLayer.getMdCRS());
                 layer.setStatus(1); // means ON - Sets the current status of the
@@ -248,7 +247,19 @@ public final class MSMapfileBinding {
 
                 // set metadata
                 layer.setMetaData("wms_title", msLayer.getMdTitle());
-                layer.setMetaData("wms_timestamp", msLayer.getMdTimestamp()); // only date of the timestamp when the layer was added to the mapfile
+                layer.setMetaData("wms_timestamp", msLayer.getMdTimestamp()); // only
+                                                                              // date
+                                                                              // of
+                                                                              // the
+                                                                              // timestamp
+                                                                              // when
+                                                                              // the
+                                                                              // layer
+                                                                              // was
+                                                                              // added
+                                                                              // to
+                                                                              // the
+                                                                              // mapfile
 
                 /*
                  * create a class and a style object of the layer and set styles
@@ -266,10 +277,7 @@ public final class MSMapfileBinding {
                  */
 
                 String wmsSupportedCRS = mapfileObj.getMetaData("wms_srs");
-                mapfileObj.setMetaData(
-                        "wms_srs",
-                        this.getMDSupportedCRS(wmsSupportedCRS,
-                                msLayer.getMdCRS()));
+                mapfileObj.setMetaData("wms_srs", this.getMDSupportedCRS(wmsSupportedCRS, msLayer.getMdCRS()));
                 // saves the new layer
                 mapfileObj.save(tmpMapfilePath);
 
@@ -297,7 +305,8 @@ public final class MSMapfileBinding {
      *            epsg code of the layer
      * @return the supported CRS
      */
-    private String getMDSupportedCRS(String wmsSupportedCrs, String mdCrs) {
+    private String getMDSupportedCRS(String wmsSupportedCrs,
+            String mdCrs) {
         String[] aCrs = wmsSupportedCrs.split(" ");
         for (int i = 0; i < aCrs.length; i++) {
             if (aCrs[i].equalsIgnoreCase(mdCrs)) {
@@ -339,10 +348,10 @@ public final class MSMapfileBinding {
             e.printStackTrace();
 
         } finally {
-            if (inCh != null){
+            if (inCh != null) {
                 inCh.close();
             }
-            if (outCh != null){
+            if (outCh != null) {
                 outCh.close();
             }
         }
@@ -389,14 +398,14 @@ public final class MSMapfileBinding {
      * @throws URISyntaxException
      * @throws Exception
      */
-    private String saveFeatureCollectionToShapefile(
-            SimpleFeatureCollection ftColl, String workspacePath,
-            String dataRepository) throws IOException, URISyntaxException,
-            Exception {
+    private String saveFeatureCollectionToShapefile(SimpleFeatureCollection ftColl,
+            String workspacePath,
+            String dataRepository) throws IOException, URISyntaxException, Exception {
 
-        //FeatureCollection ftColl = createCorrectFeatureCollection(ftCollWrong);
-        //FeatureCollectionTester tester = new FeatureCollectionTester();
-        //tester.testFeatureCollection(ftColl);
+        // FeatureCollection ftColl =
+        // createCorrectFeatureCollection(ftCollWrong);
+        // FeatureCollectionTester tester = new FeatureCollectionTester();
+        // tester.testFeatureCollection(ftColl);
 
         SimpleFeatureType TYPE = (SimpleFeatureType) ftColl.getSchema();
 
@@ -404,13 +413,11 @@ public final class MSMapfileBinding {
 
         // Create the shapefilePath
         if (dataRepository.endsWith("/") || dataRepository.endsWith("\\")) {
-            shapefilePath = workspacePath + dataRepository + "shape_"
-                    + TYPE.getName().getLocalPart().toLowerCase() + "_"
-                    + System.currentTimeMillis() + ".shp";
-        } else{
-            shapefilePath = workspacePath + dataRepository + "/shape_"
-                    + TYPE.getName().getLocalPart().toLowerCase() + "_"
-                    + System.currentTimeMillis() + ".shp";
+            shapefilePath = workspacePath + dataRepository + "shape_" + TYPE.getName().getLocalPart().toLowerCase()
+                    + "_" + System.currentTimeMillis() + ".shp";
+        } else {
+            shapefilePath = workspacePath + dataRepository + "/shape_" + TYPE.getName().getLocalPart().toLowerCase()
+                    + "_" + System.currentTimeMillis() + ".shp";
         }
 
         /*
@@ -422,12 +429,10 @@ public final class MSMapfileBinding {
         Map<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("url", url);
         params.put("create spatial index", Boolean.TRUE);
-        ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
-                .createNewDataStore(params);
+        ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
 
         // Initialize the CRS for transformation
-        CoordinateReferenceSystem sourceCrs = TYPE
-                .getCoordinateReferenceSystem();
+        CoordinateReferenceSystem sourceCrs = TYPE.getCoordinateReferenceSystem();
 
         newDataStore.createSchema(TYPE);
         newDataStore.forceSchemaCRS(sourceCrs);

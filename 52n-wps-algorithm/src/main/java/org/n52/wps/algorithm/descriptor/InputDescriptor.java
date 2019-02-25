@@ -27,9 +27,10 @@ import org.n52.wps.io.data.IData;
 public abstract class InputDescriptor<T extends Class<? extends IData>> extends BoundDescriptor<T> {
 
     private final BigInteger minOccurs;
+
     private final BigInteger maxOccurs;
 
-    protected InputDescriptor(Builder<? extends Builder<?,T>, T> builder) {
+    protected InputDescriptor(Builder<? extends Builder<?, T>, T> builder) {
         super(builder);
         this.minOccurs = builder.minOccurs;
         this.maxOccurs = builder.maxOccurs;
@@ -44,9 +45,11 @@ public abstract class InputDescriptor<T extends Class<? extends IData>> extends 
         return maxOccurs;
     }
 
-    public static abstract class Builder<B extends Builder<B,T>, T extends Class<? extends IData>> extends BoundDescriptor.Builder<B,T>{
+    public static abstract class Builder<B extends Builder<B, T>, T extends Class<? extends IData>>
+            extends BoundDescriptor.Builder<B, T> {
 
         private BigInteger minOccurs = BigInteger.ONE;
+
         private BigInteger maxOccurs = BigInteger.ONE;
 
         protected Builder(String identifier, T binding) {

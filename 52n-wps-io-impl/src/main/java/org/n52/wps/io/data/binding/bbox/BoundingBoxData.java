@@ -34,17 +34,21 @@ import org.n52.wps.io.data.IBBOXData;
 
 /**
  * TODO JavaDoc
+ * 
  * @author Christian Autermann
  */
 public class BoundingBoxData implements IBBOXData {
     private static final long serialVersionUID = -3000224272877489674L;
+
     private final double[] lowerCorner;
+
     private final double[] upperCorner;
+
     private final int dimensions;
+
     private final String crs;
 
-    public BoundingBoxData(double[] lowerCorner,
-                           double[] upperCorner, String crs) {
+    public BoundingBoxData(double[] lowerCorner, double[] upperCorner, String crs) {
         checkArgument(lowerCorner.length == upperCorner.length);
         this.lowerCorner = lowerCorner;
         this.upperCorner = upperCorner;

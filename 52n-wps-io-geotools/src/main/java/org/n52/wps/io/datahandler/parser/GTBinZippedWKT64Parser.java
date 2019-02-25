@@ -100,7 +100,9 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
      * @see IParser#parse(InputStream input, String mimeType, String schema)
      */
     @Override
-    public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
+    public GTVectorDataBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
         try {
 
             String fileName = "tempfile" + UUID.randomUUID() + ".zip";
@@ -132,16 +134,17 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
             finalizeFiles.addAll(wktFiles); // mark for final delete
 
             if (wktFiles == null || wktFiles.size() == 0) {
-                throw new RuntimeException(
-                        "Cannot find a shapefile inside the zipped file.");
+                throw new RuntimeException("Cannot find a shapefile inside the zipped file.");
             }
 
-            //set namespace namespace
+            // set namespace namespace
             List<Geometry> geometries = new ArrayList<Geometry>();
 
-            //read wkt file
-            //please not that only 1 geometry is returned. If multiple geometries are included, perhaps use the read(String wktstring) method
-            for(int i = 0; i<wktFiles.size();i++){
+            // read wkt file
+            // please not that only 1 geometry is returned. If multiple
+            // geometries are included, perhaps use the read(String wktstring)
+            // method
+            for (int i = 0; i < wktFiles.size(); i++) {
                 File wktFile = wktFiles.get(i);
                 Reader fileReader = new FileReader(wktFile);
 
@@ -151,42 +154,38 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
             }
 
             CoordinateReferenceSystem coordinateReferenceSystem = CRS.decode("EPSG:4326");
-            SimpleFeatureCollection inputFeatureCollection = createFeatureCollection(geometries, coordinateReferenceSystem);
+            SimpleFeatureCollection inputFeatureCollection =
+                    createFeatureCollection(geometries, coordinateReferenceSystem);
 
             return new GTVectorDataBinding(inputFeatureCollection);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);
+            throw new RuntimeException("An error has occurred while accessing provided data", e);
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);
+            throw new RuntimeException("An error has occurred while accessing provided data", e);
         } catch (NoSuchAuthorityCodeException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);
+            throw new RuntimeException("An error has occurred while accessing provided data", e);
         } catch (FactoryException e) {
             LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException(
-                        "An error has occurred while accessing provided data", e);
+            throw new RuntimeException("An error has occurred while accessing provided data", e);
         }
     }
 
-    private SimpleFeatureCollection createFeatureCollection(List<Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
+    private SimpleFeatureCollection createFeatureCollection(List<Geometry> geometries,
+            CoordinateReferenceSystem coordinateReferenceSystem) {
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-        if(coordinateReferenceSystem==null){
+        if (coordinateReferenceSystem == null) {
             try {
                 coordinateReferenceSystem = CRS.decode("EPSG:4326");
             } catch (NoSuchAuthorityCodeException e) {
-            LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException(
-                        "An error has occurred while trying to decode CRS EPSG:4326", e);
+                LOGGER.error(e.getMessage(), e);
+                throw new RuntimeException("An error has occurred while trying to decode CRS EPSG:4326", e);
             } catch (FactoryException e) {
-            LOGGER.error(e.getMessage());
-                throw new RuntimeException(
-                        "An error has occurred while trying to decode CRS EPSG:432", e);
+                LOGGER.error(e.getMessage());
+                throw new RuntimeException("An error has occurred while trying to decode CRS EPSG:432", e);
             }
             typeBuilder.setCRS(coordinateReferenceSystem);
         }
@@ -201,12 +200,13 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 
         SimpleFeatureType featureType = typeBuilder.buildFeatureType();
 
-        for(int i = 0; i<geometries.size();i++){
-                SimpleFeature feature = GTHelper.createFeature(""+i, geometries.get(i), featureType, new ArrayList<Property>());
-                simpleFeatureList.add(feature);        }
+        for (int i = 0; i < geometries.size(); i++) {
+            SimpleFeature feature =
+                    GTHelper.createFeature("" + i, geometries.get(i), featureType, new ArrayList<Property>());
+            simpleFeatureList.add(feature);
+        }
 
-
-        SimpleFeatureCollection collection =  new ListFeatureCollection(featureType, simpleFeatureList);
+        SimpleFeatureCollection collection = new ListFeatureCollection(featureType, simpleFeatureList);
 
         return collection;
     }

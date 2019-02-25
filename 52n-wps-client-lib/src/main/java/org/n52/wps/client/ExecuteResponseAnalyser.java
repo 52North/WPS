@@ -64,53 +64,68 @@ public class ExecuteResponseAnalyser {
     private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseAnalyser.class);
 
     ProcessDescriptionType processDesc;
+
     ExecuteDocument exec;
+
     Object response;
 
-    public ExecuteResponseAnalyser(ExecuteDocument exec, Object response, ProcessDescriptionType processDesc) throws WPSClientException {
+    public ExecuteResponseAnalyser(ExecuteDocument exec, Object response, ProcessDescriptionType processDesc)
+            throws WPSClientException {
         this.processDesc = processDesc;
-        this.exec= exec;
-        if(response instanceof ExceptionReport){
+        this.exec = exec;
+        if (response instanceof ExceptionReport) {
             throw new WPSClientException("Output is not ComplexData but an Exception Report");
         }
         this.response = response;
     }
 
-
-/**
- * delivers the parsed ComplexData by name
- * @param outputID id of the output element
- * @param binding Class of the output binding, e.g. GenericFileDataBinding
- * @return the parsed ComplexData in the requested format defined by the binding
- * @throws WPSClientException if an exception occurred while getting the ComplexData
- */
-    public IData getComplexData(String outputID, Class<?> binding) throws WPSClientException {
+    /**
+     * delivers the parsed ComplexData by name
+     * 
+     * @param outputID
+     *            id of the output element
+     * @param binding
+     *            Class of the output binding, e.g. GenericFileDataBinding
+     * @return the parsed ComplexData in the requested format defined by the
+     *         binding
+     * @throws WPSClientException
+     *             if an exception occurred while getting the ComplexData
+     */
+    public IData getComplexData(String outputID,
+            Class<?> binding) throws WPSClientException {
         return parseProcessOutput(outputID, binding);
 
     }
 
     /**
      * delivers the parsed ComplexData by index
-     * @param index index of the output element starting with 0
-     * @param binding Class of the output binding, e.g. GenericFileDataBinding
-     * @return the parsed ComplexData in the requested format defined by the binding
-     * @throws WPSClientException if an exception occurred while getting the ComplexData
+     * 
+     * @param index
+     *            index of the output element starting with 0
+     * @param binding
+     *            Class of the output binding, e.g. GenericFileDataBinding
+     * @return the parsed ComplexData in the requested format defined by the
+     *         binding
+     * @throws WPSClientException
+     *             if an exception occurred while getting the ComplexData
      */
-    public IData getComplexDataByIndex(int index, Class<?> binding) throws WPSClientException {
+    public IData getComplexDataByIndex(int index,
+            Class<?> binding) throws WPSClientException {
         ExecuteResponseDocument doc = null;
-        if(response instanceof ExecuteResponseDocument){
+        if (response instanceof ExecuteResponseDocument) {
             doc = (ExecuteResponseDocument) response;
-        }else{
-            throw new WPSClientException("Output cannot be determined by index since it is either raw data or an exception report");
+        } else {
+            throw new WPSClientException(
+                    "Output cannot be determined by index since it is either raw data or an exception report");
         }
         OutputDataType[] outputs = doc.getExecuteResponse().getProcessOutputs().getOutputArray();
         int counter = 0;
-        for(OutputDataType output : outputs) {
-            if(output.getData().getComplexData() != null) {
-                if(counter == index) {
+        for (OutputDataType output : outputs) {
+            if (output.getData().getComplexData() != null) {
+                if (counter == index) {
                     return this.parseProcessOutput(output.getIdentifier().getStringValue(), binding);
                 }
-                counter ++;
+                counter++;
             }
         }
         return null;
@@ -118,25 +133,30 @@ public class ExecuteResponseAnalyser {
 
     /**
      * delivers just the URL of a referenced output identified by index
-     * @param index index of the output
+     * 
+     * @param index
+     *            index of the output
      * @return URL of the stored output
-     * @throws WPSClientException  if an exception occurred while getting the ComplexData reference
+     * @throws WPSClientException
+     *             if an exception occurred while getting the ComplexData
+     *             reference
      */
     public String getComplexReferenceByIndex(int index) throws WPSClientException {
         ExecuteResponseDocument doc = null;
-        if(response instanceof ExecuteResponseDocument){
+        if (response instanceof ExecuteResponseDocument) {
             doc = (ExecuteResponseDocument) response;
-        }else{
-            throw new WPSClientException("Output cannot be determined by index since it is either raw data or an exception report");
+        } else {
+            throw new WPSClientException(
+                    "Output cannot be determined by index since it is either raw data or an exception report");
         }
         OutputDataType[] outputs = doc.getExecuteResponse().getProcessOutputs().getOutputArray();
         int counter = 0;
-        for(OutputDataType output : outputs) {
-            if(output.getReference() != null) {
-                if(counter == index) {
+        for (OutputDataType output : outputs) {
+            if (output.getReference() != null) {
+                if (counter == index) {
                     return output.getReference().getHref();
                 }
-                counter ++;
+                counter++;
             }
         }
         RuntimeException rte = new RuntimeException("No reference found in response");
@@ -144,33 +164,36 @@ public class ExecuteResponseAnalyser {
         throw rte;
     }
 
-
-
-
     /**
      * parses a specific WPS output
      *
-     * @param outputID id of the output
-     * @param outputDataBindingClass class of the desired output binding
+     * @param outputID
+     *            id of the output
+     * @param outputDataBindingClass
+     *            class of the desired output binding
      * @return parsed WPS output as IData
-     * @throws WPSClientException  if an exception occurred while parsing the process output
+     * @throws WPSClientException
+     *             if an exception occurred while parsing the process output
      */
-    private IData parseProcessOutput(String outputID, Class<?> outputDataBindingClass) throws WPSClientException {
+    private IData parseProcessOutput(String outputID,
+            Class<?> outputDataBindingClass) throws WPSClientException {
         OutputDescriptionType outputDesc = null;
 
         String schema = null;
         String mimeType = null;
         String encoding = null;
 
-        if(exec.getExecute().isSetResponseForm() && exec.getExecute().getResponseForm().isSetRawDataOutput()){
+        if (exec.getExecute().isSetResponseForm() && exec.getExecute().getResponseForm().isSetRawDataOutput()) {
             // get data specification from request
             schema = exec.getExecute().getResponseForm().getRawDataOutput().getSchema();
             mimeType = exec.getExecute().getResponseForm().getRawDataOutput().getMimeType();
             encoding = exec.getExecute().getResponseForm().getRawDataOutput().getEncoding();
-        }else if(exec.getExecute().isSetResponseForm() && exec.getExecute().getResponseForm().isSetResponseDocument()){
-            DocumentOutputDefinitionType[] outputs = exec.getExecute().getResponseForm().getResponseDocument().getOutputArray();
-            for(DocumentOutputDefinitionType output : outputs){
-                if(output.getIdentifier().getStringValue().equals(outputID)){
+        } else if (exec.getExecute().isSetResponseForm()
+                && exec.getExecute().getResponseForm().isSetResponseDocument()) {
+            DocumentOutputDefinitionType[] outputs =
+                    exec.getExecute().getResponseForm().getResponseDocument().getOutputArray();
+            for (DocumentOutputDefinitionType output : outputs) {
+                if (output.getIdentifier().getStringValue().equals(outputID)) {
                     schema = output.getSchema();
                     mimeType = output.getMimeType();
                     encoding = output.getEncoding();
@@ -179,9 +202,9 @@ public class ExecuteResponseAnalyser {
 
         }
 
-        if(mimeType==null){
-            for(OutputDescriptionType tempDesc : processDesc.getProcessOutputs().getOutputArray()) {
-                if(outputID.equals(tempDesc.getIdentifier().getStringValue())) {
+        if (mimeType == null) {
+            for (OutputDescriptionType tempDesc : processDesc.getProcessOutputs().getOutputArray()) {
+                if (outputID.equals(tempDesc.getIdentifier().getStringValue())) {
                     outputDesc = tempDesc;
                     break;
                 }
@@ -192,17 +215,19 @@ public class ExecuteResponseAnalyser {
             schema = outputDesc.getComplexOutput().getDefault().getFormat().getSchema();
         }
 
-        IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, outputDataBindingClass);
+        IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding,
+                outputDataBindingClass);
         InputStream is = null;
-        if(response instanceof InputStream){
-            is = (InputStream)response;
-        }else if (response instanceof ExecuteResponseDocument){
+        if (response instanceof InputStream) {
+            is = (InputStream) response;
+        } else if (response instanceof ExecuteResponseDocument) {
             ExecuteResponseDocument responseDocument = (ExecuteResponseDocument) response;
-            OutputDataType[] processOutputs = responseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
-            for(OutputDataType processOutput : processOutputs){
-                if(processOutput.getIdentifier().getStringValue().equalsIgnoreCase(outputID)){
-                    if(processOutput.isSetReference()){
-                        //request the reference
+            OutputDataType[] processOutputs =
+                    responseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
+            for (OutputDataType processOutput : processOutputs) {
+                if (processOutput.getIdentifier().getStringValue().equalsIgnoreCase(outputID)) {
+                    if (processOutput.isSetReference()) {
+                        // request the reference
                         String urlString = processOutput.getReference().getHref();
                         URL url;
                         try {
@@ -214,13 +239,15 @@ public class ExecuteResponseAnalyser {
                             throw new WPSClientException("Could not fetch response from referenced URL", e);
                         }
 
-                    }else{
+                    } else {
                         String complexDataContent;
                         try {
 
-                            NodeList candidateNodes = processOutput.getData().getComplexData().getDomNode().getChildNodes();
+                            NodeList candidateNodes =
+                                    processOutput.getData().getComplexData().getDomNode().getChildNodes();
 
-                            Node complexDataNode = candidateNodes.getLength() > 1 ? candidateNodes.item(1) : candidateNodes.item(0);
+                            Node complexDataNode =
+                                    candidateNodes.getLength() > 1 ? candidateNodes.item(1) : candidateNodes.item(0);
 
                             complexDataContent = XMLUtil.nodeToString(complexDataNode);
                             is = new ByteArrayInputStream(complexDataContent.getBytes());
@@ -234,15 +261,14 @@ public class ExecuteResponseAnalyser {
                 }
             }
 
-        }else{
+        } else {
             throw new WPSClientException("Wrong output type");
         }
 
-
-        if(parser != null) {
-            if(encoding != null && encoding.equalsIgnoreCase("base64")){
+        if (parser != null) {
+            if (encoding != null && encoding.equalsIgnoreCase("base64")) {
                 return parser.parseBase64(is, mimeType, schema);
-            }else{
+            } else {
                 return parser.parse(is, mimeType, schema);
             }
         }

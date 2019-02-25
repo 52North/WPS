@@ -58,7 +58,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
- * Management class to store and retrieve script files and their corresponding well known names.
+ * Management class to store and retrieve script files and their corresponding
+ * well known names.
  *
  * @author Daniel Nüst
  *
@@ -87,7 +88,7 @@ public class ScriptFileRepository {
     }
 
     public File getScriptFile(String wkn) {
-        if ( !wknToFileMap.containsKey(wkn)) {
+        if (!wknToFileMap.containsKey(wkn)) {
             throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
         }
         final Map<Integer, File> versionedScriptFiles = getScriptFileVersionsForWKN(wkn);
@@ -101,26 +102,26 @@ public class ScriptFileRepository {
     }
 
     public boolean hasReadableScriptFile(String wkn) {
-        if ( !wknToFileMap.containsKey(wkn)) {
+        if (!wknToFileMap.containsKey(wkn)) {
             LOGGER.info("Missing R Script for process '" + wkn + "'.");
             return false;
-            //throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
+            // throw new IllegalStateException("Missing R Script for process '"
+            // + wkn + "'.");
         }
         final File file = getScriptFile(wkn);
-        boolean readable = file != null
-                && file.exists()
-                && file.isFile()
-                && file.canRead();
+        boolean readable = file != null && file.exists() && file.isFile() && file.canRead();
         return readable;
 
     }
 
     /**
-     * @param file the file to check.
-     * @return <code>true</code> if script file is registered, <code>false</code> otherwise.
+     * @param file
+     *            the file to check.
+     * @return <code>true</code> if script file is registered,
+     *         <code>false</code> otherwise.
      */
     public boolean isRegisteredScriptFile(File file) {
-        if ( !fileToWknMap.containsKey(file)) {
+        if (!fileToWknMap.containsKey(file)) {
             LOGGER.debug("File {} is not registered: {}", file.getAbsoluteFile());
             return false;
         }
@@ -138,29 +139,29 @@ public class ScriptFileRepository {
         return validateScriptFile(getScriptFile(wkn), wkn);
     }
 
-    public File validateScriptFile(File file, String wkn) throws InvalidRScriptException {
+    public File validateScriptFile(File file,
+            String wkn) throws InvalidRScriptException {
         StringBuilder message = new StringBuilder();
-        if ( !hasReadableScriptFile(wkn)) {
+        if (!hasReadableScriptFile(wkn)) {
             String fname = getScriptFileName(wkn);
-            message.append("Error in Process: '").append(wkn)
-                    .append("' with file '").append(fname).append("': ");
+            message.append("Error in Process: '").append(wkn).append("' with file '").append(fname).append("': ");
             if (file == null) {
                 message.append("File is null. ");
                 throw new InvalidRScriptException(message.toString());
             }
-            if ( !file.exists()) {
+            if (!file.exists()) {
                 message.append("File does not exist. ");
                 throw new InvalidRScriptException(message.toString());
             }
-            if ( !file.isFile()) {
+            if (!file.isFile()) {
                 message.append("Is not a file. ");
                 throw new InvalidRScriptException(message.toString());
             }
-            if ( !file.canRead()) {
+            if (!file.canRead()) {
                 message.append("Cannot read file.");
                 throw new InvalidRScriptException(message.toString());
             }
-        } else if ( !isValidScriptFile(wkn)) {
+        } else if (!isValidScriptFile(wkn)) {
             message.append("Invalid script content.");
             throw new InvalidRScriptException(message.toString());
         }
@@ -169,24 +170,21 @@ public class ScriptFileRepository {
 
     public boolean isValidScriptFile(String wkn) {
         try (FileInputStream fis = new FileInputStream(getScriptFile(wkn));) {
-            if ( !hasReadableScriptFile(wkn)) {
+            if (!hasReadableScriptFile(wkn)) {
                 LOGGER.error("Script file not available/readable for process '{}'!", wkn);
                 return false;
             }
             final boolean valid = annotationParser.validateScript(fis, wkn);
-            if ( !valid) {
+            if (!valid) {
                 final Collection<Exception> errors = annotationParser.validateScriptWithErrors(fis, wkn);
-                LOGGER.error("invalid script content: {}", errors.stream()
-                        .map(e -> e.getMessage())
-                        .collect(Collectors.joining(", \n")));
+                LOGGER.error("invalid script content: {}",
+                        errors.stream().map(e -> e.getMessage()).collect(Collectors.joining(", \n")));
             }
             return valid;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Script file unavailable for process '{}'.", wkn, e);
             return false;
-        }
-        catch (RuntimeException | RAnnotationException e) {
+        } catch (RuntimeException | RAnnotationException e) {
             LOGGER.error("Validation of process '{}' failed.", wkn, e);
             return false;
         }
@@ -197,24 +195,27 @@ public class ScriptFileRepository {
     }
 
     public String getWKNForScriptFile(File file) throws RAnnotationException, ExceptionReport {
-//        if ( !file.exists())
-//            throw new FileNotFoundException("File not found: " + file.getName());
+        // if ( !file.exists())
+        // throw new FileNotFoundException("File not found: " + file.getName());
         return fileToWknMap.get(file);
     }
 
     /**
      * Register all scripts in the given directory, returns true only if all
-     * scripts could be registered and does not provide information about which script failed.
+     * scripts could be registered and does not provide information about which
+     * script failed.
      *
-     * @param directory the script directory.
-     * @return <code>true</code> only if all scripts could be registered, <code>false</code> otherwise.
+     * @param directory
+     *            the script directory.
+     * @return <code>true</code> only if all scripts could be registered,
+     *         <code>false</code> otherwise.
      */
     public boolean registerScriptFiles(File directory) {
-        if ( !directory.exists()) {
+        if (!directory.exists()) {
             LOGGER.warn("File does not exist: " + directory);
             return false;
         }
-        if ( !directory.isDirectory()) {
+        if (!directory.isDirectory()) {
             LOGGER.error("Provided file is not a directory, cannot load scripts: {}", directory);
             return false;
         }
@@ -231,13 +232,12 @@ public class ScriptFileRepository {
         boolean allRegistered = true;
         for (File file : files) {
             try {
-                if ( !registerScriptFile(file)) {
+                if (!registerScriptFile(file)) {
                     LOGGER.debug("Could not register script based on file {}", file);
                     allRegistered = false;
                 }
                 LOGGER.debug("Registered script in file {} into {}", file, this);
-            }
-            catch (RAnnotationException | ExceptionReport e) {
+            } catch (RAnnotationException | ExceptionReport e) {
                 LOGGER.error("Could not register script based on file {}", file, e);
                 allRegistered = false;
             }
@@ -252,23 +252,20 @@ public class ScriptFileRepository {
 
             if (fileToWknMap.containsKey(file.getAbsoluteFile())) {
                 LOGGER.debug("File already registered, not doing it again: {}", file);
-            }
-            else {
+            } else {
                 LOGGER.info("Registering script file {} from input {}", file, fis);
 
                 List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
                 if (annotations.size() < 1) {
                     LOGGER.warn("Could not parse any annotations from file '{}'. Did not load the script.", file);
                     registered = false;
-                }
-                else {
-                    RAnnotation descriptionAnnotation = RAnnotation.filterFirstMatchingAnnotation(annotations,
-                                                                                                  RAnnotationType.DESCRIPTION);
+                } else {
+                    RAnnotation descriptionAnnotation =
+                            RAnnotation.filterFirstMatchingAnnotation(annotations, RAnnotationType.DESCRIPTION);
                     if (descriptionAnnotation == null) {
                         LOGGER.error("No description annotation for script '{}' - cannot be registered!", file);
                         registered = false;
-                    }
-                    else {
+                    } else {
                         String process_id = descriptionAnnotation.getStringValue(RAttribute.IDENTIFIER);
                         String versionString = descriptionAnnotation.getStringValue(RAttribute.VERSION);
                         if (versionString == null) {
@@ -280,59 +277,52 @@ public class ScriptFileRepository {
                         Integer version = null;
                         try {
                             version = Integer.parseInt(versionString);
-                        }
-                        catch (NumberFormatException e) {
-                            String message = String.format("Version '%s' cannot be parsed to integer! Process: '%s', file: '%s'",
-                                                           versionString,
-                                                           wkn,
-                                                           file.getAbsoluteFile());
+                        } catch (NumberFormatException e) {
+                            String message =
+                                    String.format("Version '%s' cannot be parsed to integer! Process: '%s', file: '%s'",
+                                            versionString, wkn, file.getAbsoluteFile());
                             LOGGER.error(message);
                             throw new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE, e);
                         }
                         LOGGER.debug("Adding script based on description annotation: id = {}, version = {}, wkn = {}",
-                                     process_id,
-                                     version,
-                                     wkn);
+                                process_id, version, wkn);
 
                         boolean identifierConflict = false;
                         String identifierMessage = null;
 
                         if (fileToWknMap.containsValue(wkn)) {
                             File conflictFile = getScriptFile(wkn);
-                            if ( !conflictFile.exists()) {
-                                LOGGER.info("Mapping for process '{}' with file '{}' replaced by file '{}'",
-                                            wkn,
-                                            conflictFile.getName(),
-                                            file.getName());
-                            }
-                            else if ( !file.equals(conflictFile)) {
-                                identifierMessage = String.format("Conflicting identifier '%s' detected for R scripts '%s' and '%s'",
-                                                                  wkn,
-                                                                  file.getAbsoluteFile(),
-                                                                  conflictFile.getAbsoluteFile());
+                            if (!conflictFile.exists()) {
+                                LOGGER.info("Mapping for process '{}' with file '{}' replaced by file '{}'", wkn,
+                                        conflictFile.getName(), file.getName());
+                            } else if (!file.equals(conflictFile)) {
+                                identifierMessage = String.format(
+                                        "Conflicting identifier '%s' detected for R scripts '%s' and '%s'", wkn,
+                                        file.getAbsoluteFile(), conflictFile.getAbsoluteFile());
                                 LOGGER.warn(identifierMessage);
-                                identifierConflict = true; // could still be different versions!
+                                identifierConflict = true; // could still be
+                                                           // different
+                                                           // versions!
                             }
                         }
 
                         if (identifierConflict && wknToFileMap.containsKey(wkn)
                                 && wknToFileMap.get(wkn).containsKey(version)) {
-                            // same version with the same identifier, throw identifier message
+                            // same version with the same identifier, throw
+                            // identifier message
                             throw new ExceptionReport(identifierMessage, ExceptionReport.NO_APPLICABLE_CODE);
                         }
 
-                        if ( !wknToFileMap.containsKey(wkn)) {
+                        if (!wknToFileMap.containsKey(wkn)) {
                             wknToFileMap.put(wkn, new TreeMap<Integer, File>(Collections.reverseOrder()));
                         }
 
                         // check conflicting versions
                         Map<Integer, File> files = wknToFileMap.get(wkn);
                         if (files.containsKey(version)) {
-                            String message = String.format("Conflicting version '%s' detected for algorithm '%s':\nFiles: %s \nTo be added: '%s'",
-                                                           version,
-                                                           wkn,
-                                                           Arrays.deepToString(files.entrySet().toArray()),
-                                                           file);
+                            String message = String.format(
+                                    "Conflicting version '%s' detected for algorithm '%s':\nFiles: %s \nTo be added: '%s'",
+                                    version, wkn, Arrays.deepToString(files.entrySet().toArray()), file);
                             LOGGER.error(message);
                             throw new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
                         }
@@ -344,8 +334,7 @@ public class ScriptFileRepository {
                     }
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Could not create input stream for file '{}'", file, e);
         }
 
@@ -359,8 +348,9 @@ public class ScriptFileRepository {
         this.fileToWknMap.clear();
     }
 
-    public File getImportedFileForWKN(String scriptId, String importId) throws InvalidRScriptException {
-//        File basefile = getValidatedScriptFile(scriptId);
+    public File getImportedFileForWKN(String scriptId,
+            String importId) throws InvalidRScriptException {
+        // File basefile = getValidatedScriptFile(scriptId);
         File basefile = getScriptFile(scriptId);
         Path basepath = basefile.toPath();
         Path importedFile = basepath.resolveSibling(importId);
@@ -368,9 +358,11 @@ public class ScriptFileRepository {
         LOGGER.debug("Resolved imported '{}' for script with id '{}': {}", importId, scriptId, importedFile);
         return importedFile.toFile();
 
-//        LOGGER.warn("Could not find import {} for {} at {}", importId, scriptId, importedFile);
-//        throw new ExceptionReport("Imported script '" + importId + "' not found for script '" + scriptId + "'.",
-//                                  ExceptionReport.NO_APPLICABLE_CODE);
+        // LOGGER.warn("Could not find import {} for {} at {}", importId,
+        // scriptId, importedFile);
+        // throw new ExceptionReport("Imported script '" + importId + "' not
+        // found for script '" + scriptId + "'.",
+        // ExceptionReport.NO_APPLICABLE_CODE);
     }
 
 }

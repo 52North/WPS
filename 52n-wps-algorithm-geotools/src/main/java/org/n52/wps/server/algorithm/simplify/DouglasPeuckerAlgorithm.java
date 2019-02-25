@@ -77,95 +77,97 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 
-public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
+public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm {
     Logger LOGGER = LoggerFactory.getLogger(DouglasPeuckerAlgorithm.class);
 
     private List<String> errors = new ArrayList<String>();
+
     private Double percentage;
 
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
-        if(inputData==null || !inputData.containsKey("FEATURES")){
+        if (inputData == null || !inputData.containsKey("FEATURES")) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         List<IData> dataList = inputData.get("FEATURES");
-        if(dataList == null || dataList.size() != 1){
+        if (dataList == null || dataList.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = dataList.get(0);
 
-        FeatureCollection<?,?> featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
+        FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
-        if( !inputData.containsKey("TOLERANCE")){
+        if (!inputData.containsKey("TOLERANCE")) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         List<IData> widthDataList = inputData.get("TOLERANCE");
-        if(widthDataList == null || widthDataList.size() != 1){
+        if (widthDataList == null || widthDataList.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         Double tolerance = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
 
-            double i = 0;
-            int totalNumberOfFeatures = featureCollection.size();
-            String uuid = UUID.randomUUID().toString();
-            List<SimpleFeature> featureList = new ArrayList<>();
-            SimpleFeatureType featureType = null;
-            LOGGER.debug("");
-            for (FeatureIterator<?> ia = featureCollection.features(); ia.hasNext();) {
-                /**
-                 * ******* How to publish percentage results ************
-                 */
-                i = i + 1;
-                percentage = (i / totalNumberOfFeatures) * 100;
-                this.update(new Integer(percentage.intValue()));
+        double i = 0;
+        int totalNumberOfFeatures = featureCollection.size();
+        String uuid = UUID.randomUUID().toString();
+        List<SimpleFeature> featureList = new ArrayList<>();
+        SimpleFeatureType featureType = null;
+        LOGGER.debug("");
+        for (FeatureIterator<?> ia = featureCollection.features(); ia.hasNext();) {
+            /**
+             * ******* How to publish percentage results ************
+             */
+            i = i + 1;
+            percentage = (i / totalNumberOfFeatures) * 100;
+            this.update(new Integer(percentage.intValue()));
 
-                /**
-                 * ******************
-                 */
-                SimpleFeature feature = (SimpleFeature) ia.next();
-                Geometry geometry = (Geometry) feature.getDefaultGeometry();
-                Geometry geometryBuffered = simplify(geometry, tolerance);
+            /**
+             * ******************
+             */
+            SimpleFeature feature = (SimpleFeature) ia.next();
+            Geometry geometry = (Geometry) feature.getDefaultGeometry();
+            Geometry geometryBuffered = simplify(geometry, tolerance);
 
-                if (i == 1) {
-                    CoordinateReferenceSystem crs = feature.getFeatureType().getCoordinateReferenceSystem();
-                    if (geometry.getUserData() instanceof CoordinateReferenceSystem) {
-                        crs = ((CoordinateReferenceSystem) geometry.getUserData());
-                    }
-                    featureType = GTHelper.createFeatureType(feature.getProperties(), geometryBuffered, uuid, crs);
-                    QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
-                    SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
-
+            if (i == 1) {
+                CoordinateReferenceSystem crs = feature.getFeatureType().getCoordinateReferenceSystem();
+                if (geometry.getUserData() instanceof CoordinateReferenceSystem) {
+                    crs = ((CoordinateReferenceSystem) geometry.getUserData());
                 }
+                featureType = GTHelper.createFeatureType(feature.getProperties(), geometryBuffered, uuid, crs);
+                QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+                SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 
-                if (geometryBuffered != null) {
-                    SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(), geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
-                    feature.setDefaultGeometry(geometryBuffered);
-                    featureList.add(createdFeature);
-                } else {
-                    LOGGER.warn("GeometryCollections are not supported, or result null. Original dataset will be returned");
-                }
             }
-                FeatureCollection<?,?> resultCollection = new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
+
+            if (geometryBuffered != null) {
+                SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(),
+                        geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
+                feature.setDefaultGeometry(geometryBuffered);
+                featureList.add(createdFeature);
+            } else {
+                LOGGER.warn("GeometryCollections are not supported, or result null. Original dataset will be returned");
+            }
+        }
+        FeatureCollection<?, ?> resultCollection =
+                new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
         HashMap<String, IData> result = new HashMap<String, IData>();
         result.put("SIMPLIFIED_FEATURES", new GTVectorDataBinding(resultCollection));
         return result;
     }
-
 
     public List<String> getErrors() {
         return errors;
     }
 
     public Class<?> getInputDataType(String id) {
-        if(id.equalsIgnoreCase("FEATURES")){
+        if (id.equalsIgnoreCase("FEATURES")) {
             return GTVectorDataBinding.class;
-        }else if(id.equalsIgnoreCase("TOLERANCE")){
+        } else if (id.equalsIgnoreCase("TOLERANCE")) {
             return LiteralDoubleBinding.class;
         }
         return null;
     }
 
     public Class<?> getOutputDataType(String id) {
-        if(id.equalsIgnoreCase("SIMPLIFIED_FEATURES")){
+        if (id.equalsIgnoreCase("SIMPLIFIED_FEATURES")) {
             return GTVectorDataBinding.class;
         }
         return null;
@@ -173,7 +175,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 
     @Override
     public List<String> getInputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add("FEATURES");
         identifierList.add("TOLERANCE");
         return identifierList;
@@ -181,7 +183,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 
     @Override
     public List<String> getOutputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add("SIMPLIFIED_FEATURES");
         return identifierList;
     }

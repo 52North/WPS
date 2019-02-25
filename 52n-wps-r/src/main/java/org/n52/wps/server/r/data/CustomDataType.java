@@ -89,7 +89,7 @@ public class CustomDataType implements RTypeDefinition {
     }
 
     @Override
-    public Class< ? extends IData> getIDataClass() {
+    public Class<? extends IData> getIDataClass() {
         return GenericFileDataBinding.class;
     }
 

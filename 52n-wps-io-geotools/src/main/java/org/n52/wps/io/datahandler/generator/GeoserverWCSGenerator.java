@@ -72,9 +72,13 @@ import org.w3c.dom.Element;
 public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGenerator.class);
+
     private String username;
+
     private String password;
+
     private String host;
+
     private String port;
 
     public GeoserverWCSGenerator() {
@@ -84,14 +88,16 @@ public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
         InputStream stream = null;
         try {
             Document doc = storeLayer(data);
             String xmlString = XMLUtil.nodeToString(doc);
             stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
-        } catch(TransformerException e){
+        } catch (TransformerException e) {
             LOGGER.error("Error generating WCS output. Reason: ", e);
             throw new RuntimeException("Error generating WCS output. Reason: " + e);
         } catch (IOException e) {
@@ -104,40 +110,42 @@ public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
         return stream;
     }
 
-    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
+    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException {
         File file = null;
         String storeName = "";
 
-        if(coll instanceof GTRasterDataBinding){
+        if (coll instanceof GTRasterDataBinding) {
             GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
             GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload(), null);
             file = fileData.getBaseFile(true);
         }
-        if(coll instanceof GeotiffBinding){
+        if (coll instanceof GeotiffBinding) {
             GeotiffBinding data = (GeotiffBinding) coll;
             file = (File) data.getPayload();
         }
 
         storeName = file.getName();
 
-        storeName = storeName +"_" + UUID.randomUUID();
+        storeName = storeName + "_" + UUID.randomUUID();
         GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 
         String result = geoserverUploader.createWorkspace();
         LOGGER.debug(result);
-        if(coll instanceof GTRasterDataBinding){
+        if (coll instanceof GTRasterDataBinding) {
             result = geoserverUploader.uploadGeotiff(file, storeName);
         }
         LOGGER.debug(result);
 
-        String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
+        String capabilitiesLink =
+                "http://" + host + ":" + port + "/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
 
         Document doc = createXML(storeName, capabilitiesLink);
         return doc;
 
     }
 
-    private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
+    private Document createXML(String layerName,
+            String getCapabilitiesLink) throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc = factory.newDocumentBuilder().newDocument();
 
@@ -152,10 +160,11 @@ public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
         getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
         root.appendChild(getCapabilitiesLinkElement);
         /*
-        Element directResourceLinkElement = doc.createElement("DirectResourceLink");
-        directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
-        root.appendChild(directResourceLinkElement);
-        */
+         * Element directResourceLinkElement =
+         * doc.createElement("DirectResourceLink");
+         * directResourceLinkElement.appendChild(doc.createTextNode(
+         * getMapRequest)); root.appendChild(directResourceLinkElement);
+         */
         doc.appendChild(root);
 
         return doc;

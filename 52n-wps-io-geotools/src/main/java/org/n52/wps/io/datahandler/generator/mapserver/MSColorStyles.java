@@ -54,7 +54,8 @@ import edu.umn.gis.mapscript.colorObj;
  *
  * @author Jacob Mendt
  *
- * TODO Offer various different styles (For example getBlack() getGrey() ...)
+ *         TODO Offer various different styles (For example getBlack() getGrey()
+ *         ...)
  */
 public class MSColorStyles {
 

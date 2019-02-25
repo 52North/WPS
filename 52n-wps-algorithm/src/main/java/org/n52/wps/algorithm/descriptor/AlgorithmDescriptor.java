@@ -31,10 +31,15 @@ import java.util.Map;
 public class AlgorithmDescriptor extends Descriptor {
 
     private final String version;
+
     private final boolean storeSupported;
+
     private final boolean statusSupported;
+
     private final Map<String, InputDescriptor> inputDescriptorMap;
+
     private final Map<String, OutputDescriptor> outputDescriptorMap;
+
     private final List<MetadataDescriptor> metadataDescriptors;
 
     AlgorithmDescriptor(Builder<? extends Builder<?>> builder) {
@@ -43,9 +48,7 @@ public class AlgorithmDescriptor extends Descriptor {
         this.storeSupported = builder.storeSupported;
         this.statusSupported = builder.statusSupported;
 
-        Preconditions.checkState(
-                builder.outputDescriptors.size() > 0,
-                "Need at minimum 1 output for algorithm.");
+        Preconditions.checkState(builder.outputDescriptors.size() > 0, "Need at minimum 1 output for algorithm.");
 
         // LinkedHaskMap to preserve order
         Map<String, InputDescriptor> iMap = new LinkedHashMap<String, InputDescriptor>();
@@ -116,19 +119,25 @@ public class AlgorithmDescriptor extends Descriptor {
         public BuilderTyped(String identifier) {
             super(identifier);
         }
+
         @Override
         protected BuilderTyped self() {
             return this;
         }
     }
 
-    public static abstract class Builder<B extends Builder<B>> extends Descriptor.Builder<B>{
+    public static abstract class Builder<B extends Builder<B>> extends Descriptor.Builder<B> {
 
         private String version = "1.0.0";
+
         private boolean storeSupported = true;
+
         private boolean statusSupported = true;
+
         private List<InputDescriptor> inputDescriptors;
+
         private List<OutputDescriptor> outputDescriptors;
+
         private List<MetadataDescriptor> metadataDescriptors;
 
         protected Builder(String identifier) {

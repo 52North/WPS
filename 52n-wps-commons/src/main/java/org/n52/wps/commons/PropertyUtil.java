@@ -40,8 +40,11 @@ public class PropertyUtil {
     private final static Joiner JOINER = Joiner.on(".");
 
     private final String systemPropertyRoot;
+
     private final Map<String, ConfigurationEntry<?>> propertyNameMap;
+
     private ConfigurationModule configurationModule;
+
     private ConfigurationManager configurationManager;
 
     public PropertyUtil(ConfigurationModule configurationModule) {
@@ -60,7 +63,7 @@ public class PropertyUtil {
         fillPropertyNameMap();
     }
 
-    private void fillPropertyNameMap(){
+    private void fillPropertyNameMap() {
         List<? extends ConfigurationEntry<?>> properties = configurationModule.getConfigurationEntries();
         if (properties != null) {
             for (ConfigurationEntry<?> property : properties) {
@@ -72,7 +75,8 @@ public class PropertyUtil {
 
     }
 
-    public boolean extractBoolean(final String valueKey, boolean valueDefault) {
+    public boolean extractBoolean(final String valueKey,
+            boolean valueDefault) {
 
         String valueAsString;
 
@@ -80,9 +84,10 @@ public class PropertyUtil {
             String systemPropertyName = JOINER.join(systemPropertyRoot, valueKey);
             valueAsString = System.getProperty(systemPropertyName);
             if (valueAsString != null) {
-               boolean value = Boolean.parseBoolean(valueAsString);
-               LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName, valueAsString, value);
-               return value;
+                boolean value = Boolean.parseBoolean(valueAsString);
+                LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName,
+                        valueAsString, value);
+                return value;
             } else {
                 LOGGER.debug("System property \"{}\" not present", systemPropertyName);
             }
@@ -94,20 +99,21 @@ public class PropertyUtil {
         if (property != null) {
             valueAsString = property.getValue().toString();
             if (valueAsString != null) {
-               boolean value = Boolean.parseBoolean(valueAsString);
-               LOGGER.info("Config property \"{}\" exists, using value of: {} ({}) ", valueKey, valueAsString, value);
-               return value;
+                boolean value = Boolean.parseBoolean(valueAsString);
+                LOGGER.info("Config property \"{}\" exists, using value of: {} ({}) ", valueKey, valueAsString, value);
+                return value;
             } else {
-               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
+                LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
 
-        if(configurationModule != null && configurationManager != null){
-            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        if (configurationModule != null && configurationManager != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices()
+                    .getConfigurationEntry(configurationModule, valueKey);
 
-            if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
+            if (configurationEntry != null && configurationEntry.getValue() instanceof Boolean) {
                 return (Boolean) configurationEntry.getValue();
             }
         }
@@ -116,7 +122,8 @@ public class PropertyUtil {
         return valueDefault;
     }
 
-    public long extractLong(final String valueKey, long valueDefault) {
+    public long extractLong(final String valueKey,
+            long valueDefault) {
 
         String valueAsString;
 
@@ -126,10 +133,12 @@ public class PropertyUtil {
             if (valueAsString != null) {
                 try {
                     long value = Long.parseLong(valueAsString);
-                    LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName, valueAsString, value);
+                    LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName,
+                            valueAsString, value);
                     return value;
                 } catch (NumberFormatException e) {
-                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey,
+                            valueAsString);
                 }
             } else {
                 LOGGER.debug("System property \"{}\" not present", systemPropertyName);
@@ -147,19 +156,21 @@ public class PropertyUtil {
                     LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
                     return value;
                 } catch (NumberFormatException e) {
-                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey,
+                            valueAsString);
                 }
             } else {
-               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
+                LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
 
-        if(configurationModule != null && configurationManager != null){
-            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        if (configurationModule != null && configurationManager != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices()
+                    .getConfigurationEntry(configurationModule, valueKey);
 
-            if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
+            if (configurationEntry != null && configurationEntry.getValue() instanceof Long) {
                 return (Long) configurationEntry.getValue();
             }
         }
@@ -168,7 +179,8 @@ public class PropertyUtil {
         return valueDefault;
     }
 
-    public double extractDouble(final String valueKey, double valueDefault) {
+    public double extractDouble(final String valueKey,
+            double valueDefault) {
 
         String valueAsString;
 
@@ -178,10 +190,12 @@ public class PropertyUtil {
             if (valueAsString != null) {
                 try {
                     double value = Double.parseDouble(valueAsString);
-                    LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName, valueAsString, value);
+                    LOGGER.info("System property \"{}\" exists, using value of: {} ({}) ", systemPropertyName,
+                            valueAsString, value);
                     return value;
                 } catch (NumberFormatException e) {
-                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey,
+                            valueAsString);
                 }
             } else {
                 LOGGER.debug("System property \"{}\" not present", systemPropertyName);
@@ -199,19 +213,21 @@ public class PropertyUtil {
                     LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
                     return value;
                 } catch (NumberFormatException e) {
-                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey,
+                            valueAsString);
                 }
             } else {
-               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
+                LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
 
-        if(configurationModule != null && configurationManager != null){
-            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        if (configurationModule != null && configurationManager != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices()
+                    .getConfigurationEntry(configurationModule, valueKey);
 
-            if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
+            if (configurationEntry != null && configurationEntry.getValue() instanceof Double) {
                 return (Double) configurationEntry.getValue();
             }
         }
@@ -220,7 +236,8 @@ public class PropertyUtil {
         return valueDefault;
     }
 
-    public String extractString(String valueKey, String valueDefault) {
+    public String extractString(String valueKey,
+            String valueDefault) {
 
         String value;
 
@@ -231,7 +248,7 @@ public class PropertyUtil {
                 LOGGER.info("System property \"{}\" exists, using database path of: ", systemPropertyName, value);
                 return value;
             } else {
-               LOGGER.debug("System property \"{}\" not present", systemPropertyName);
+                LOGGER.debug("System property \"{}\" not present", systemPropertyName);
             }
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
@@ -241,19 +258,20 @@ public class PropertyUtil {
         if (property != null) {
             value = property.getValue().toString();
             if (value != null) {
-               LOGGER.info("Config property \"{}\" exists, using value of: ", valueKey, value);
-               return property.getValue().toString();
+                LOGGER.info("Config property \"{}\" exists, using value of: ", valueKey, value);
+                return property.getValue().toString();
             } else {
                 LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
-           LOGGER.debug("Config property \"{}\" not present", valueKey);
+            LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
 
-        if(configurationModule != null && configurationManager != null){
-            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        if (configurationModule != null && configurationManager != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices()
+                    .getConfigurationEntry(configurationModule, valueKey);
 
-            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+            if (configurationEntry != null && configurationEntry.getValue() instanceof String) {
                 return (String) configurationEntry.getValue();
             }
         }
@@ -262,7 +280,8 @@ public class PropertyUtil {
         return valueDefault;
     }
 
-    public long extractPeriodAsMillis(String valueKey, long valueDefault) {
+    public long extractPeriodAsMillis(String valueKey,
+            long valueDefault) {
 
         String periodAsString;
 
@@ -274,13 +293,16 @@ public class PropertyUtil {
                     Period period = Period.parse(periodAsString);
                     if (period != null) {
                         long periodMillis = period.toStandardDuration().getMillis();
-                        LOGGER.info("System property \"{}\" exists, using value of: {} ({}ms) ", systemPropertyName, periodAsString, periodMillis);
+                        LOGGER.info("System property \"{}\" exists, using value of: {} ({}ms) ", systemPropertyName,
+                                periodAsString, periodMillis);
                         return periodMillis;
                     } else {
-                        LOGGER.error("System property \"{}\" exists but unable to parse \"{}\" as ISO8601 period", systemPropertyName, periodAsString);
+                        LOGGER.error("System property \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                                systemPropertyName, periodAsString);
                     }
                 } catch (Exception e) {
-                    LOGGER.error("System property \"{}\" exists but unable to parse \"{}\" as ISO8601 period", systemPropertyName, periodAsString);
+                    LOGGER.error("System property \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                            systemPropertyName, periodAsString);
                 }
             } else {
                 LOGGER.debug("System property \"{}\" not present", systemPropertyName);
@@ -297,25 +319,30 @@ public class PropertyUtil {
                     Period period = Period.parse(periodAsString);
                     if (period != null) {
                         long periodMillis = period.toStandardDuration().getMillis();
-                        LOGGER.info("Config property for \"{}\" exists, using value of: {} ({}ms) ", valueKey, periodAsString, periodMillis);
+                        LOGGER.info("Config property for \"{}\" exists, using value of: {} ({}ms) ", valueKey,
+                                periodAsString, periodMillis);
                         return periodMillis;
                     } else {
-                        LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                        LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                                valueKey, periodAsString);
                     }
                 } catch (Exception e) {
-                    LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                    LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                            valueKey, periodAsString);
                 }
             } else {
-                LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey,
+                        periodAsString);
             }
         } else {
             LOGGER.debug("Config property for \"{}\"  not present", valueKey);
         }
 
-        if(configurationModule != null && configurationManager != null){
-            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        if (configurationModule != null && configurationManager != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices()
+                    .getConfigurationEntry(configurationModule, valueKey);
 
-            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+            if (configurationEntry != null && configurationEntry.getValue() instanceof String) {
                 periodAsString = (String) configurationEntry.getValue();
 
                 if (periodAsString != null) {
@@ -323,16 +350,23 @@ public class PropertyUtil {
                         Period period = Period.parse(periodAsString);
                         if (period != null) {
                             long periodMillis = period.toStandardDuration().getMillis();
-                            LOGGER.info("ConfigurationModule entry for \"{}\" exists, using value of: {} ({}ms) ", valueKey, periodAsString, periodMillis);
+                            LOGGER.info("ConfigurationModule entry for \"{}\" exists, using value of: {} ({}ms) ",
+                                    valueKey, periodAsString, periodMillis);
                             return periodMillis;
                         } else {
-                            LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                            LOGGER.error(
+                                    "ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                                    valueKey, periodAsString);
                         }
                     } catch (Exception e) {
-                        LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                        LOGGER.error(
+                                "ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                                valueKey, periodAsString);
                     }
                 } else {
-                    LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                    LOGGER.error(
+                            "ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period",
+                            valueKey, periodAsString);
                 }
             }
         }

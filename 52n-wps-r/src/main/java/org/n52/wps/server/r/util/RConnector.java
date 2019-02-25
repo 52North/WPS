@@ -53,10 +53,10 @@ public class RConnector {
     }
 
     public FilteredRConnection getNewConnection(boolean enableBatchStart,
-                                                String host,
-                                                int port,
-                                                String user,
-                                                String password) throws RserveException {
+            String host,
+            int port,
+            String user,
+            String password) throws RserveException {
         FilteredRConnection con = null;
         log.debug("Creating new RConnection");
         con = getNewConnection(enableBatchStart, host, port);
@@ -72,34 +72,32 @@ public class RConnector {
         REXP info = con.eval("capture.output(sessionInfo())");
         try {
             log.debug("NEW CONNECTION >>> sessionInfo:\n{}", Arrays.deepToString(info.asStrings()));
-        }
-        catch (REXPMismatchException e) {
+        } catch (REXPMismatchException e) {
             log.warn("Error creating session info.", e);
         }
 
         return con;
     }
 
-    private FilteredRConnection getNewConnection(boolean enableBatchStart, String host, int port) throws RserveException {
+    private FilteredRConnection getNewConnection(boolean enableBatchStart,
+            String host,
+            int port) throws RserveException {
         log.debug("New connection using batch = {} at {}:{}", enableBatchStart, host, port);
 
         FilteredRConnection con = null;
         try {
             con = new FilteredRConnection(host, port);
-        }
-        catch (RserveException rse) {
+        } catch (RserveException rse) {
             log.debug("Could not connect to RServe, maybe it is not started yet? Exception messag is '{}'",
-                      rse.getMessage());
+                    rse.getMessage());
 
             if (rse.getMessage().startsWith("Cannot connect") && enableBatchStart) {
                 try {
                     con = attemptStarts(host, port);
-                }
-                catch (RuntimeException | InterruptedException | IOException e) {
+                } catch (RuntimeException | InterruptedException | IOException e) {
                     log.error("Attempted to start Rserve and establish a connection failed", e);
                 }
-            }
-            else {
+            } else {
                 log.trace("Batch start is disabled!");
                 throw rse;
             }
@@ -107,15 +105,14 @@ public class RConnector {
 
         if (con == null) {
             throw new RserveException(null,
-                                      "Cannot start or connect with Rserve. Is Rserve installed and configured for remote connections? It is not by default. See http://www.rforge.net/Rserve/doc.html");
+                    "Cannot start or connect with Rserve. Is Rserve installed and configured for remote connections? It is not by default. See http://www.rforge.net/Rserve/doc.html");
         }
 
         return con;
     }
 
-    private FilteredRConnection attemptStarts(String host, int port) throws InterruptedException,
-            IOException,
-            RserveException {
+    private FilteredRConnection attemptStarts(String host,
+            int port) throws InterruptedException, IOException, RserveException {
         log.info("Attempting to start RServe.");
 
         int attempt = 1;
@@ -129,8 +126,7 @@ public class RConnector {
                 con = new FilteredRConnection(host, port);
                 log.info("Started R, connection is {}", con);
                 break;
-            }
-            catch (RserveException rse) {
+            } catch (RserveException rse) {
                 if (attempt >= START_ATTEMP_COUNT) {
                     throw rse;
                 }

@@ -55,8 +55,8 @@ public class ResourceAnnotation extends RAnnotation {
 
     private final ResourceUrlGenerator urlGenerator;
 
-    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry, ResourceUrlGenerator urlGenerator) throws IOException,
-            RAnnotationException {
+    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry,
+            ResourceUrlGenerator urlGenerator) throws IOException, RAnnotationException {
         super(RAnnotationType.RESOURCE, new HashMap<>(), dataTypeRegistry);
         this.resources.addAll(resources);
         this.urlGenerator = urlGenerator;
@@ -67,27 +67,25 @@ public class ResourceAnnotation extends RAnnotation {
     public Object getObjectValue(RAttribute attr) throws RAnnotationException {
         if (attr.equals(RAttribute.NAMED_LIST)) {
             return getResources();
-        }
-        else if (attr.equals(RAttribute.NAMED_LIST_R_SYNTAX)) {
+        } else if (attr.equals(RAttribute.NAMED_LIST_R_SYNTAX)) {
             StringBuilder namedList = new StringBuilder();
             namedList.append("list(");
             boolean startloop = true;
             // have to process the resources to get full URLs to the files
             for (R_Resource resource : this.resources) {
-                // String fullResourceURL = resource.getFullResourceURL(this.resourceDirUrl).toExternalForm();
+                // String fullResourceURL =
+                // resource.getFullResourceURL(this.resourceDirUrl).toExternalForm();
                 String fullResourceURL;
                 try {
                     fullResourceURL = urlGenerator.getResourceURL(resource).toExternalForm();
-                }
-                catch (ExceptionReport e) {
+                } catch (ExceptionReport e) {
                     log.error("Could not create full resource URL for {}", resource);
                     continue;
                 }
 
                 if (startloop) {
                     startloop = false;
-                }
-                else {
+                } else {
                     namedList.append(", ");
                 }
 
@@ -97,8 +95,7 @@ public class ResourceAnnotation extends RAnnotation {
                     namedList.append("\"").append(resourceName).append("\"");
                     namedList.append(" = ");
                     namedList.append("\"").append(fullResourceURL).append("\"");
-                }
-                else {
+                } else {
                     namedList.append("\"").append(resourceName).append("\"");
                     namedList.append(" = ");
                     namedList.append("\"").append(resourceName).append("\"");
@@ -108,8 +105,7 @@ public class ResourceAnnotation extends RAnnotation {
 
             log.trace("Created resource list for usage in R: {}", namedList);
             return namedList.toString();
-        }
-        else {
+        } else {
             throw new RAnnotationException("Attribute '{}' not defined for this annotation: {}", attr, this);
         }
     }
@@ -128,8 +124,7 @@ public class ResourceAnnotation extends RAnnotation {
         builder.append("ResourceAnnotation [resources=");
         if (this.resources != null) {
             builder.append(Arrays.toString(this.resources.toArray()));
-        }
-        else {
+        } else {
             builder.append("<null>");
         }
         builder.append("]");

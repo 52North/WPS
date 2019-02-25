@@ -30,10 +30,12 @@ package org.n52.wps.server.r;
 
 /**
  *
- * names of the variables that are put into the R session prior to execution of a script.
+ * names of the variables that are put into the R session prior to execution of
+ * a script.
  *
- * TODO: create a complex object called "wps" with the slots processDescriptionLink, serverRuntime (52N WPS
- * build version), serverName, resourceBaseUrl, scriptBaseUrl, ...
+ * TODO: create a complex object called "wps" with the slots
+ * processDescriptionLink, serverRuntime (52N WPS build version), serverName,
+ * resourceBaseUrl, scriptBaseUrl, ...
  *
  * @author Daniel Nüst
  *

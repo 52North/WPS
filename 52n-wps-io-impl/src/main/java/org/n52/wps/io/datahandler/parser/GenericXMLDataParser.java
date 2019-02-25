@@ -41,19 +41,21 @@ public class GenericXMLDataParser extends AbstractParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GenericXMLDataParser.class);
 
-    public GenericXMLDataParser(){
+    public GenericXMLDataParser() {
         super();
         supportedIDataTypes.add(GenericXMLDataBinding.class);
     }
 
     @Override
     public boolean isSupportedSchema(String schema) {
-        //no schema checks
+        // no schema checks
         return true;
     }
 
     @Override
-    public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {
+    public GenericXMLDataBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         XmlObject xmlData = XmlObject.Factory.newInstance();
 

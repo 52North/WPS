@@ -78,7 +78,8 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 return false;
             }
             if (getMember().getParameterTypes().length != 0) {
-                LOGGER.error("Method {} with Execute annotation can't be used, method parameter count is > 0.", getMember());
+                LOGGER.error("Method {} with Execute annotation can't be used, method parameter count is > 0.",
+                        getMember());
                 return false;
             }
             return true;
@@ -87,7 +88,7 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
         public void execute(Object annotatedInstance) {
             try {
                 getMember().invoke(annotatedInstance);
-            }catch (IllegalAccessException ex) {
+            } catch (IllegalAccessException ex) {
                 throw new RuntimeException("Internal error executing process", ex);
             } catch (IllegalArgumentException ex) {
                 throw new RuntimeException("Internal error executing process", ex);
@@ -98,7 +99,8 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
         }
     }
 
-    public static abstract class DataBinding<M extends AccessibleObject & Member, D extends BoundDescriptor> extends AnnotationBinding<M> {
+    public static abstract class DataBinding<M extends AccessibleObject & Member, D extends BoundDescriptor>
+            extends AnnotationBinding<M> {
 
         private D descriptor;
 
@@ -140,7 +142,8 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
         }
     }
 
-    public static abstract class InputBinding<M extends AccessibleObject & Member, D extends InputDescriptor> extends DataBinding<M,D> {
+    public static abstract class InputBinding<M extends AccessibleObject & Member, D extends InputDescriptor>
+            extends DataBinding<M, D> {
 
         public InputBinding(M member) {
             super(member);
@@ -189,8 +192,10 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 if (inputPayloadType instanceof Class<?>) {
                     return ((Class<?>) inputPayloadType).isAssignableFrom(bindingPayloadClass);
                 } else if (inputPayloadType instanceof ParameterizedType) {
-                    // i.e. List<FeatureCollection<SimpleFeatureType,SimpleFeature>>
-                    return ((Class<?>) ((ParameterizedType) inputPayloadType).getRawType()).isAssignableFrom(bindingPayloadClass);
+                    // i.e.
+                    // List<FeatureCollection<SimpleFeatureType,SimpleFeature>>
+                    return ((Class<?>) ((ParameterizedType) inputPayloadType).getRawType())
+                            .isAssignableFrom(bindingPayloadClass);
                 } else if (inputPayloadType instanceof WildcardType) {
                     // i.e. List<? extends String> or List<? super String>
                     WildcardType inputTypeWildcardType = (WildcardType) inputPayloadType;
@@ -212,7 +217,8 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                             upperBoundClass = (Class<?>) ((ParameterizedType) upperBounds[0]).getRawType();
                         }
                     }
-                    return (upperBoundClass == null || upperBoundClass.isAssignableFrom(bindingPayloadClass)) && (lowerBounds == null || bindingPayloadClass.isAssignableFrom(lowerBoundClass));
+                    return (upperBoundClass == null || upperBoundClass.isAssignableFrom(bindingPayloadClass))
+                            && (lowerBounds == null || bindingPayloadClass.isAssignableFrom(lowerBoundClass));
                 } else {
                     LOGGER.error("Unable to infer assignability from type for " + getMember());
                 }
@@ -230,7 +236,7 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                     for (IData bound : boundValueList) {
                         value = bound.getPayload();
                         if (isTypeEnum()) {
-                            value = Enum.valueOf((Class<? extends Enum>)getType(), (String)value);
+                            value = Enum.valueOf((Class<? extends Enum>) getType(), (String) value);
                         }
                         valueList.add(value);
                     }
@@ -238,17 +244,19 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 } else if (boundValueList.size() == 1) {
                     value = boundValueList.get(0).getPayload();
                     if (isTypeEnum()) {
-                        value = Enum.valueOf((Class<? extends Enum>)getType(), (String)value);
+                        value = Enum.valueOf((Class<? extends Enum>) getType(), (String) value);
                     }
                 }
             }
             return value;
         }
 
-        public abstract void set(Object annotatedObject, List<IData> boundInputList);
+        public abstract void set(Object annotatedObject,
+                List<IData> boundInputList);
     }
 
-    public static abstract class OutputBinding<M extends AccessibleObject & Member,  D extends OutputDescriptor> extends DataBinding<M,D> {
+    public static abstract class OutputBinding<M extends AccessibleObject & Member, D extends OutputDescriptor>
+            extends DataBinding<M, D> {
 
         private Constructor<? extends IData> bindingConstructor;
 
@@ -256,14 +264,14 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
             super(member);
         }
 
-        protected boolean checkType( ) {
+        protected boolean checkType() {
             return getConstructor() != null;
         }
 
         public IData bindOutputValue(Object outputValue) {
             try {
                 if (isTypeEnum()) {
-                    outputValue = ((Enum<?>)outputValue).name();
+                    outputValue = ((Enum<?>) outputValue).name();
                 }
                 return getConstructor().newInstance(outputValue);
             } catch (InstantiationException ex) {
@@ -281,10 +289,11 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
         public abstract IData get(Object annotatedInstance);
 
         private synchronized Constructor<? extends IData> getConstructor() {
-            if (bindingConstructor == null ){
+            if (bindingConstructor == null) {
                 try {
                     Class<? extends IData> bindingClass = getDescriptor().getBinding();
-                    Class<?> outputPayloadClass = bindingClass.getMethod("getPayload", (Class<?>[]) null).getReturnType();
+                    Class<?> outputPayloadClass =
+                            bindingClass.getMethod("getPayload", (Class<?>[]) null).getReturnType();
                     Type bindingPayloadType = getPayloadType();
                     if (bindingPayloadType instanceof Class<?>) {
                         Class<?> bindingPayloadClass = (Class<?>) bindingPayloadType;
@@ -292,7 +301,7 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                             bindingConstructor = bindingClass.getConstructor(bindingPayloadClass);
                         }
                     }
-                }  catch (NoSuchMethodException e) {
+                } catch (NoSuchMethodException e) {
                     // error handling on fall-through
                 }
             }
@@ -318,18 +327,23 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 return false;
             }
             if (!(getDescriptor().getMaxOccurs().intValue() < 2 || isMemberTypeList())) {
-                LOGGER.error("Field {} with input annotation can't be used, maxOccurs > 1 and field is not of type List", getMember());
+                LOGGER.error(
+                        "Field {} with input annotation can't be used, maxOccurs > 1 and field is not of type List",
+                        getMember());
                 return false;
             }
             if (!checkType()) {
-                LOGGER.error("Field {} with input annotation can't be used, unable to safely assign field using binding payload type", getMember());
+                LOGGER.error(
+                        "Field {} with input annotation can't be used, unable to safely assign field using binding payload type",
+                        getMember());
                 return false;
             }
             return true;
         }
 
         @Override
-        public void set(Object annotatedObject, List<IData> boundInputList) {
+        public void set(Object annotatedObject,
+                List<IData> boundInputList) {
             try {
                 getMember().set(annotatedObject, unbindInput(boundInputList));
             } catch (IllegalArgumentException ex) {
@@ -359,18 +373,23 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 return false;
             }
             if (!(getDescriptor().getMaxOccurs().intValue() < 2 || isMemberTypeList())) {
-                LOGGER.error("Field {} with input annotation can't be used, maxOccurs > 1 and field is not of type List", getMember());
+                LOGGER.error(
+                        "Field {} with input annotation can't be used, maxOccurs > 1 and field is not of type List",
+                        getMember());
                 return false;
             }
             if (!checkType()) {
-                LOGGER.error("Field {} with input annotation can't be used, unable to safely assign field using binding payload type", getMember());
+                LOGGER.error(
+                        "Field {} with input annotation can't be used, unable to safely assign field using binding payload type",
+                        getMember());
                 return false;
             }
             return true;
         }
 
         @Override
-        public void set(Object annotatedObject, List<IData> boundInputList) {
+        public void set(Object annotatedObject,
+                List<IData> boundInputList) {
             try {
                 getMember().invoke(annotatedObject, unbindInput(boundInputList));
             } catch (IllegalAccessException ex) {
@@ -402,7 +421,9 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 return false;
             }
             if (!checkType()) {
-                LOGGER.error("Field {} with output annotation can't be used, unable to safely construct binding using field type", getMember());
+                LOGGER.error(
+                        "Field {} with output annotation can't be used, unable to safely construct binding using field type",
+                        getMember());
                 return false;
             }
             return true;
@@ -445,7 +466,9 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
                 return false;
             }
             if (!checkType()) {
-                LOGGER.error("Method {} with output annotation can't be used, unable to safely construct binding using method return type", getMember());
+                LOGGER.error(
+                        "Method {} with output annotation can't be used, unable to safely construct binding using method return type",
+                        getMember());
                 return false;
             }
             return true;
@@ -468,9 +491,17 @@ public abstract class AnnotationBinding<M extends AccessibleObject & Member> {
         }
     }
 
-    // for example, a type reprecenting the <? extends Object> for types of List<? extends Object> or List
+    // for example, a type reprecenting the <? extends Object> for types of
+    // List<? extends Object> or List
     public final Type NOT_PARAMETERIZED_TYPE = new WildcardType() {
-        @Override public Type[] getUpperBounds() { return new Type[]{Object.class}; }
-        @Override public Type[] getLowerBounds() { return new Type[0]; }
+        @Override
+        public Type[] getUpperBounds() {
+            return new Type[] { Object.class };
+        }
+
+        @Override
+        public Type[] getLowerBounds() {
+            return new Type[0];
+        }
     };
 }

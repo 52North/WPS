@@ -70,14 +70,15 @@ public class AsciiGrassParser extends AbstractParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
 
-    public AsciiGrassParser(){
+    public AsciiGrassParser() {
         super();
         supportedIDataTypes.add(AsciiGrassDataBinding.class);
     }
 
     @Override
-    public AsciiGrassDataBinding parse(InputStream input, String mimeType, String schema) {
-
+    public AsciiGrassDataBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         GridCoverage2D grid = null;
 
@@ -98,9 +99,7 @@ public class AsciiGrassParser extends AbstractParser {
         return new AsciiGrassDataBinding(grid);
     }
 
-
-    private File dumpToFile(InputStream inputStream)
-            throws FileNotFoundException, IOException {
+    private File dumpToFile(InputStream inputStream) throws FileNotFoundException, IOException {
 
         BufferedInputStream bis = new BufferedInputStream(inputStream);
 

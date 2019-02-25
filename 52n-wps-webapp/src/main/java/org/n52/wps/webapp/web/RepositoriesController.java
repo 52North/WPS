@@ -51,14 +51,16 @@ public class RepositoriesController extends BaseConfigurationsController {
     /**
      * Display repositories configuration modules
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The repositories view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String displayRepositories(Model model) {
         ConfigurationCategory category = ConfigurationCategory.REPOSITORY;
-        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-                .getConfigurationModulesByCategory(category);
+        Map<String, ConfigurationModule> configurations =
+                configurationManager.getConfigurationServices().getConfigurationModulesByCategory(category);
         model.addAttribute("configurations", configurations);
         LOGGER.info("Retrived '{}' configurations.", category);
         return "repositories";
@@ -74,12 +76,17 @@ public class RepositoriesController extends BaseConfigurationsController {
      * @param status
      *            The new status
      */
-    @RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm,
+    @RequestMapping(
+            value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void toggleAlgorithmStatus(@PathVariable String moduleClassName,
+            @PathVariable String algorithm,
             @PathVariable boolean status) {
         configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, status);
-        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
+        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName,
+                status);
     }
 
     /**
@@ -90,26 +97,37 @@ public class RepositoriesController extends BaseConfigurationsController {
      * @param algorithmName
      *            The algorithm name
      */
-    @RequestMapping(value = "algorithms/add_algorithm", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void addAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("algorithmName") String algorithmName) {
+    @RequestMapping(
+            value = "algorithms/add_algorithm",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void addAlgorithm(@RequestParam("moduleClassName") String moduleClassName,
+            @RequestParam("algorithmName") String algorithmName) {
         configurationManager.getConfigurationServices().addAlgorithmEntry(moduleClassName, algorithmName);
         LOGGER.info("Algorithm '{}' has been added to module '{}'", algorithmName, moduleClassName);
     }
-
 
     /**
      * Edit an algorithm name
      *
      * @param moduleClassName
      *            The fully qualified name of the module holding the algorithm
-     * @param oldAlgorithmName the old name
-     * @param algorithmName the nem name
+     * @param oldAlgorithmName
+     *            the old name
+     * @param algorithmName
+     *            the nem name
      */
-    @RequestMapping(value = "algorithms/edit_algorithm", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void editAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("oldAlgorithmName") String oldAlgorithmName, @RequestParam("algorithmName") String algorithmName) {
-        configurationManager.getConfigurationServices().updateAlgorithmEntry(moduleClassName, algorithmName, oldAlgorithmName);
+    @RequestMapping(
+            value = "algorithms/edit_algorithm",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void editAlgorithm(@RequestParam("moduleClassName") String moduleClassName,
+            @RequestParam("oldAlgorithmName") String oldAlgorithmName,
+            @RequestParam("algorithmName") String algorithmName) {
+        configurationManager.getConfigurationServices().updateAlgorithmEntry(moduleClassName, algorithmName,
+                oldAlgorithmName);
         LOGGER.info("Algorithm '{}' has been updated in module '{}'", algorithmName, moduleClassName);
     }
 
@@ -121,9 +139,13 @@ public class RepositoriesController extends BaseConfigurationsController {
      * @param algorithmName
      *            The algorithm name
      */
-    @RequestMapping(value = "algorithms/{moduleClassName}/{algorithmName}/delete", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteAlgorithm(@PathVariable String moduleClassName, @PathVariable String algorithmName) {
+    @RequestMapping(
+            value = "algorithms/{moduleClassName}/{algorithmName}/delete",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void deleteAlgorithm(@PathVariable String moduleClassName,
+            @PathVariable String algorithmName) {
         configurationManager.getConfigurationServices().deleteAlgorithmEntry(moduleClassName, algorithmName);
         LOGGER.info("Algorithm '{}' has been deleted from module '{}'", algorithmName, moduleClassName);
     }

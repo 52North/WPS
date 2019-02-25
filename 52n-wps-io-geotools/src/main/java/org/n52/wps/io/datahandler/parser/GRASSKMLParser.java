@@ -58,15 +58,17 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  */
 public class GRASSKMLParser extends AbstractParser {
 
-    public GRASSKMLParser(){
+    public GRASSKMLParser() {
         super();
         supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
     }
 
     @Override
-    public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
-        GenericFileDataWithGTBinding data = new GenericFileDataWithGTBinding(
-                new GenericFileDataWithGT(stream, "text/xml"));
+    public GenericFileDataWithGTBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
+        GenericFileDataWithGTBinding data =
+                new GenericFileDataWithGTBinding(new GenericFileDataWithGT(stream, "text/xml"));
         return data;
     }
 

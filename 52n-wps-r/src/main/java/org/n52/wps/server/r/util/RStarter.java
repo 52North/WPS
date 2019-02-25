@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  *
  * For documentation see http://www.rforge.net/Rserve/doc.html
  *
- * For information about RServe on Windows see http://rforge.net/Rserve/rserve-win.html
+ * For information about RServe on Windows see
+ * http://rforge.net/Rserve/rserve-win.html
  *
  * @author Daniel
  *
@@ -69,12 +70,14 @@ public class RStarter {
     }
 
     private static void startRServeOnLinux() throws InterruptedException, IOException {
-        String rserveStartCMD = "R CMD Rserve --vanilla --slave"; // TODO make configurable
+        String rserveStartCMD = "R CMD Rserve --vanilla --slave"; // TODO make
+                                                                  // configurable
         Runtime.getRuntime().exec(rserveStartCMD).waitFor();
     }
 
     /**
-     * command for local testing: cmd /c start R --vanilla --slave -e library(Rserve);Rserve()
+     * command for local testing: cmd /c start R --vanilla --slave -e
+     * library(Rserve);Rserve()
      *
      * @throws IOException
      */
@@ -84,29 +87,23 @@ public class RStarter {
         if (classicStartCommand) {
             String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
             Runtime.getRuntime().exec(rserveStartCMD);
-        }
-        else {
+        } else {
             ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "start", "R",
-            // log.isDebugEnabled() ? OutputLevel.verbose.getCommand()
-            // : OutputLevel.slave.getCommand(),
-                                                   "-e",
-                                                   "library(Rserve);Rserve()",
-                                                   "--vanilla",
-                                                   OutputLevel.slave.getCommand());
+                    // log.isDebugEnabled() ? OutputLevel.verbose.getCommand()
+                    // : OutputLevel.slave.getCommand(),
+                    "-e", "library(Rserve);Rserve()", "--vanilla", OutputLevel.slave.getCommand());
             pb.inheritIO(); // nothing here since the command starts a new shell
 
-            log.info("ProcessBuilder: {} | command: {} | directory: {} | environment: {}",
-                     pb,
-                     pb.command(),
-                     pb.directory(),
-                     Arrays.toString(pb.environment().entrySet().toArray()));
+            log.info("ProcessBuilder: {} | command: {} | directory: {} | environment: {}", pb, pb.command(),
+                    pb.directory(), Arrays.toString(pb.environment().entrySet().toArray()));
             Process process = pb.start();
 
             log.info("Process: {}, alive: {}", process.toString(), process.isAlive());
             // process should have already exited at this point
-            // TODO see if access to the started shell is possible, maybe this helps:
+            // TODO see if access to the started shell is possible, maybe this
+            // helps:
             // http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
-            if ( !process.isAlive()) {
+            if (!process.isAlive()) {
                 log.debug("Process exit status: {}", process.exitValue());
             }
         }
@@ -117,8 +114,7 @@ public class RStarter {
 
         if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
             startRServeOnLinux();
-        }
-        else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
             startRServeOnWindows();
         }
 
@@ -133,8 +129,7 @@ public class RStarter {
             if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0) {
                 return;
             }
-        }
-        catch (InterruptedException | IOException e) {
+        } catch (InterruptedException | IOException e) {
             log.warn("Error trying to stop Rserve on windows.", e);
         }
     }

@@ -59,17 +59,15 @@ public class GetResultRequestV200 extends Request {
     public GetResultRequestV200(Document doc) throws ExceptionReport {
         super(doc);
 
-                if(!validate()){
-                        throw new ExceptionReport("GetResultRequest not valid",
-                                        ExceptionReport.NO_APPLICABLE_CODE);
-                }
-                if(getResultDocument.getGetResult() != null){
-                        jobID = getResultDocument.getGetResult().getJobID();
-                }
-                if(jobID == null || jobID.equals("")){
-                        throw new ExceptionReport("JobID not valid",
-                                        ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
-                }
+        if (!validate()) {
+            throw new ExceptionReport("GetResultRequest not valid", ExceptionReport.NO_APPLICABLE_CODE);
+        }
+        if (getResultDocument.getGetResult() != null) {
+            jobID = getResultDocument.getGetResult().getJobID();
+        }
+        if (jobID == null || jobID.equals("")) {
+            throw new ExceptionReport("JobID not valid", ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+        }
     }
 
     @Override
@@ -82,10 +80,10 @@ public class GetResultRequestV200 extends Request {
         try {
             document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
 
-            if(document instanceof StatusInfoDocument){
-                StatusInfoDocument statusInfoDocument = (StatusInfoDocument)document;
+            if (document instanceof StatusInfoDocument) {
+                StatusInfoDocument statusInfoDocument = (StatusInfoDocument) document;
                 String status = statusInfoDocument.getStatusInfo().getStatus();
-                if(status.equals(Status.Running.toString()) || status.equals(Status.Accepted.toString())){
+                if (status.equals(Status.Running.toString()) || status.equals(Status.Accepted.toString())) {
                     throw new ExceptionReport("Result not ready.", ExceptionReport.RESULT_NOT_READY, "jobID=" + jobID);
                 }
             }
@@ -99,12 +97,12 @@ public class GetResultRequestV200 extends Request {
 
     @Override
     public boolean validate() throws ExceptionReport {
-               try {
-                   getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
-               } catch (XmlException e) {
-                       return false;
-               }
-               return getResultDocument != null;
+        try {
+            getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
+        } catch (XmlException e) {
+            return false;
+        }
+        return getResultDocument != null;
     }
 
 }

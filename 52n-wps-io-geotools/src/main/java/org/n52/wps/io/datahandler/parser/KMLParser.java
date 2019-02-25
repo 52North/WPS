@@ -57,9 +57,9 @@ import org.geotools.kml.KMLConfiguration;
 import org.geotools.xml.Configuration;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
-
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
+ * 
  * @author schaeffer
  *
  */
@@ -70,15 +70,17 @@ public class KMLParser extends AbstractParser {
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
 
-    public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
+    public GTVectorDataBinding parse(InputStream stream,
+            String mimeType,
+            String schema) {
 
         FileOutputStream fos = null;
-        try{
+        try {
             File tempFile = File.createTempFile("kml", "tmp");
             finalizeFiles.add(tempFile); // mark for final delete
             fos = new FileOutputStream(tempFile);
             int i = stream.read();
-            while(i != -1){
+            while (i != -1) {
                 fos.write(i);
                 i = stream.read();
             }
@@ -86,11 +88,12 @@ public class KMLParser extends AbstractParser {
             fos.close();
             GTVectorDataBinding data = parseXML(tempFile);
             return data;
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             if (fos != null) {
-                try { fos.close(); }
-                catch (Exception e1) { }
+                try {
+                    fos.close();
+                } catch (Exception e1) {
+                }
             }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }

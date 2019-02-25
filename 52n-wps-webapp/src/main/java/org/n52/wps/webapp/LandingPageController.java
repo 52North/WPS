@@ -37,15 +37,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Daniel Nüst
  *
  */
-//@Controller
+// @Controller
 public class LandingPageController {
 
-    @RequestMapping({"/home"})
+    @RequestMapping({ "/home" })
     public String showHomePage(Map<String, Object> model) {
         return "../../static/index.html";
     }
 
-    @RequestMapping({"/"})
+    @RequestMapping({ "/" })
     public String redirectToHome(Map<String, Object> model) {
         return "redirect:/home";
     }

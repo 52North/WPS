@@ -104,38 +104,39 @@ public class RequestHandler {
      * @throws ExceptionReport
      *             If the requested operation is not supported
      */
-    public RequestHandler(Map<String, String[]> params, OutputStream os)
-            throws ExceptionReport {
+    public RequestHandler(Map<String, String[]> params, OutputStream os) throws ExceptionReport {
         this.os = os;
-        //sleepingTime is 0, by default.
-        /*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
-            this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
-        }
-        String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-        */
-
+        // sleepingTime is 0, by default.
+        /*
+         * if(WPSConfiguration.getInstance().exists(
+         * PROPERTY_NAME_COMPUTATION_TIMEOUT)) { this.sleepingTime =
+         * Integer.parseInt(WPSConfiguration.getInstance().getProperty(
+         * PROPERTY_NAME_COMPUTATION_TIMEOUT)); } String sleepTime =
+         * WPSConfig.getInstance().getWPSConfig().getServer().
+         * getComputationTimeoutMilliSeconds();
+         */
 
         Request req;
         CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
 
         /*
-         * check if service parameter is present and equals "WPS"
-         * otherwise an ExceptionReport will be thrown
+         * check if service parameter is present and equals "WPS" otherwise an
+         * ExceptionReport will be thrown
          */
         String serviceType = Request.getMapValue("service", ciMap, true);
 
-        if(!serviceType.equalsIgnoreCase("WPS")){
+        if (!serviceType.equalsIgnoreCase("WPS")) {
             throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + serviceType,
                     ExceptionReport.INVALID_PARAMETER_VALUE, "service");
         }
 
         /*
-         * check language. if not supported, return ExceptionReport
-         * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
+         * check language. if not supported, return ExceptionReport Fix for
+         * https://bugzilla.52north.org/show_bug.cgi?id=905
          */
         String language = Request.getMapValue("language", ciMap, false);
 
-        if(language != null){
+        if (language != null) {
             Request.checkLanguageSupported(language);
         }
 
@@ -144,55 +145,48 @@ public class RequestHandler {
 
         if (requestType.equalsIgnoreCase("GetCapabilities")) {
             req = new CapabilitiesRequest(ciMap);
-        }
-        else if (requestType.equalsIgnoreCase("DescribeProcess")) {
+        } else if (requestType.equalsIgnoreCase("DescribeProcess")) {
 
             requestedVersion = Request.getMapValue("version", ciMap, true);
 
-            if(requestedVersion.equals(WPSConfig.VERSION_100)){
+            if (requestedVersion.equals(WPSConfig.VERSION_100)) {
                 req = new DescribeProcessRequest(ciMap);
-            }else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+            } else if (requestedVersion.equals(WPSConfig.VERSION_200)) {
                 req = new DescribeProcessRequestV200(ciMap);
-            }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+            } else {
+                throw new ExceptionReport("Version not supported.", ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        }
-        else if (requestType.equalsIgnoreCase("Execute")) {
+        } else if (requestType.equalsIgnoreCase("Execute")) {
 
             requestedVersion = Request.getMapValue("version", ciMap, true);
 
-            if(requestedVersion.equals(WPSConfig.VERSION_100)){
+            if (requestedVersion.equals(WPSConfig.VERSION_100)) {
                 req = new ExecuteRequestV100(ciMap);
-                setResponseMimeType((ExecuteRequestV100)req);
-            }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+                setResponseMimeType((ExecuteRequestV100) req);
+            } else {
+                throw new ExceptionReport("Version not supported.", ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        }
-        else if (requestType.equalsIgnoreCase("GetStatus")) {
+        } else if (requestType.equalsIgnoreCase("GetStatus")) {
             requestedVersion = Request.getMapValue("version", ciMap, true);
 
-            if(requestedVersion.equals(WPSConfig.VERSION_200)){
+            if (requestedVersion.equals(WPSConfig.VERSION_200)) {
                 req = new GetStatusRequestV200(ciMap);
-                }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+            } else {
+                throw new ExceptionReport("Version not supported.", ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        }
-        else if (requestType.equalsIgnoreCase("GetResult")) {
+        } else if (requestType.equalsIgnoreCase("GetResult")) {
             requestedVersion = Request.getMapValue("version", ciMap, true);
 
-            if(requestedVersion.equals(WPSConfig.VERSION_200)){
+            if (requestedVersion.equals(WPSConfig.VERSION_200)) {
                 req = new GetResultRequestV200(ciMap);
-            }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+            } else {
+                throw new ExceptionReport("Version not supported.", ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        }
-        else if (requestType.equalsIgnoreCase("RetrieveResult")) {
+        } else if (requestType.equalsIgnoreCase("RetrieveResult")) {
             req = new RetrieveResultRequest(ciMap);
-        }
-        else {
+        } else {
             throw new ExceptionReport(
-                    "The requested Operation is not supported or not applicable to the specification: "
-                            + requestType,
+                    "The requested Operation is not supported or not applicable to the specification: " + requestType,
                     ExceptionReport.OPERATION_NOT_SUPPORTED, requestType);
         }
 
@@ -208,10 +202,11 @@ public class RequestHandler {
      *            The client input
      * @param os
      *            The OutputStream to write the response to.
-     * @throws ExceptionReport if an exception occurred while constructing the requesthandler
+     * @throws ExceptionReport
+     *             if an exception occurred while constructing the
+     *             requesthandler
      */
-    public RequestHandler(InputStream is, OutputStream os)
-            throws ExceptionReport {
+    public RequestHandler(InputStream is, OutputStream os) throws ExceptionReport {
         String nodeName;
         String localName;
         String nodeURI = null;
@@ -221,7 +216,8 @@ public class RequestHandler {
         boolean isCapabilitiesNode = false;
 
         try {
-            System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+            System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+                    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
             DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
             fac.setNamespaceAware(true);
@@ -231,7 +227,7 @@ public class RequestHandler {
 
             // Get the first non-comment child.
             Node child = doc.getFirstChild();
-            while(child.getNodeName().compareTo("#comment")==0) {
+            while (child.getNodeName().compareTo("#comment") == 0) {
                 child = child.getNextSibling();
             }
             nodeName = child.getNodeName();
@@ -240,97 +236,100 @@ public class RequestHandler {
             Node versionNode = child.getAttributes().getNamedItem("version");
 
             /*
-             * check for service parameter. this has to be present for all requests
+             * check for service parameter. this has to be present for all
+             * requests
              */
             Node serviceNode = child.getAttributes().getNamedItem("service");
 
-            if(serviceNode == null){
-                throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "service");
-            }else{
-                if(!serviceNode.getNodeValue().equalsIgnoreCase("WPS")){
-                    throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+            if (serviceNode == null) {
+                throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE,
+                        "service");
+            } else {
+                if (!serviceNode.getNodeValue().equalsIgnoreCase("WPS")) {
+                    throw new ExceptionReport("Parameter <service> not specified.",
+                            ExceptionReport.INVALID_PARAMETER_VALUE, "service");
                 }
             }
 
             isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
-            if(versionNode == null && !isCapabilitiesNode) {
-                throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
+            if (versionNode == null && !isCapabilitiesNode) {
+                throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE,
+                        "version");
             }
-            if(!isCapabilitiesNode){
+            if (!isCapabilitiesNode) {
                 requestedVersion = child.getAttributes().getNamedItem("version").getNodeValue();
             }
             /*
-             * check language, if not supported, return ExceptionReport
-             * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
+             * check language, if not supported, return ExceptionReport Fix for
+             * https://bugzilla.52north.org/show_bug.cgi?id=905
              */
             Node languageNode = child.getAttributes().getNamedItem("language");
-            if(languageNode != null){
+            if (languageNode != null) {
                 String language = languageNode.getNodeValue();
                 Request.checkLanguageSupported(language);
             }
         } catch (SAXException e) {
-            throw new ExceptionReport(
-                    "There went something wrong with parsing the POST data: "
-                            + e.getMessage(),
+            throw new ExceptionReport("There went something wrong with parsing the POST data: " + e.getMessage(),
                     ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (IOException e) {
-            throw new ExceptionReport(
-                    "There went something wrong with the network connection.",
+            throw new ExceptionReport("There went something wrong with the network connection.",
                     ExceptionReport.NO_APPLICABLE_CODE, e);
         } catch (ParserConfigurationException e) {
-            throw new ExceptionReport(
-                    "There is a internal parser configuration error",
+            throw new ExceptionReport("There is a internal parser configuration error",
                     ExceptionReport.NO_APPLICABLE_CODE, e);
         }
-        //Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
-        if(!isCapabilitiesNode && requestedVersion == null) {
-            throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
+        // Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+        if (!isCapabilitiesNode && requestedVersion == null) {
+            throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE,
+                    "version");
         }
-        if(!isCapabilitiesNode && !WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)) {
-            throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+        if (!isCapabilitiesNode && !WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)) {
+            throw new ExceptionReport("Version not supported.", ExceptionReport.INVALID_PARAMETER_VALUE, "version");
         }
         // get the request type
 
-        if (nodeURI.equals(XMLBeansHelper.NS_WPS_1_0_0)){
+        if (nodeURI.equals(XMLBeansHelper.NS_WPS_1_0_0)) {
 
             if (localName.equals("Execute")) {
                 req = new ExecuteRequestV100(doc);
-                setResponseMimeType((ExecuteRequestV100)req);
-            }else if (localName.equals("GetCapabilities")){
+                setResponseMimeType((ExecuteRequestV100) req);
+            } else if (localName.equals("GetCapabilities")) {
                 req = new CapabilitiesRequest(doc);
                 this.responseMimeType = "text/xml";
             } else if (localName.equals("DescribeProcess")) {
                 req = new DescribeProcessRequest(doc);
                 this.responseMimeType = "text/xml";
 
-            }  else if(!localName.equals("Execute")){
-                throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
-                        + nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+            } else if (!localName.equals("Execute")) {
+                throw new ExceptionReport(
+                        "The requested Operation not supported or not applicable to the specification: " + nodeName,
+                        ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+            } else {
+                throw new ExceptionReport("specified namespace is not supported: " + nodeURI,
+                        ExceptionReport.INVALID_PARAMETER_VALUE);
             }
-            else{
-                throw new ExceptionReport("specified namespace is not supported: "
-                        + nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
-            }
-        }else if (nodeURI.equals(XMLBeansHelper.NS_WPS_2_0)){
+        } else if (nodeURI.equals(XMLBeansHelper.NS_WPS_2_0)) {
 
             if (localName.equals("Execute")) {
                 req = new ExecuteRequestV200(doc);
-                setResponseMimeType((ExecuteRequestV200)req);
-            }else if (localName.equals("GetCapabilities")){
+                setResponseMimeType((ExecuteRequestV200) req);
+            } else if (localName.equals("GetCapabilities")) {
                 req = new CapabilitiesRequest(doc);
                 this.responseMimeType = "text/xml";
-                } else if (localName.equals("DescribeProcess")) {
-                    req = new DescribeProcessRequestV200(doc);
-                    this.responseMimeType = "text/xml";
-                    } else if (localName.equals("GetStatus")) {
-                        req = new GetStatusRequestV200(doc);
-                    } else if (localName.equals("GetResult")) {
-                        req = new GetResultRequestV200(doc);
-                    } else if (!localName.equals("Execute")) {
-                        throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: " + nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
-                    } else {
-                throw new ExceptionReport("specified namespace is not supported: "
-                        + nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
+            } else if (localName.equals("DescribeProcess")) {
+                req = new DescribeProcessRequestV200(doc);
+                this.responseMimeType = "text/xml";
+            } else if (localName.equals("GetStatus")) {
+                req = new GetStatusRequestV200(doc);
+            } else if (localName.equals("GetResult")) {
+                req = new GetResultRequestV200(doc);
+            } else if (!localName.equals("Execute")) {
+                throw new ExceptionReport(
+                        "The requested Operation not supported or not applicable to the specification: " + nodeName,
+                        ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+            } else {
+                throw new ExceptionReport("specified namespace is not supported: " + nodeURI,
+                        ExceptionReport.INVALID_PARAMETER_VALUE);
             }
 
         }
@@ -342,12 +341,13 @@ public class RequestHandler {
      * be served immediately. If time runs out, the client will be asked to come
      * back later with a reference to the result.
      *
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * @throws ExceptionReport
+     *             if an exception occurred while handling the request
      */
     public void handle() throws ExceptionReport {
         Response resp = null;
-        if(req ==null){
-            throw new ExceptionReport("Internal Error","");
+        if (req == null) {
+            throw new ExceptionReport("Internal Error", "");
         }
         if (req instanceof ExecuteRequest) {
             // cast the request to an executerequest
@@ -369,42 +369,41 @@ public class RequestHandler {
                     // retrieve status with timeout enabled
                     try {
                         resp = pool.submit(execReq).get();
-                    }
-                    catch (ExecutionException ee) {
+                    } catch (ExecutionException ee) {
                         LOGGER.warn("exception while handling ExecuteRequest.");
                         // the computation threw an error
                         // probably the client input is not valid
                         if (ee.getCause() instanceof ExceptionReport) {
-                            exceptionReport = (ExceptionReport) ee
-                                    .getCause();
+                            exceptionReport = (ExceptionReport) ee.getCause();
                         } else {
-                            exceptionReport = new ExceptionReport(
-                                    "An error occurred in the computation: "
-                                            + ee.getMessage(),
-                                    ExceptionReport.NO_APPLICABLE_CODE);
+                            exceptionReport =
+                                    new ExceptionReport("An error occurred in the computation: " + ee.getMessage(),
+                                            ExceptionReport.NO_APPLICABLE_CODE);
                         }
                     } catch (InterruptedException ie) {
                         LOGGER.warn("interrupted while handling ExecuteRequest.");
                         // interrupted while waiting in the queue
-                        exceptionReport = new ExceptionReport(
-                                "The computation in the process was interrupted.",
+                        exceptionReport = new ExceptionReport("The computation in the process was interrupted.",
                                 ExceptionReport.NO_APPLICABLE_CODE);
                     }
                 } finally {
                     if (exceptionReport != null) {
                         LOGGER.debug("ExceptionReport not null: " + exceptionReport.getMessage());
-                        // NOT SURE, if this exceptionReport is also written to the DB, if required... test please!
+                        // NOT SURE, if this exceptionReport is also written to
+                        // the DB, if required... test please!
                         throw exceptionReport;
                     }
                     // send the result to the outputstream of the client.
-                /*    if(((ExecuteRequest) req).isQuickStatus()) {
-                        resp = new ExecuteResponse(execReq);
-                    }*/
-                    else if(resp == null) {
+                    /*
+                     * if(((ExecuteRequest) req).isQuickStatus()) { resp = new
+                     * ExecuteResponse(execReq); }
+                     */
+                    else if (resp == null) {
                         LOGGER.warn("null response handling ExecuteRequest.");
-                        throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
+                        throw new ExceptionReport("Problem with handling threads in RequestHandler",
+                                ExceptionReport.NO_APPLICABLE_CODE);
                     }
-                    if(!execReq.isStoreResponse()) {
+                    if (!execReq.isStoreResponse()) {
                         InputStream is = resp.getAsStream();
                         IOUtils.copy(is, os);
                         is.close();
@@ -420,7 +419,7 @@ public class RequestHandler {
             } catch (Exception e) {
                 LOGGER.error("exception handling ExecuteRequest.", e);
                 if (e instanceof ExceptionReport) {
-                    throw (ExceptionReport)e;
+                    throw (ExceptionReport) e;
                 }
                 throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
             }
@@ -440,32 +439,30 @@ public class RequestHandler {
 
     protected void setResponseMimeType(Request req) {
 
-        if(req instanceof ExecuteRequestV100){
+        if (req instanceof ExecuteRequestV100) {
 
-            ExecuteRequestV100 executeRequest = (ExecuteRequestV100)req;
+            ExecuteRequestV100 executeRequest = (ExecuteRequestV100) req;
 
-            if(executeRequest.isRawData()){
+            if (executeRequest.isRawData()) {
                 responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
-            }else{
+            } else {
                 responseMimeType = "text/xml";
             }
-        }else if(req instanceof ExecuteRequestV200){
+        } else if (req instanceof ExecuteRequestV200) {
 
-            ExecuteRequestV200 executeRequest = (ExecuteRequestV200)req;
+            ExecuteRequestV200 executeRequest = (ExecuteRequestV200) req;
 
-            if(executeRequest.isRawData()){
+            if (executeRequest.isRawData()) {
                 responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
-            }else{
+            } else {
                 responseMimeType = "text/xml";
             }
         }
 
     }
 
-
-
-    public String getResponseMimeType(){
-        if(responseMimeType == null){
+    public String getResponseMimeType() {
+        if (responseMimeType == null) {
             return "text/xml";
         }
         return responseMimeType.toLowerCase();
@@ -475,8 +472,4 @@ public class RequestHandler {
         return requestedVersion;
     }
 
-
 }
-
-
-

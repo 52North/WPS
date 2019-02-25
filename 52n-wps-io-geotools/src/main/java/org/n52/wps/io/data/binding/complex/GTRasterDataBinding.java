@@ -55,7 +55,7 @@ import org.n52.wps.io.data.IComplexData;
 public class GTRasterDataBinding implements IComplexData {
     protected GridCoverage2D payload;
 
-    public GTRasterDataBinding(GridCoverage2D coverage){
+    public GTRasterDataBinding(GridCoverage2D coverage) {
         this.payload = coverage;
     }
 
@@ -67,13 +67,11 @@ public class GTRasterDataBinding implements IComplexData {
         return GridCoverage2D.class;
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-    {
+    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
         throw new RuntimeException("Serialization of 'GTRasterDataBinding' data type not implemented yet.");
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-    {
+    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         throw new RuntimeException("Deserialization of 'GTRasterDataBinding' data type not implemented yet.");
     }
 

@@ -63,40 +63,42 @@ import org.locationtech.jts.geom.Geometry;
 
 /**
  * This class generates a GeoJSON String representation out of a JTS Geometry.
+ * 
  * @author BenjaminPross(bpross-52n)
  *
  */
 public class GeoJSONGenerator extends AbstractGenerator {
 
-    public GeoJSONGenerator(){
+    public GeoJSONGenerator() {
         super();
         supportedIDataTypes.add(JTSGeometryBinding.class);
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema)
-            throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
-        if(data instanceof JTSGeometryBinding){
-            Geometry g = ((JTSGeometryBinding)data).getPayload();
+        if (data instanceof JTSGeometryBinding) {
+            Geometry g = ((JTSGeometryBinding) data).getPayload();
 
             File tempFile = File.createTempFile("wps", "json");
             finalizeFiles.add(tempFile); // mark for final delete
 
-             new GeometryJSON().write(g, tempFile);
+            new GeometryJSON().write(g, tempFile);
 
             InputStream is = new FileInputStream(tempFile);
 
             return is;
-        }else if(data instanceof GTVectorDataBinding){
+        } else if (data instanceof GTVectorDataBinding) {
 
-            SimpleFeatureCollection f = (SimpleFeatureCollection)data.getPayload();
+            SimpleFeatureCollection f = (SimpleFeatureCollection) data.getPayload();
 
             File tempFile = File.createTempFile("wps", "json");
             finalizeFiles.add(tempFile); // mark for final delete
 
-             new FeatureJSON().writeFeatureCollection(f, tempFile);
+            new FeatureJSON().writeFeatureCollection(f, tempFile);
 
             InputStream is = new FileInputStream(tempFile);
 

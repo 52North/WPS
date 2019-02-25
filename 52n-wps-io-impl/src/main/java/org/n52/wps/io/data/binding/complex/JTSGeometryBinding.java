@@ -34,6 +34,7 @@ import org.locationtech.jts.geom.Geometry;
 
 /**
  * This class wraps a JTS Geometry.
+ * 
  * @author Benjamin Pross
  *
  */
@@ -43,9 +44,10 @@ public class JTSGeometryBinding implements IComplexData {
      *
      */
     private static final long serialVersionUID = 3415522592135759594L;
+
     private Geometry geom;
 
-    public JTSGeometryBinding(Geometry geom){
+    public JTSGeometryBinding(Geometry geom) {
         this.geom = geom;
     }
 

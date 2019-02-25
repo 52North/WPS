@@ -38,22 +38,30 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 import org.locationtech.jts.geom.Geometry;
 
 /**
- * This algorithm creates a convex hull of a JTS geometry using build the in method.
+ * This algorithm creates a convex hull of a JTS geometry using build the in
+ * method.
+ * 
  * @author BenjaminPross
  *
  */
-@Algorithm(version = "1.1.0")
+@Algorithm(
+        version = "1.1.0")
 public class JTSConvexHullAlgorithm extends AbstractAnnotatedAlgorithm {
 
     private Geometry result;
+
     private Geometry data;
 
-    @ComplexDataOutput(identifier = "result", binding = JTSGeometryBinding.class)
+    @ComplexDataOutput(
+            identifier = "result",
+            binding = JTSGeometryBinding.class)
     public Geometry getResult() {
         return result;
     }
 
-    @ComplexDataInput(identifier = "data", binding = JTSGeometryBinding.class)
+    @ComplexDataInput(
+            identifier = "data",
+            binding = JTSGeometryBinding.class)
     public void setData(Geometry data) {
         this.data = data;
     }

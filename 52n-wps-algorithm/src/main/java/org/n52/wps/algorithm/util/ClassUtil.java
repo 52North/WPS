@@ -30,6 +30,7 @@ import java.util.Map;
 public class ClassUtil {
 
     private final static Map<Class<?>, Class<?>> TO_WRAPPER;
+
     private final static Map<Class<?>, Class<?>> FROM_WRAPPER;
 
     static {
@@ -46,8 +47,8 @@ public class ClassUtil {
         FROM_WRAPPER = Collections.unmodifiableMap(map.inverse());
     }
 
-
-    public static <T extends Enum<T>> List<T> convertStringToEnumList(Class<T> enumType, List<String> stringList) {
+    public static <T extends Enum<T>> List<T> convertStringToEnumList(Class<T> enumType,
+            List<String> stringList) {
         List<T> enumList = new ArrayList<T>();
         for (String string : stringList) {
             enumList.add(Enum.valueOf(enumType, string));
@@ -69,8 +70,7 @@ public class ClassUtil {
 
     public static <T extends Enum<T>> String[] convertEnumToStringArray(Class<T> enumType) {
         List<String> stringList = convertEnumToStringList(enumType);
-        return stringList == null ? null :
-            stringList.toArray(new String[stringList.size()]);
+        return stringList == null ? null : stringList.toArray(new String[stringList.size()]);
     }
 
     public static boolean isWrapper(Class<?> clazz) {
@@ -79,7 +79,7 @@ public class ClassUtil {
 
     public static Class<?> unwrap(Class<?> clazz) {
         Class<?> unwrapped = FROM_WRAPPER.get(clazz);
-        if (unwrapped == null){
+        if (unwrapped == null) {
             return clazz;
         }
         return unwrapped;
@@ -88,7 +88,7 @@ public class ClassUtil {
 
     public static Class<?> wrap(Class<?> clazz) {
         Class<?> wrapped = TO_WRAPPER.get(clazz);
-        if (wrapped == null){
+        if (wrapped == null) {
             return clazz;
         }
         return wrapped;

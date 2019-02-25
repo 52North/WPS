@@ -52,8 +52,7 @@ import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
 import org.n52.wps.webapp.api.FormatEntry;
 
-
-public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
+public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject {
 
     @Override
     protected ProcessDescription initializeDescription() {
@@ -64,18 +63,18 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
         processDescription.setStoreSupported(true);
         processDescription.setProcessVersion("1.0.0");
 
-        //1. Identifier
+        // 1. Identifier
         processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
         processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
 
-        //2. Inputs
+        // 2. Inputs
         List<String> identifiers = this.getInputIdentifiers();
         DataInputs dataInputs = null;
-        if(identifiers.size()>0){
+        if (identifiers.size() > 0) {
             dataInputs = processDescription.addNewDataInputs();
         }
 
-        for(String identifier : identifiers){
+        for (String identifier : identifiers) {
             InputDescriptionType dataInput = dataInputs.addNewInput();
             dataInput.setMinOccurs(getMinOccurs(identifier));
             dataInput.setMaxOccurs(getMaxOccurs(identifier));
@@ -85,61 +84,59 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             Class<?> inputDataTypeClass = this.getInputDataType(identifier);
             Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
 
-            //we have to add this because of the new AbstractLiteralDataBinding class
-            if(interfaces.length == 0){
+            // we have to add this because of the new AbstractLiteralDataBinding
+            // class
+            if (interfaces.length == 0) {
                 interfaces = inputDataTypeClass.getSuperclass().getInterfaces();
             }
 
-            for(Class<?> implementedInterface : interfaces){
-                if(implementedInterface.equals(ILiteralData.class)){
+            for (Class<?> implementedInterface : interfaces) {
+                if (implementedInterface.equals(ILiteralData.class)) {
                     LiteralInputType literalData = dataInput.addNewLiteralData();
                     String inputClassType = "";
 
                     Constructor<?>[] constructors = inputDataTypeClass.getConstructors();
-                    for(Constructor<?> constructor : constructors){
+                    for (Constructor<?> constructor : constructors) {
                         Class<?>[] parameters = constructor.getParameterTypes();
-                        if(parameters.length==1){
-                            inputClassType    = parameters[0].getSimpleName();
+                        if (parameters.length == 1) {
+                            inputClassType = parameters[0].getSimpleName();
                         }
                     }
 
-                    if(inputClassType.length()>0){
+                    if (inputClassType.length() > 0) {
                         DomainMetadataType datatype = literalData.addNewDataType();
-                        datatype.setReference("xs:"+inputClassType.toLowerCase());
+                        datatype.setReference("xs:" + inputClassType.toLowerCase());
                         literalData.addNewAnyValue();
                     }
-                }else if(implementedInterface.equals(IBBOXData.class)){
-                        SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
-                        String[] supportedCRSAray = getSupportedCRSForBBOXInput(identifier);
-                        for(int i = 0; i<supportedCRSAray.length; i++){
-                            if(i==0){
-                                Default defaultCRS = bboxData.addNewDefault();
-                                defaultCRS.setCRS(supportedCRSAray[0]);
-                                if(supportedCRSAray.length==1){
-                                    CRSsType supportedCRS = bboxData.addNewSupported();
-                                    supportedCRS.addCRS(supportedCRSAray[0]);
-                                }
-                            }else{
-                                if(i==1){
-                                    CRSsType supportedCRS = bboxData.addNewSupported();
-                                    supportedCRS.addCRS(supportedCRSAray[1]);
-                                }else{
-                                    bboxData.getSupported().addCRS(supportedCRSAray[i]);
-                                }
+                } else if (implementedInterface.equals(IBBOXData.class)) {
+                    SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
+                    String[] supportedCRSAray = getSupportedCRSForBBOXInput(identifier);
+                    for (int i = 0; i < supportedCRSAray.length; i++) {
+                        if (i == 0) {
+                            Default defaultCRS = bboxData.addNewDefault();
+                            defaultCRS.setCRS(supportedCRSAray[0]);
+                            if (supportedCRSAray.length == 1) {
+                                CRSsType supportedCRS = bboxData.addNewSupported();
+                                supportedCRS.addCRS(supportedCRSAray[0]);
+                            }
+                        } else {
+                            if (i == 1) {
+                                CRSsType supportedCRS = bboxData.addNewSupported();
+                                supportedCRS.addCRS(supportedCRSAray[1]);
+                            } else {
+                                bboxData.getSupported().addCRS(supportedCRSAray[i]);
                             }
                         }
+                    }
 
-
-
-
-                }else if(implementedInterface.equals(IComplexData.class)){
+                } else if (implementedInterface.equals(IComplexData.class)) {
                     SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
                     List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
                     List<IParser> foundParsers = new ArrayList<IParser>();
-                    for(IParser parser : parsers) {
+                    for (IParser parser : parsers) {
                         Class<?>[] supportedClasses = parser.getSupportedDataBindings();
-                        for(Class<?> clazz : supportedClasses){
-                            if(clazz.equals(inputDataTypeClass)){
+                        for (Class<?> clazz : supportedClasses) {
+                            if (clazz.equals(inputDataTypeClass)) {
                                 foundParsers.add(parser);
                             }
 
@@ -152,12 +149,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             }
         }
 
-        //3. Outputs
+        // 3. Outputs
         ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
         List<String> outputIdentifiers = this.getOutputIdentifiers();
-        for(String identifier : outputIdentifiers){
+        for (String identifier : outputIdentifiers) {
             OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
-
 
             dataOutput.addNewIdentifier().setStringValue(identifier);
             dataOutput.addNewTitle().setStringValue(identifier);
@@ -166,64 +162,64 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
             Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
 
-            //we have to add this because of the new AbstractLiteralDataBinding class
-            if(interfaces.length == 0){
+            // we have to add this because of the new AbstractLiteralDataBinding
+            // class
+            if (interfaces.length == 0) {
                 interfaces = outputDataTypeClass.getSuperclass().getInterfaces();
             }
-            for(Class<?> implementedInterface : interfaces){
+            for (Class<?> implementedInterface : interfaces) {
 
-
-                if(implementedInterface.equals(ILiteralData.class)){
+                if (implementedInterface.equals(ILiteralData.class)) {
                     LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
                     String outputClassType = "";
 
                     Constructor<?>[] constructors = outputDataTypeClass.getConstructors();
-                    for(Constructor<?> constructor : constructors){
+                    for (Constructor<?> constructor : constructors) {
                         Class<?>[] parameters = constructor.getParameterTypes();
-                        if(parameters.length==1){
-                            outputClassType    = parameters[0].getSimpleName();
+                        if (parameters.length == 1) {
+                            outputClassType = parameters[0].getSimpleName();
                         }
                     }
 
-                    if(outputClassType.length()>0){
-                        literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
+                    if (outputClassType.length() > 0) {
+                        literalData.addNewDataType().setReference("xs:" + outputClassType.toLowerCase());
                     }
 
-                }else if(implementedInterface.equals(IBBOXData.class)){
+                } else if (implementedInterface.equals(IBBOXData.class)) {
                     SupportedCRSsType bboxData = dataOutput.addNewBoundingBoxOutput();
                     String[] supportedCRSAray = getSupportedCRSForBBOXOutput(identifier);
-                    for(int i = 0; i<supportedCRSAray.length; i++){
-                        if(i==0){
+                    for (int i = 0; i < supportedCRSAray.length; i++) {
+                        if (i == 0) {
                             Default defaultCRS = bboxData.addNewDefault();
                             defaultCRS.setCRS(supportedCRSAray[0]);
-                            if(supportedCRSAray.length==1){
+                            if (supportedCRSAray.length == 1) {
                                 CRSsType supportedCRS = bboxData.addNewSupported();
                                 supportedCRS.addCRS(supportedCRSAray[0]);
                             }
-                        }else{
-                            if(i==1){
+                        } else {
+                            if (i == 1) {
                                 CRSsType supportedCRS = bboxData.addNewSupported();
                                 supportedCRS.addCRS(supportedCRSAray[1]);
-                            }else{
+                            } else {
                                 bboxData.getSupported().addCRS(supportedCRSAray[i]);
                             }
                         }
                     }
 
-                }else if(implementedInterface.equals(IComplexData.class)){
+                } else if (implementedInterface.equals(IComplexData.class)) {
 
-                        SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
+                    SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
 
-                        List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
-                        List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
-                        for(IGenerator generator : generators) {
-                            Class<?>[] supportedClasses = generator.getSupportedDataBindings();
-                            for(Class<?> clazz : supportedClasses){
-                                if(clazz.equals(outputDataTypeClass)){
-                                    foundGenerators.add(generator);
-                                }
-
+                    List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+                    List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+                    for (IGenerator generator : generators) {
+                        Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+                        for (Class<?> clazz : supportedClasses) {
+                            if (clazz.equals(outputDataTypeClass)) {
+                                foundGenerators.add(generator);
                             }
+
+                        }
                     }
 
                     addOutputFormats(complexData, foundGenerators);
@@ -234,81 +230,88 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 
         ProcessDescription superProcessDescription = new ProcessDescription();
 
-        superProcessDescription.addProcessDescriptionForVersion(document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+        superProcessDescription.addProcessDescriptionForVersion(
+                document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
 
         return superProcessDescription;
     }
 
     /**
-     * Override this class for BBOX input data to set supported mime types. The first one in the resulting array will be the default one.
-     * @param identifier ID of the input BBOXType
-     * @return an array containing Strings representing the supported CRSs for inputs
+     * Override this class for BBOX input data to set supported mime types. The
+     * first one in the resulting array will be the default one.
+     * 
+     * @param identifier
+     *            ID of the input BBOXType
+     * @return an array containing Strings representing the supported CRSs for
+     *         inputs
      */
-    public String[] getSupportedCRSForBBOXInput(String identifier){
+    public String[] getSupportedCRSForBBOXInput(String identifier) {
         return new String[0];
     }
 
     /**
-     * Override this class for BBOX output data to set supported mime types. The first one in the resulting array will be the default one.
-     * @param identifier ID of the input BBOXType
-     * @return an array containing Strings representing the supported CRSs for outputs
+     * Override this class for BBOX output data to set supported mime types. The
+     * first one in the resulting array will be the default one.
+     * 
+     * @param identifier
+     *            ID of the input BBOXType
+     * @return an array containing Strings representing the supported CRSs for
+     *         outputs
      */
-    public String[] getSupportedCRSForBBOXOutput(String identifier){
+    public String[] getSupportedCRSForBBOXOutput(String identifier) {
         return new String[0];
     }
 
-    public BigInteger getMinOccurs(String identifier){
+    public BigInteger getMinOccurs(String identifier) {
         return new BigInteger("1");
     }
-    public BigInteger getMaxOccurs(String identifier){
+
+    public BigInteger getMaxOccurs(String identifier) {
         return new BigInteger("1");
     }
 
     public abstract List<String> getInputIdentifiers();
+
     public abstract List<String> getOutputIdentifiers();
-
-
 
     private List<IObserver> observers = new ArrayList<IObserver>();
 
     private Object state = null;
 
     public Object getState() {
-      return state;
+        return state;
     }
 
     public void update(Object state) {
-       this.state = state;
-       notifyObservers();
+        this.state = state;
+        notifyObservers();
     }
 
-     public void addObserver(IObserver o) {
-       observers.add(o);
-     }
+    public void addObserver(IObserver o) {
+        observers.add(o);
+    }
 
-     public void removeObserver(IObserver o) {
-       observers.remove(o);
-     }
+    public void removeObserver(IObserver o) {
+        observers.remove(o);
+    }
 
-     public void notifyObservers() {
-       Iterator<IObserver> i = observers.iterator();
-       while (i.hasNext()) {
-         IObserver o = (IObserver) i.next();
-         o.update(this);
-       }
-     }
-
-     @Override
-        public List<String> getErrors() {
-            List<String> errors = new ArrayList<String>();
-            return errors;
+    public void notifyObservers() {
+        Iterator<IObserver> i = observers.iterator();
+        while (i.hasNext()) {
+            IObserver o = (IObserver) i.next();
+            o.update(this);
         }
+    }
 
+    @Override
+    public List<String> getErrors() {
+        List<String> errors = new ArrayList<String>();
+        return errors;
+    }
 
     private void addInputFormats(SupportedComplexDataInputType complexData,
             List<IParser> foundParsers) {
-        ComplexDataCombinationsType supportedInputFormat = complexData
-                .addNewSupported();
+        ComplexDataCombinationsType supportedInputFormat = complexData.addNewSupported();
 
         for (int i = 0; i < foundParsers.size(); i++) {
             IParser parser = foundParsers.get(i);
@@ -316,14 +319,12 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             List<FormatEntry> supportedFullFormats = parser.getSupportedFullFormats();
 
             if (complexData.getDefault() == null) {
-                ComplexDataCombinationType defaultInputFormat = complexData
-                        .addNewDefault();
+                ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
                 /*
                  * default format will be the first config format
                  */
                 FormatEntry format = supportedFullFormats.get(0);
-                ComplexDataDescriptionType defaultFormat = defaultInputFormat
-                        .addNewFormat();
+                ComplexDataDescriptionType defaultFormat = defaultInputFormat.addNewFormat();
                 defaultFormat.setMimeType(format.getMimeType());
 
                 String encoding = format.getEncoding();
@@ -350,8 +351,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                 /*
                  * add one format for this mimetype
                  */
-                ComplexDataDescriptionType supportedFormat = supportedInputFormat
-                        .addNewFormat();
+                ComplexDataDescriptionType supportedFormat = supportedInputFormat.addNewFormat();
                 supportedFormat.setMimeType(format1.getMimeType());
                 if (format1.getEncoding() != null) {
                     supportedFormat.setEncoding(format1.getEncoding());
@@ -365,8 +365,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 
     private void addOutputFormats(SupportedComplexDataType complexData,
             List<IGenerator> foundGenerators) {
-        ComplexDataCombinationsType supportedOutputFormat = complexData
-                .addNewSupported();
+        ComplexDataCombinationsType supportedOutputFormat = complexData.addNewSupported();
 
         for (int i = 0; i < foundGenerators.size(); i++) {
             IGenerator generator = foundGenerators.get(i);
@@ -374,14 +373,12 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             List<FormatEntry> supportedFullFormats = generator.getSupportedFullFormats();
 
             if (complexData.getDefault() == null) {
-                ComplexDataCombinationType defaultInputFormat = complexData
-                        .addNewDefault();
+                ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
                 /*
                  * default format will be the first config format
                  */
                 FormatEntry format = supportedFullFormats.get(0);
-                ComplexDataDescriptionType defaultFormat = defaultInputFormat
-                        .addNewFormat();
+                ComplexDataDescriptionType defaultFormat = defaultInputFormat.addNewFormat();
                 defaultFormat.setMimeType(format.getMimeType());
 
                 String encoding = format.getEncoding();
@@ -408,8 +405,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                 /*
                  * add one format for this mimetype
                  */
-                ComplexDataDescriptionType supportedFormat = supportedOutputFormat
-                        .addNewFormat();
+                ComplexDataDescriptionType supportedFormat = supportedOutputFormat.addNewFormat();
                 supportedFormat.setMimeType(format1.getMimeType());
                 if (format1.getEncoding() != null) {
                     supportedFormat.setEncoding(format1.getEncoding());

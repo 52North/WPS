@@ -40,22 +40,24 @@ import org.locationtech.jts.io.WKTWriter;
 
 /**
  * This class generates a String representation out of a JTS Geometry.
+ * 
  * @author Benjamin Pross
  *
  */
 public class WKTGenerator extends AbstractGenerator {
 
-    public WKTGenerator(){
+    public WKTGenerator() {
         super();
         supportedIDataTypes.add(JTSGeometryBinding.class);
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema)
-            throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
-        if(data instanceof JTSGeometryBinding){
-            Geometry g = ((JTSGeometryBinding)data).getPayload();
+        if (data instanceof JTSGeometryBinding) {
+            Geometry g = ((JTSGeometryBinding) data).getPayload();
 
             String wktString = new WKTWriter().write(g);
 

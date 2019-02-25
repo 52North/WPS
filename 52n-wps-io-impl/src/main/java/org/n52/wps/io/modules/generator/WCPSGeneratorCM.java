@@ -38,7 +38,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class WCPSGeneratorCM extends ClassKnowingModule{
+public class WCPSGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -46,7 +46,7 @@ public class WCPSGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public WCPSGeneratorCM(){
+    public WCPSGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

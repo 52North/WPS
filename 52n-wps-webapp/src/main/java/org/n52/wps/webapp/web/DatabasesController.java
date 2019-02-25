@@ -37,7 +37,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 /**
  * Handles databases specific URI requests and mapping.
  */
@@ -47,14 +46,17 @@ public class DatabasesController extends BaseConfigurationsController {
 
     /**
      * Display databases configuration modules
-     * @param model the model
+     * 
+     * @param model
+     *            the model
      * @return The databases view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String displayDatabases(Model model) {
         ConfigurationCategory category = ConfigurationCategory.DATABASE;
-        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-                .getConfigurationModulesByCategory(category);
+        Map<String, ConfigurationModule> configurations =
+                configurationManager.getConfigurationServices().getConfigurationModulesByCategory(category);
         model.addAttribute("configurations", configurations);
         LOGGER.info("Retrived '{}' configurations.", category);
         return "databases";

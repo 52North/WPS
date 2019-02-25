@@ -42,17 +42,22 @@ public class GetResultResponseV200 extends Response {
 
     /**
      * Serves the Request with a Response
-     * @param request The GetCapabilities request
+     * 
+     * @param request
+     *            The GetCapabilities request
      */
-    public GetResultResponseV200(GetResultRequestV200 request){
+    public GetResultResponseV200(GetResultRequestV200 request) {
         super(request);
     }
 
     /**
      * Save this Response to an InputStream
-     * @throws ExceptionReport if an exception occurred while creating the response <code>InputStream</code>
+     * 
+     * @throws ExceptionReport
+     *             if an exception occurred while creating the response
+     *             <code>InputStream</code>
      */
-    public InputStream getAsStream() throws ExceptionReport{
-        return ((XmlObject)getRequest().getAttachedResult()).newInputStream();
+    public InputStream getAsStream() throws ExceptionReport {
+        return ((XmlObject) getRequest().getAttachedResult()).newInputStream();
     }
 }

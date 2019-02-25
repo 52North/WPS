@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class AsciiGrassParserCM extends ClassKnowingModule{
+public class AsciiGrassParserCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class AsciiGrassParserCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public AsciiGrassParserCM(){
+    public AsciiGrassParserCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

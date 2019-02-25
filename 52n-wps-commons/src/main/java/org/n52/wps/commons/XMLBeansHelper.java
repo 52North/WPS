@@ -41,39 +41,42 @@ import net.opengis.wps.x20.ProcessDescriptionType;
  */
 public class XMLBeansHelper {
 
-    public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI =
-            "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI = "http://www.w3.org/2001/XMLSchema-instance";
 
-    public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
-        for(OutputDescriptionType desc : outputDescs) {
-            if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static OutputDescriptionType findOutputByID(String outputID,
+            OutputDescriptionType[] outputDescs) {
+        for (OutputDescriptionType desc : outputDescs) {
+            if (desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-    public static InputDescriptionType findInputByID(String outputID, DataInputs inputs) {
-        for(InputDescriptionType desc : inputs.getInputArray()) {
-            if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static InputDescriptionType findInputByID(String outputID,
+            DataInputs inputs) {
+        for (InputDescriptionType desc : inputs.getInputArray()) {
+            if (desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
-        for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
-            if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID,
+            net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
+        for (net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
+            if (desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-    public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
-        for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
-            if(desc.getIdentifier().getStringValue().equals(inputID)) {
+    public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID,
+            ProcessDescriptionType descType) {
+        for (net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
+            if (desc.getIdentifier().getStringValue().equals(inputID)) {
                 return desc;
             }
         }
@@ -84,31 +87,34 @@ public class XMLBeansHelper {
      * @return the default XmlOptions used in responses
      */
     public static XmlOptions getXmlOptions() {
-        return new XmlOptions()
-                .setSaveNamespacesFirst()
-                .setSaveSuggestedPrefixes(PREFIXES)
-                .setSaveAggressiveNamespaces()
-                .setSavePrettyPrint();
+        return new XmlOptions().setSaveNamespacesFirst().setSaveSuggestedPrefixes(PREFIXES)
+                .setSaveAggressiveNamespaces().setSavePrettyPrint();
     }
 
     /**
      * Registers a prefix for a namespace to be used in responses.
      *
-     * @param namespace the XML namespace
-     * @param prefix the prefix
+     * @param namespace
+     *            the XML namespace
+     * @param prefix
+     *            the prefix
      */
-    public static void registerPrefix(String namespace, String prefix) {
+    public static void registerPrefix(String namespace,
+            String prefix) {
         PREFIXES.put(Preconditions.checkNotNull(Strings.emptyToNull(namespace)),
-                     Preconditions.checkNotNull(Strings.emptyToNull(prefix)));
+                Preconditions.checkNotNull(Strings.emptyToNull(prefix)));
     }
 
     /**
-     *Adds a schema location attribute to an XMLObject
+     * Adds a schema location attribute to an XMLObject
      *
-     * @param object the XMLObject
-     * @param schemaLocation the schema location
+     * @param object
+     *            the XMLObject
+     * @param schemaLocation
+     *            the schema location
      */
-    public static void addSchemaLocationToXMLObject(XmlObject object, String schemaLocation){
+    public static void addSchemaLocationToXMLObject(XmlObject object,
+            String schemaLocation) {
 
         XmlCursor c = object.newCursor();
         c.toFirstChild();
@@ -150,8 +156,7 @@ public class XMLBeansHelper {
     /**
      * The namespace for XSI: {@value}.
      */
-    public static final String NS_XSI
-            = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
 
     /**
      * The prefix for XSI: {@value}.

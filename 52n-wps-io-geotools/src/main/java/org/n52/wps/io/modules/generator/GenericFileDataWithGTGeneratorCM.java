@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule{
+public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GenericFileDataWithGTGeneratorCM(){
+    public GenericFileDataWithGTGeneratorCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

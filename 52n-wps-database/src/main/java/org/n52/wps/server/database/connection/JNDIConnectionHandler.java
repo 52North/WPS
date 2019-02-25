@@ -44,8 +44,10 @@ public class JNDIConnectionHandler implements ConnectionHandler {
     /**
      * Create a new JNDI Connection Handler.
      *
-     * @param jndiName the name used by the container to tie to the database
-     * @throws NamingException if a naming exception is encountered
+     * @param jndiName
+     *            the name used by the container to tie to the database
+     * @throws NamingException
+     *             if a naming exception is encountered
      */
     public JNDIConnectionHandler(String jndiName) throws NamingException {
         InitialContext context = new InitialContext();
@@ -57,7 +59,8 @@ public class JNDIConnectionHandler implements ConnectionHandler {
      * connection from the connection pool
      *
      * @return the connection
-     * @throws SQLException if a sql exception is encountered
+     * @throws SQLException
+     *             if a sql exception is encountered
      */
     @Override
     public Connection getConnection() throws SQLException {

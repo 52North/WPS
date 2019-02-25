@@ -31,7 +31,8 @@ package org.n52.wps.webapp.service;
 import org.n52.wps.webapp.entities.LogConfigurations;
 
 /**
- * Used for configuring log settings. The interface gets and saves {@link LogConfigurations} object.
+ * Used for configuring log settings. The interface gets and saves
+ * {@link LogConfigurations} object.
  */
 public interface LogConfigurationsService {
     /**

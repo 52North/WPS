@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GTBinZippedSHPParserCM extends ClassKnowingModule{
+public class GTBinZippedSHPParserCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GTBinZippedSHPParserCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GTBinZippedSHPParserCM(){
+    public GTBinZippedSHPParserCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

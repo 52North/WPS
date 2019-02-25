@@ -71,12 +71,12 @@ public class RepositoryManager implements ApplicationContextAware {
         // creates listener and register it to the wpsConfig instance.
         WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME,
                 (final PropertyChangeEvent propertyChangeEvent) -> {
-                    LOGGER.info("Received Property Change Event: {}",
-                            propertyChangeEvent.getPropertyName());
+                    LOGGER.info("Received Property Change Event: {}", propertyChangeEvent.getPropertyName());
                     loadAllRepositories();
                 });
 
-        Double updateHours = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getRepoReloadInterval();
+        Double updateHours =
+                WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getRepoReloadInterval();
         if (updateHours != 0) {
             LOGGER.info("Setting repository update period to {} hours.", updateHours);
             updateHours = updateHours * 3600 * 1000; // make milliseconds
@@ -95,8 +95,8 @@ public class RepositoryManager implements ApplicationContextAware {
 
         List<String> repositoryNames = new ArrayList<>();
 
-        Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance()
-                .getRegisteredAlgorithmRepositoryConfigModules();
+        Map<String, ConfigurationModule> repositoryMap =
+                WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
 
         for (ConfigurationModule configModule : repositoryMap.values()) {
             if (configModule.isActive() && configModule instanceof ClassKnowingModule) {
@@ -113,12 +113,21 @@ public class RepositoryManager implements ApplicationContextAware {
     }
 
     protected void loadAllRepositories() {
-        LOGGER.debug("Loading all repositories: {} (doing a gc beforehand...)", repositories);//FIXME not sure log statement makes a lot of sense
+        LOGGER.debug("Loading all repositories: {} (doing a gc beforehand...)", repositories);// FIXME
+                                                                                              // not
+                                                                                              // sure
+                                                                                              // log
+                                                                                              // statement
+                                                                                              // makes
+                                                                                              // a
+                                                                                              // lot
+                                                                                              // of
+                                                                                              // sense
 
         System.gc();
 
-        Map<String, ConfigurationModule> repositoryConfigModules = WPSConfig.getInstance()
-                .getRegisteredAlgorithmRepositoryConfigModules();
+        Map<String, ConfigurationModule> repositoryConfigModules =
+                WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
 
         for (String configModuleName : repositoryConfigModules.keySet()) {
 
@@ -132,7 +141,8 @@ public class RepositoryManager implements ApplicationContextAware {
         }
     }
 
-    private void loadRepository(String configModuleName, ClassKnowingModule configModule) {
+    private void loadRepository(String configModuleName,
+            ClassKnowingModule configModule) {
         if (configModule.isActive()) {
             LOGGER.debug("Loading module '{}'", configModuleName);
             registerRepository(configModuleName, configModule);
@@ -141,11 +151,14 @@ public class RepositoryManager implements ApplicationContextAware {
         }
     }
 
-    private void registerRepository(String configModuleName, ClassKnowingModule configModule) {
+    private void registerRepository(String configModuleName,
+            ClassKnowingModule configModule) {
         String repositoryClassName = configModule.getClassName();
         try {
-            // XXX configModuleName != COMPONENT_NAME of LocalRAlgorithmRepository
-            addRepository(repositoryClassName, applicationContext.getBean(configModuleName, IAlgorithmRepository.class));
+            // XXX configModuleName != COMPONENT_NAME of
+            // LocalRAlgorithmRepository
+            addRepository(repositoryClassName,
+                    applicationContext.getBean(configModuleName, IAlgorithmRepository.class));
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.info("Hard wiring '{}' for module '{}'.", repositoryClassName, configModuleName);
             registerNewRepository(repositoryClassName);
@@ -156,25 +169,19 @@ public class RepositoryManager implements ApplicationContextAware {
 
     private void registerNewRepository(String repositoryClassName) {
         try {
-            Class<?> repositoryClass = RepositoryManager.class
-                    .getClassLoader()
-                    .loadClass(repositoryClassName);
-            IAlgorithmRepository algorithmRepository = (IAlgorithmRepository) repositoryClass
-                    .newInstance();
+            Class<?> repositoryClass = RepositoryManager.class.getClassLoader().loadClass(repositoryClassName);
+            IAlgorithmRepository algorithmRepository = (IAlgorithmRepository) repositoryClass.newInstance();
 
             addRepository(repositoryClassName, algorithmRepository);
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.warn(
-                    "An error occured while registering AlgorithmRepository: {}",
-                    repositoryClassName, e);
+            LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName, e);
         } catch (ClassNotFoundException | IllegalArgumentException | SecurityException e) {
-            LOGGER.warn(
-                    "An error occured while registering AlgorithmRepository: {}",
-                    repositoryClassName, e);
+            LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName, e);
         }
     }
 
-    protected void addRepository(String name, IAlgorithmRepository repository) {
+    protected void addRepository(String name,
+            IAlgorithmRepository repository) {
         repositories.put(name, repository);
         LOGGER.info("Algorithm Repository {} registered", name);
     }
@@ -188,11 +195,11 @@ public class RepositoryManager implements ApplicationContextAware {
     }
 
     /**
-     * Methods looks for Algorithm in all Repositories.
-     * The first match is returned.
-     * If no match could be found, null is returned
+     * Methods looks for Algorithm in all Repositories. The first match is
+     * returned. If no match could be found, null is returned
      *
-     * @param className the class name of the algorithm
+     * @param className
+     *            the class name of the algorithm
      * @return IAlgorithm or null
      */
     public IAlgorithm getAlgorithm(String className) {
@@ -236,18 +243,21 @@ public class RepositoryManager implements ApplicationContextAware {
      * returns <code>true</code>, whereas the implementation has to take care if
      * it is capabable to handle giving item correctly.
      *
-     * // XXX repo-implementations expect mostly a simple string which is certainly
-     *    not enough info to determine if repo is capable for the given item
-     * // TODO item should contain more infos for repositories to decide
+     * // XXX repo-implementations expect mostly a simple string which is
+     * certainly not enough info to determine if repo is capable for the given
+     * item // TODO item should contain more infos for repositories to decide
      *
-     * @param item the algorithm item to add.
-     * @return <code>true</code> if item could be added, <code>false</code> otherwise.
+     * @param item
+     *            the algorithm item to add.
+     * @return <code>true</code> if item could be added, <code>false</code>
+     *         otherwise.
      */
     public boolean addAlgorithm(Object item) {
         LOGGER.debug("Adding algorithm based on {} ...", item);
         for (IAlgorithmRepository repository : repositories.values()) {
             if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
-                ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
+                ITransactionalAlgorithmRepository transactionalRepository =
+                        ITransactionalAlgorithmRepository.class.cast(repository);
                 LOGGER.trace("Found compatible algorithms repository {} for {}", transactionalRepository, item);
                 if (transactionalRepository.addAlgorithm(item)) {
                     LOGGER.debug("Added algorithm {} to {}", item, transactionalRepository);
@@ -261,23 +271,27 @@ public class RepositoryManager implements ApplicationContextAware {
     }
 
     /**
-     * Removes given algorithm item from the first (transactional) repository which
+     * Removes given algorithm item from the first (transactional) repository
+     * which
      * {@link ITransactionalAlgorithmRepository#addAlgorithm(java.lang.Object)}
      * returns <code>true</code>, whereas the implementation has to take care if
      * it is capabable to handle giving item correctly.
      *
-     * // XXX repo-implementations expect mostly a simple string which is certainly
-     *    not enough info to determine if repo is capable for the given item
-     * // TODO item should contain more infos for repositories to decide
+     * // XXX repo-implementations expect mostly a simple string which is
+     * certainly not enough info to determine if repo is capable for the given
+     * item // TODO item should contain more infos for repositories to decide
      *
-     * @param item the algorithm item to remove.
-     * @return <code>true</code> if item could be removed, <code>false</code> otherwise.
+     * @param item
+     *            the algorithm item to remove.
+     * @return <code>true</code> if item could be removed, <code>false</code>
+     *         otherwise.
      */
     public boolean removeAlgorithm(Object item) {
         LOGGER.debug("Removing algorithm based on {} ...", item);
         for (IAlgorithmRepository repository : repositories.values()) {
             if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
-                ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
+                ITransactionalAlgorithmRepository transactionalRepository =
+                        ITransactionalAlgorithmRepository.class.cast(repository);
                 try {
                     if (transactionalRepository.removeAlgorithm(item)) {
                         LOGGER.debug("Removed algorithm {} from {}", item, transactionalRepository);
@@ -303,17 +317,20 @@ public class RepositoryManager implements ApplicationContextAware {
         return null;
     }
 
-    public Class<?> getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier) {
+    public Class<?> getInputDataTypeForAlgorithm(String algorithmIdentifier,
+            String inputIdentifier) {
         IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
         return algorithm.getInputDataType(inputIdentifier);
     }
 
-    public Class<?> getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier) {
+    public Class<?> getOutputDataTypeForAlgorithm(String algorithmIdentifier,
+            String inputIdentifier) {
         IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
         return algorithm.getOutputDataType(inputIdentifier);
     }
 
-    public boolean registerAlgorithm(String id, IAlgorithmRepository repository) {
+    public boolean registerAlgorithm(String id,
+            IAlgorithmRepository repository) {
         if (globalProcessIDs.addID(id)) {
             return true;
         } else {
@@ -339,8 +356,7 @@ public class RepositoryManager implements ApplicationContextAware {
         return null;
     }
 
-    public IAlgorithmRepository getRepositoryForClassName(
-            String className) {
+    public IAlgorithmRepository getRepositoryForClassName(String className) {
         for (String repositoryClassName : getRepositoryNames()) {
             IAlgorithmRepository repository = repositories.get(repositoryClassName);
             if (repository.getClass().getName().equals(className)) {

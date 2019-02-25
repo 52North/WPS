@@ -71,23 +71,29 @@ public class UploadController {
     private ResourcePathUtil resourcePathUtil;
 
     /**
-     * Process all upload requests; forward to the appropriate method based on the type of file uploaded. The method
-     * will return an HTTP 200 status code if there are no errors, else, it will return a 400 status code.
+     * Process all upload requests; forward to the appropriate method based on
+     * the type of file uploaded. The method will return an HTTP 200 status code
+     * if there are no errors, else, it will return a 400 status code.
      *
-     * @param request the servlet request
-     * @param response the servlet response
-     * @return A {@code ValidationResponse} object which contains the list of errors, if any.
+     * @param request
+     *            the servlet request
+     * @param response
+     *            the servlet response
+     * @return A {@code ValidationResponse} object which contains the list of
+     *         errors, if any.
      */
-    @RequestMapping(value = "upload", method = RequestMethod.POST)
+    @RequestMapping(
+            value = "upload",
+            method = RequestMethod.POST)
     @ResponseBody
-    public ValidationResponse upload(MultipartHttpServletRequest request, HttpServletResponse response) {
+    public ValidationResponse upload(MultipartHttpServletRequest request,
+            HttpServletResponse response) {
 
         ValidationResponse validationResponse = new ValidationResponse();
         List<FieldError> listOfErros = new ArrayList<FieldError>();
         validationResponse.setErrorMessageList(listOfErros);
 
-        @SuppressWarnings("unused")
-        MultipartFile file = null;
+        @SuppressWarnings("unused") MultipartFile file = null;
 
         if ((file = request.getFile("javaFile")) != null) {
             validationResponse = uploadProcess(request, response);
@@ -106,7 +112,8 @@ public class UploadController {
     /*
      * Handle the uploading of process and process description.
      */
-    private ValidationResponse uploadProcess(MultipartHttpServletRequest request, HttpServletResponse response) {
+    private ValidationResponse uploadProcess(MultipartHttpServletRequest request,
+            HttpServletResponse response) {
         ValidationResponse validationResponse = new ValidationResponse();
         List<FieldError> listOfErros = new ArrayList<FieldError>();
         validationResponse.setErrorMessageList(listOfErros);
@@ -127,8 +134,8 @@ public class UploadController {
         if (xml != null) {
             if (xml.isEmpty() || !checkExtension(xml, "xml")) {
                 response.setStatus(400);
-                FieldError error = new FieldError(xml.getOriginalFilename(), xml.getName(),
-                        "Only XML files are accepted.");
+                FieldError error =
+                        new FieldError(xml.getOriginalFilename(), xml.getName(), "Only XML files are accepted.");
                 listOfErros.add(error);
                 return validationResponse;
             }
@@ -152,7 +159,8 @@ public class UploadController {
     /*
      * Handle the uploading of RScript
      */
-    private ValidationResponse uploadRScript(MultipartHttpServletRequest request, HttpServletResponse response) {
+    private ValidationResponse uploadRScript(MultipartHttpServletRequest request,
+            HttpServletResponse response) {
 
         ValidationResponse validationResponse = new ValidationResponse();
         List<FieldError> listOfErros = new ArrayList<FieldError>();
@@ -165,9 +173,7 @@ public class UploadController {
                 saveRScript(rScript, request);
             } catch (WPSConfigurationException e) {
                 response.setStatus(400);
-                FieldError error = new FieldError(
-                        "alert",
-                        "alert",
+                FieldError error = new FieldError("alert", "alert",
                         "Unable to load the script directory for the LocalRAlgorithmRepository module. "
                                 + "Please check that the module is loaded correctly and the configuration entry is set.");
                 listOfErros.add(error);
@@ -181,8 +187,8 @@ public class UploadController {
             }
         } else {
             response.setStatus(400);
-            FieldError error = new FieldError(rScript.getOriginalFilename(), rScript.getName(),
-                    "Only R scripts are accepted.");
+            FieldError error =
+                    new FieldError(rScript.getOriginalFilename(), rScript.getName(), "Only R scripts are accepted.");
             listOfErros.add(error);
         }
 
@@ -192,7 +198,8 @@ public class UploadController {
     /*
      * Check the extension of the passed file.
      */
-    private boolean checkExtension(MultipartFile file, String requiredExtension) {
+    private boolean checkExtension(MultipartFile file,
+            String requiredExtension) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         if (!extension.equals(requiredExtension)) {
             return false;
@@ -203,12 +210,13 @@ public class UploadController {
     /*
      * Write & save the Java file
      */
-    private String saveJava(MultipartFile java, HttpServletRequest request) throws IOException {
+    private String saveJava(MultipartFile java,
+            HttpServletRequest request) throws IOException {
         LOGGER.debug("Trying to upload '{}'.", java.getOriginalFilename());
 
         // base directory
-        StringBuilder directoryPath = new StringBuilder(
-                resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes/uploaded"));
+        StringBuilder directoryPath =
+                new StringBuilder(resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes/uploaded"));
 
         // try to get the package name from the file, read line by line
         String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separatorChar + java.getOriginalFilename();
@@ -242,12 +250,15 @@ public class UploadController {
         FileUtils.copyFileToDirectory(tempFile, new File(directoryPath.toString()));
         LOGGER.info("Uploaded file saved in '{}'.", directoryPath.toString());
 
-        String fileName = directoryPath.toString().endsWith(File.separator) ? directoryPath.toString() + tempFile.getName() : directoryPath.toString() + File.separator + tempFile.getName();
+        String fileName =
+                directoryPath.toString().endsWith(File.separator) ? directoryPath.toString() + tempFile.getName()
+                        : directoryPath.toString() + File.separator + tempFile.getName();
 
-        //TODO: inform user about possible compile errors
+        // TODO: inform user about possible compile errors
         JavaProcessCompiler.compile(fileName);
 
-        configurationManager.getConfigurationServices().addAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), fullyQualifiedName);
+        configurationManager.getConfigurationServices().addAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(),
+                fullyQualifiedName);
 
         tempFile.delete();
         return directoryPath.toString();
@@ -256,7 +267,8 @@ public class UploadController {
     /*
      * Write & save the XML file
      */
-    private void saveXml(MultipartFile xml, String savePath) throws IOException {
+    private void saveXml(MultipartFile xml,
+            String savePath) throws IOException {
         if (xml != null) {
             LOGGER.debug("Trying to upload '{}'.", xml.getOriginalFilename());
             String xmlPath = savePath + "/" + xml.getOriginalFilename();
@@ -270,8 +282,8 @@ public class UploadController {
     /*
      * Write & save the R file
      */
-    private void saveRScript(MultipartFile rScript, HttpServletRequest request) throws WPSConfigurationException,
-            IOException {
+    private void saveRScript(MultipartFile rScript,
+            HttpServletRequest request) throws WPSConfigurationException, IOException {
         LOGGER.debug("Trying to upload '{}'.", rScript.getOriginalFilename());
 
         // check if the user entered a process name
@@ -290,20 +302,21 @@ public class UploadController {
         }
 
         /*
-         * try to get the directory path for the R module. First get the configuration module, and then try to get the
-         * entry with the directory path
+         * try to get the directory path for the R module. First get the
+         * configuration module, and then try to get the entry with the
+         * directory path
          */
         String directoryPath = null;
 
         /*
-         * if the module or the entry are null, catch and rethrow to alert the user that the LocalRAlgorithmRepository
-         * module is not loaded
+         * if the module or the entry are null, catch and rethrow to alert the
+         * user that the LocalRAlgorithmRepository module is not loaded
          */
         try {
-            ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-                    "org.n52.wps.server.r.LocalRAlgorithmRepository");
-            ConfigurationEntry<?> entry = configurationManager.getConfigurationServices().getConfigurationEntry(module,
-                    "Script_Dir");
+            ConfigurationModule module = configurationManager.getConfigurationServices()
+                    .getConfigurationModule("org.n52.wps.server.r.LocalRAlgorithmRepository");
+            ConfigurationEntry<?> entry =
+                    configurationManager.getConfigurationServices().getConfigurationEntry(module, "Script_Dir");
             String scriptDirectory = configurationManager.getConfigurationServices().getConfigurationEntryValue(module,
                     entry, String.class);
             directoryPath = resourcePathUtil.getWebAppResourcePath(scriptDirectory);

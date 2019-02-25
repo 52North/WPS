@@ -56,8 +56,7 @@ public class WPSClientExample {
         String processID = "org.n52.wps.server.algorithm.SimpleBufferAlgorithm";
 
         try {
-            ProcessDescriptionType describeProcessDocument = requestDescribeProcess(
-                    wpsURL, processID);
+            ProcessDescriptionType describeProcessDocument = requestDescribeProcess(wpsURL, processID);
             System.out.println(describeProcessDocument);
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,22 +64,18 @@ public class WPSClientExample {
         try {
             requestGetCapabilities(wpsURL);
 
-            ProcessDescriptionType describeProcessDocument = requestDescribeProcess(
-                    wpsURL, processID);
+            ProcessDescriptionType describeProcessDocument = requestDescribeProcess(wpsURL, processID);
             // define inputs
             HashMap<String, Object> inputs = new HashMap<String, Object>();
             // complex data by reference
-            inputs.put(
-                    "data",
+            inputs.put("data",
                     "http://geoprocessing.demo.52north.org:8080/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=topp:tasmania_roads&outputFormat=GML3");
             // literal data
             inputs.put("width", "0.05");
-            IData data = executeProcess(wpsURL, processID,
-                    describeProcessDocument, inputs);
+            IData data = executeProcess(wpsURL, processID, describeProcessDocument, inputs);
 
             if (data instanceof GTVectorDataBinding) {
-                FeatureCollection< ? , ? > featureCollection = ((GTVectorDataBinding) data)
-                        .getPayload();
+                FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) data).getPayload();
                 System.out.println(featureCollection.size());
             }
         } catch (WPSClientException e) {
@@ -92,8 +87,7 @@ public class WPSClientExample {
         }
     }
 
-    public CapabilitiesDocument requestGetCapabilities(String url)
-            throws WPSClientException {
+    public CapabilitiesDocument requestGetCapabilities(String url) throws WPSClientException {
 
         WPSClientSession wpsClient = WPSClientSession.getInstance();
 
@@ -101,8 +95,7 @@ public class WPSClientExample {
 
         CapabilitiesDocument capabilities = wpsClient.getWPSCaps(url);
 
-        ProcessBriefType[] processList = capabilities.getCapabilities()
-                .getProcessOfferings().getProcessArray();
+        ProcessBriefType[] processList = capabilities.getCapabilities().getProcessOfferings().getProcessArray();
 
         System.out.println("Processes in capabilities:");
         for (ProcessBriefType process : processList) {
@@ -116,11 +109,9 @@ public class WPSClientExample {
 
         WPSClientSession wpsClient = WPSClientSession.getInstance();
 
-        ProcessDescriptionType processDescription = wpsClient
-                .getProcessDescription(url, processID);
+        ProcessDescriptionType processDescription = wpsClient.getProcessDescription(url, processID);
 
-        InputDescriptionType[] inputList = processDescription.getDataInputs()
-                .getInputArray();
+        InputDescriptionType[] inputList = processDescription.getDataInputs().getInputArray();
 
         for (InputDescriptionType input : inputList) {
             System.out.println(input.getIdentifier().getStringValue());
@@ -128,63 +119,48 @@ public class WPSClientExample {
         return processDescription;
     }
 
-    public IData executeProcess(String url, String processID,
+    public IData executeProcess(String url,
+            String processID,
             ProcessDescriptionType processDescription,
             HashMap<String, Object> inputs) throws Exception {
-        org.n52.wps.client.ExecuteRequestBuilder executeBuilder = new org.n52.wps.client.ExecuteRequestBuilder(
-                processDescription);
+        org.n52.wps.client.ExecuteRequestBuilder executeBuilder =
+                new org.n52.wps.client.ExecuteRequestBuilder(processDescription);
 
-        for (InputDescriptionType input : processDescription.getDataInputs()
-                .getInputArray()) {
+        for (InputDescriptionType input : processDescription.getDataInputs().getInputArray()) {
             String inputName = input.getIdentifier().getStringValue();
             Object inputValue = inputs.get(inputName);
             if (input.getLiteralData() != null) {
                 if (inputValue instanceof String) {
-                    executeBuilder.addLiteralData(inputName,
-                            (String) inputValue);
+                    executeBuilder.addLiteralData(inputName, (String) inputValue);
                 }
             } else if (input.getComplexData() != null) {
                 // Complexdata by value
                 if (inputValue instanceof FeatureCollection) {
-                    IData data = new GTVectorDataBinding(
-(FeatureCollection< ? , ? >) inputValue);
-                    executeBuilder
-                            .addComplexData(
-                                    inputName,
-                                    data,
-                                    "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
-                                    null, "text/xml");
+                    IData data = new GTVectorDataBinding((FeatureCollection<?, ?>) inputValue);
+                    executeBuilder.addComplexData(inputName, data,
+                            "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", null, "text/xml");
                 }
                 // Complexdata Reference
                 if (inputValue instanceof String) {
-                    executeBuilder
-                            .addComplexDataReference(
-                                    inputName,
-                                    (String) inputValue,
-                                    "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
-                                    null, "text/xml");
+                    executeBuilder.addComplexDataReference(inputName, (String) inputValue,
+                            "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", null, "text/xml");
                 }
 
                 if (inputValue == null && input.getMinOccurs().intValue() > 0) {
-                    throw new IOException("Property not set, but mandatory: "
-                            + inputName);
+                    throw new IOException("Property not set, but mandatory: " + inputName);
                 }
             }
         }
         executeBuilder.setMimeTypeForOutput("text/xml", "result");
-        executeBuilder.setSchemaForOutput(
-                "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
-                "result");
+        executeBuilder.setSchemaForOutput("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", "result");
         ExecuteDocument execute = executeBuilder.getExecute();
         execute.getExecute().setService("WPS");
         WPSClientSession wpsClient = WPSClientSession.getInstance();
         Object responseObject = wpsClient.execute(url, execute);
         if (responseObject instanceof ExecuteResponseDocument) {
             ExecuteResponseDocument response = (ExecuteResponseDocument) responseObject;
-            ExecuteResponseAnalyser analyser = new ExecuteResponseAnalyser(
-                    execute, response, processDescription);
-            IData data = (IData) analyser.getComplexDataByIndex(0,
-                    GTVectorDataBinding.class);
+            ExecuteResponseAnalyser analyser = new ExecuteResponseAnalyser(execute, response, processDescription);
+            IData data = (IData) analyser.getComplexDataByIndex(0, GTVectorDataBinding.class);
             return data;
         }
         throw new Exception("Exception: " + responseObject.toString());
@@ -192,7 +168,7 @@ public class WPSClientExample {
 
     public static void main(String[] args) {
 
-        //TODO find way to initialize parsers/generators
+        // TODO find way to initialize parsers/generators
 
         WPSClientExample client = new WPSClientExample();
         client.testExecute();

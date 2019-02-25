@@ -39,57 +39,76 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
 /**
- * Data types which are supported by scripts Note that every IData class must be parsed from an to are to be
- * handled successful, see GenericRProcess. TODO: restructure dependent classes and methods for new attributes
+ * Data types which are supported by scripts Note that every IData class must be
+ * parsed from an to are to be handled successful, see GenericRProcess. TODO:
+ * restructure dependent classes and methods for new attributes
  *
- * FIXME use either this class or the file R_Datatype.conf, potentially refactor the format of the file.
+ * FIXME use either this class or the file R_Datatype.conf, potentially refactor
+ * the format of the file.
  */
 public enum RDataType implements RTypeDefinition {
 
     // literal data:
-    STRING("string", "xs:string", LiteralStringBinding.class),
-    CHARACTER("character", "xs:string", LiteralStringBinding.class),
-    INTEGER("integer", "xs:integer", LiteralIntBinding.class),
-    DOUBLE("double", "xs:double", LiteralDoubleBinding.class),
-    BOOLEAN("boolean", "xs:boolean", LiteralBooleanBinding.class),
+    STRING("string", "xs:string", LiteralStringBinding.class), CHARACTER("character", "xs:string",
+            LiteralStringBinding.class), INTEGER("integer", "xs:integer", LiteralIntBinding.class), DOUBLE("double",
+                    "xs:double",
+                    LiteralDoubleBinding.class), BOOLEAN("boolean", "xs:boolean", LiteralBooleanBinding.class),
 
     // geodata:
-    DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    DGN("dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    GEOTIFF("geotiff", GenericFileDataConstants.MIME_TYPE_GEOTIFF, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    GEOTIFF2("geotiff_image", GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF,GenericFileDataWithGTBinding.class, true, null, "base64"),
-    GEOTIFF_X("geotiff_x",GenericFileDataConstants.MIME_TYPE_X_GEOTIFF, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    IMG("img", GenericFileDataConstants.MIME_TYPE_HDF, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    IMG2("img_x", GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA, GenericFileDataWithGTBinding.class, true, null,"base64"),
-    NETCDF("netcdf", GenericFileDataConstants.MIME_TYPE_NETCDF, GenericFileDataWithGTBinding.class,true, null, "base64"),
-    NETCDF_X("netcdf_x", GenericFileDataConstants.MIME_TYPE_X_NETCDF,GenericFileDataWithGTBinding.class, true, null, "base64"),
-    REMAP("remap",GenericFileDataConstants.MIME_TYPE_REMAPFILE, GenericFileDataWithGTBinding.class, true, null, "base64"),
-    SHAPE("shp", GenericFileDataConstants.MIME_TYPE_SHP, GenericFileDataWithGTBinding.class, true, null, "base64"),
+    DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataWithGTBinding.class, true, null,
+            "base64"), DGN("dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataWithGTBinding.class, true,
+                    null, "base64"), GEOTIFF("geotiff", GenericFileDataConstants.MIME_TYPE_GEOTIFF,
+                            GenericFileDataWithGTBinding.class, true, null, "base64"), GEOTIFF2("geotiff_image",
+                                    GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF,
+                                    GenericFileDataWithGTBinding.class, true, null, "base64"), GEOTIFF_X("geotiff_x",
+                                            GenericFileDataConstants.MIME_TYPE_X_GEOTIFF,
+                                            GenericFileDataWithGTBinding.class, true, null, "base64"), IMG("img",
+                                                    GenericFileDataConstants.MIME_TYPE_HDF,
+                                                    GenericFileDataWithGTBinding.class, true, null, "base64"), IMG2(
+                                                            "img_x", GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA,
+                                                            GenericFileDataWithGTBinding.class, true, null,
+                                                            "base64"), NETCDF("netcdf",
+                                                                    GenericFileDataConstants.MIME_TYPE_NETCDF,
+                                                                    GenericFileDataWithGTBinding.class, true, null,
+                                                                    "base64"), NETCDF_X("netcdf_x",
+                                                                            GenericFileDataConstants.MIME_TYPE_X_NETCDF,
+                                                                            GenericFileDataWithGTBinding.class, true,
+                                                                            null, "base64"), REMAP("remap",
+                                                                                    GenericFileDataConstants.MIME_TYPE_REMAPFILE,
+                                                                                    GenericFileDataWithGTBinding.class,
+                                                                                    true, null, "base64"), SHAPE("shp",
+                                                                                            GenericFileDataConstants.MIME_TYPE_SHP,
+                                                                                            GenericFileDataWithGTBinding.class,
+                                                                                            true, null, "base64"),
     // SHAPE_ZIP("shp_zip",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP,GenericFileDataBinding.class,true),
-    SHAPE_ZIP2("shp_x", GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null, "base64"),
-    KML("kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataWithGTBinding.class, true, null, "UTF-8"),
+    SHAPE_ZIP2("shp_x", GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null,
+            "base64"), KML("kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataWithGTBinding.class, true,
+                    null, "UTF-8"),
 
     // graphical data
-    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, "base64"),
-    JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
-    JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
-    PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class, true, null, "base64"),
-    TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, "base64"),
+    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, "base64"), JPEG(
+            "jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null,
+            "base64"), JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true,
+                    null, "base64"), PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG,
+                            GenericFileDataBinding.class, true, null, "base64"), TIFF("tiff",
+                                    GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null,
+                                    "base64"),
 
     // file data and xml:
-    TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class, true),
-    TEXT_XML("xml", GenericFileDataConstants.MIME_TYPE_TEXT_XML, GenericFileDataBinding.class, true),
-    FILE("file", "application/unknown", GenericFileDataBinding.class),
-    PDF("pdf", "application/pdf",GenericFileDataBinding.class, true, null, null), // "base64"),
-    STY("sty", "application/sty", GenericFileDataBinding.class, true, null, "base64"),
-    RNW("rnw", "application/rnw",GenericFileDataBinding.class, true, null, "base64");
-    // TEXT_XML2("text_xml", GenericFileDataConstants.MIME_TYPE_TEXT_XML,GenericFileDataBinding.class,true);
+    TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class, true), TEXT_XML(
+            "xml", GenericFileDataConstants.MIME_TYPE_TEXT_XML, GenericFileDataBinding.class,
+            true), FILE("file", "application/unknown", GenericFileDataBinding.class), PDF("pdf", "application/pdf",
+                    GenericFileDataBinding.class, true, null, null), // "base64"),
+    STY("sty", "application/sty", GenericFileDataBinding.class, true, null, "base64"), RNW("rnw", "application/rnw",
+            GenericFileDataBinding.class, true, null, "base64");
+    // TEXT_XML2("text_xml",
+    // GenericFileDataConstants.MIME_TYPE_TEXT_XML,GenericFileDataBinding.class,true);
 
     private String key;
 
     private String processKey;
 
-    private Class< ? extends IData> iDataClass;
+    private Class<? extends IData> iDataClass;
 
     private boolean isComplex;
 
@@ -97,30 +116,22 @@ public enum RDataType implements RTypeDefinition {
 
     String encoding = "UTF-8";
 
-    private RDataType(String key,
-                      String mimeType,
-                      Class< ? extends IData> iDataClass,
-                      boolean isComplex,
-                      String schema,
-                      String encoding) {
+    private RDataType(String key, String mimeType, Class<? extends IData> iDataClass, boolean isComplex, String schema,
+            String encoding) {
         this.key = key;
         this.processKey = mimeType;
         this.iDataClass = iDataClass;
         this.isComplex = isComplex;
 
-        this.schema = schema == null
-                ? this.schema
-                : schema;
-        this.encoding = encoding == null
-                ? this.encoding
-                : encoding;
+        this.schema = schema == null ? this.schema : schema;
+        this.encoding = encoding == null ? this.encoding : encoding;
     }
 
-    private RDataType(String key, String mimeType, Class< ? extends IData> iDataClass, boolean isComplex) {
+    private RDataType(String key, String mimeType, Class<? extends IData> iDataClass, boolean isComplex) {
         this(key, mimeType, iDataClass, isComplex, null, null);
     }
 
-    private RDataType(String key, String mimeType, Class< ? extends IData> iDataClass) {
+    private RDataType(String key, String mimeType, Class<? extends IData> iDataClass) {
         this(key, mimeType, iDataClass, false);
     }
 
@@ -153,7 +164,7 @@ public enum RDataType implements RTypeDefinition {
     }
 
     @Override
-    public Class< ? extends IData> getIDataClass() {
+    public Class<? extends IData> getIDataClass() {
         return this.iDataClass;
     }
 }

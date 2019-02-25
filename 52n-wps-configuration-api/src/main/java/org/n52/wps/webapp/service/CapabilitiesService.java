@@ -32,8 +32,9 @@ import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 /**
- * Used for configuring the capabilities document information. The interface gets and saves
- * {@link ServiceIdentification} and {@link ServiceProvider} objects.
+ * Used for configuring the capabilities document information. The interface
+ * gets and saves {@link ServiceIdentification} and {@link ServiceProvider}
+ * objects.
  */
 public interface CapabilitiesService {
     /**
@@ -53,14 +54,16 @@ public interface CapabilitiesService {
     /**
      * Save the service identification information to file
      *
-     * @param serviceIdentification the <code>ServiceIdentification</code> to be saved
+     * @param serviceIdentification
+     *            the <code>ServiceIdentification</code> to be saved
      */
     void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
     /**
      * Save the service provider information to file
      *
-     * @param serviceProvider the <code>ServiceProvider</code> to be saved
+     * @param serviceProvider
+     *            the <code>ServiceProvider</code> to be saved
      */
     void saveServiceProvider(ServiceProvider serviceProvider);
 }

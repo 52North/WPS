@@ -60,34 +60,44 @@ import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
-public class GeoserverWMSGeneratorCM extends ClassKnowingModule{
+public class GeoserverWMSGeneratorCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
-public static final String geoserverUsernameKey = "Geoserver_username";
-public static final String geoserverPasswordKey = "Geoserver_password";
-public static final String geoserverHostKey = "Geoserver_host";
-public static final String geoserverPortKey = "Geoserver_port";
+    public static final String geoserverUsernameKey = "Geoserver_username";
 
-private ConfigurationEntry<String> geoserverUsernameEntry = new StringConfigurationEntry(geoserverUsernameKey, "GeoServer user name", "GeoServer user name",
-true, "admin");
-private ConfigurationEntry<String> geoserverPasswordEntry = new StringConfigurationEntry(geoserverPasswordKey, "GeoServer password", "GeoServer password",
-true, "geoserver");
-private ConfigurationEntry<String> geoserverHostEntry = new StringConfigurationEntry(geoserverHostKey, "GeoServer hostname", "GeoServer hostname",
-true, "localhost");
-private ConfigurationEntry<String> geoserverPortEntry = new StringConfigurationEntry(geoserverPortKey, "GeoServer port", "GeoServer port",
-true, "8080");
+    public static final String geoserverPasswordKey = "Geoserver_password";
 
-private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(geoserverUsernameEntry, geoserverPasswordEntry, geoserverHostEntry, geoserverPortEntry);
+    public static final String geoserverHostKey = "Geoserver_host";
 
-private String geoserverUsername;
-private String geoserverPassword;
-private String geoserverHost;
-private String geoserverPort;
+    public static final String geoserverPortKey = "Geoserver_port";
+
+    private ConfigurationEntry<String> geoserverUsernameEntry = new StringConfigurationEntry(geoserverUsernameKey,
+            "GeoServer user name", "GeoServer user name", true, "admin");
+
+    private ConfigurationEntry<String> geoserverPasswordEntry = new StringConfigurationEntry(geoserverPasswordKey,
+            "GeoServer password", "GeoServer password", true, "geoserver");
+
+    private ConfigurationEntry<String> geoserverHostEntry = new StringConfigurationEntry(geoserverHostKey,
+            "GeoServer hostname", "GeoServer hostname", true, "localhost");
+
+    private ConfigurationEntry<String> geoserverPortEntry =
+            new StringConfigurationEntry(geoserverPortKey, "GeoServer port", "GeoServer port", true, "8080");
+
+    private List<? extends ConfigurationEntry<?>> configurationEntries =
+            Arrays.asList(geoserverUsernameEntry, geoserverPasswordEntry, geoserverHostEntry, geoserverPortEntry);
+
+    private String geoserverUsername;
+
+    private String geoserverPassword;
+
+    private String geoserverHost;
+
+    private String geoserverPort;
 
     private List<FormatEntry> formatEntries;
 
-    public GeoserverWMSGeneratorCM(){
+    public GeoserverWMSGeneratorCM() {
         formatEntries = new ArrayList<>();
     }
 
@@ -129,42 +139,46 @@ private String geoserverPort;
     @Override
     public String getClassName() {
         return GeoserverWMSGenerator.class.getName();
-}
+    }
 
-public String getGeoserverUsername() {
-return geoserverUsername;
-}
+    public String getGeoserverUsername() {
+        return geoserverUsername;
+    }
 
-@ConfigurationKey(key = geoserverUsernameKey)
-public void setGeoserverUsername(String geoserverUsername) {
-this.geoserverUsername = geoserverUsername;
-}
+    @ConfigurationKey(
+            key = geoserverUsernameKey)
+    public void setGeoserverUsername(String geoserverUsername) {
+        this.geoserverUsername = geoserverUsername;
+    }
 
-public String getGeoserverPassword() {
-return geoserverPassword;
-}
+    public String getGeoserverPassword() {
+        return geoserverPassword;
+    }
 
-@ConfigurationKey(key = geoserverPasswordKey)
-public void setGeoserverPassword(String geoserverPassword) {
-this.geoserverPassword = geoserverPassword;
-}
+    @ConfigurationKey(
+            key = geoserverPasswordKey)
+    public void setGeoserverPassword(String geoserverPassword) {
+        this.geoserverPassword = geoserverPassword;
+    }
 
-public String getGeoserverHost() {
-return geoserverHost;
-}
+    public String getGeoserverHost() {
+        return geoserverHost;
+    }
 
-@ConfigurationKey(key = geoserverHostKey)
-public void setGeoserverHost(String geoserverHost) {
-this.geoserverHost = geoserverHost;
-}
+    @ConfigurationKey(
+            key = geoserverHostKey)
+    public void setGeoserverHost(String geoserverHost) {
+        this.geoserverHost = geoserverHost;
+    }
 
-public String getGeoserverPort() {
-return geoserverPort;
-}
+    public String getGeoserverPort() {
+        return geoserverPort;
+    }
 
-@ConfigurationKey(key = geoserverPortKey)
-public void setGeoserverPort(String geoserverPort) {
-this.geoserverPort = geoserverPort;
+    @ConfigurationKey(
+            key = geoserverPortKey)
+    public void setGeoserverPort(String geoserverPort) {
+        this.geoserverPort = geoserverPort;
     }
 
 }

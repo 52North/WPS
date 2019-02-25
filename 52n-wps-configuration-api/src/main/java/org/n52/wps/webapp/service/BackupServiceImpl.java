@@ -48,14 +48,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+
 /**
  * The implementation for the {@link BackupService} interface.
  */
 @Service("backupService")
 public class BackupServiceImpl implements BackupService {
     public final static String RESOURCES_FOLDER = "static";
+
     public final static String DATABASE_FOLDER = "WEB-INF/classes/db/data";
+
     public final static String LOG = "WEB-INF/classes/logback.xml";
+
     public final static String WPS_CAPABILITIES_SKELETON = "config/wpsCapabilitiesSkeleton.xml";
 
     @Autowired
@@ -71,7 +75,8 @@ public class BackupServiceImpl implements BackupService {
         LOGGER.debug("Starting backup process.");
         String zipPath = null;
         if (itemsToBackup != null && itemsToBackup.length > 0) {
-            // Zip archive will be saved as WPSConfig_{date}.zip (e.g. WPSConfig_2013-09-12.zip)
+            // Zip archive will be saved as WPSConfig_{date}.zip (e.g.
+            // WPSConfig_2013-09-12.zip)
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             zipPath = getResourcesFolderPath() + File.separator + "WPSBackup_" + format.format(new Date()) + ".zip";
             ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipPath));
@@ -141,14 +146,16 @@ public class BackupServiceImpl implements BackupService {
     private void backupDatabase(ZipOutputStream zipOutput) throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-        // Create a database backup with the following name DbBackup_{date}.tar.gz
-        String tarPath = getResourcesFolderPath() + File.separator + "DbBackup_" + format.format(new Date())
-                + ".tar.gz";
+        // Create a database backup with the following name
+        // DbBackup_{date}.tar.gz
+        String tarPath =
+                getResourcesFolderPath() + File.separator + "DbBackup_" + format.format(new Date()) + ".tar.gz";
         namedParameterJdbcTemplate.getJdbcOperations().execute("BACKUP DATABASE TO '" + tarPath + "'");
         File dbTarFile = new File(tarPath);
         writeToZip(dbTarFile, zipOutput);
 
-        // The tar file has been included in the overall backup zip file, so delete it
+        // The tar file has been included in the overall backup zip file, so
+        // delete it
         if (dbTarFile.exists()) {
             try {
                 dbTarFile.delete();
@@ -181,7 +188,8 @@ public class BackupServiceImpl implements BackupService {
         }
     }
 
-    private void writeToZip(File file, ZipOutputStream zipOutput) throws IOException {
+    private void writeToZip(File file,
+            ZipOutputStream zipOutput) throws IOException {
         if (file.exists()) {
 
             try (FileInputStream input = new FileInputStream(file)) {
@@ -202,7 +210,8 @@ public class BackupServiceImpl implements BackupService {
         zipOutput.closeEntry();
     }
 
-    private void extractToFile(File file, ZipInputStream zipInput) throws IOException {
+    private void extractToFile(File file,
+            ZipInputStream zipInput) throws IOException {
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -211,7 +220,7 @@ public class BackupServiceImpl implements BackupService {
                 return;
             }
         }
-        try(FileOutputStream output = new FileOutputStream(file)) {
+        try (FileOutputStream output = new FileOutputStream(file)) {
 
             // write to file
             LOGGER.debug("Writing '{}'.", file.getName());

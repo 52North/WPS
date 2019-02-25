@@ -44,6 +44,7 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
 
 /**
  * This class parses String representations out of JTS Geometries.
+ * 
  * @author Benjamin Pross
  *
  */
@@ -57,7 +58,9 @@ public class WKTParser extends AbstractParser {
     }
 
     @Override
-    public JTSGeometryBinding parse(InputStream input, String mimeType, String schema) {
+    public JTSGeometryBinding parse(InputStream input,
+            String mimeType,
+            String schema) {
 
         try {
             Geometry g = new WKTReader().read(new InputStreamReader(input));
@@ -66,7 +69,7 @@ public class WKTParser extends AbstractParser {
 
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
-        }finally{
+        } finally {
             try {
                 input.close();
             } catch (IOException e) {

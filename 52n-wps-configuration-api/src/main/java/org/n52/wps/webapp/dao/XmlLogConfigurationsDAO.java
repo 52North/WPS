@@ -44,13 +44,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
- * An implementation for the {@link LogConfigurationsDAO} interface. This implementation uses {@code JDom} to parse the
- * {@code lobback.xml} file.
+ * An implementation for the {@link LogConfigurationsDAO} interface. This
+ * implementation uses {@code JDom} to parse the {@code lobback.xml} file.
  */
 @Repository
 public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 
     public static final String FILE_NAME = "logback.xml";
+
     private static Logger LOGGER = LoggerFactory.getLogger(XmlLogConfigurationsDAO.class);
 
     @Autowired
@@ -67,11 +68,10 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
         document = jDomUtil.parse(absolutePath);
         Element root = document.getRootElement();
 
-        @SuppressWarnings("unchecked")
-        List<Element> appenders = root.getChildren("appender");
+        @SuppressWarnings("unchecked") List<Element> appenders = root.getChildren("appender");
 
-        Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
-                .getChild("fileNamePattern");
+        Element fileAppenderFileNamePatternElement =
+                appenders.get(0).getChild("rollingPolicy").getChild("fileNamePattern");
         logConfigurations.setWpsfileAppenderFileNamePattern(getValue(fileAppenderFileNamePatternElement));
 
         Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
@@ -83,8 +83,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
         Element consoleAppenderEncoderPatternElement = appenders.get(1).getChild("encoder").getChild("pattern");
         logConfigurations.setWpsconsoleEncoderPattern(getValue(consoleAppenderEncoderPatternElement));
 
-        @SuppressWarnings("unchecked")
-        List<Element> loggersElements = root.getChildren("logger");
+        @SuppressWarnings("unchecked") List<Element> loggersElements = root.getChildren("logger");
         SortedMap<String, String> loggersMap = new TreeMap<String, String>();
 
         for (Element element : loggersElements) {
@@ -95,8 +94,8 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
         Element rootLevelElement = root.getChild("root");
         logConfigurations.setRootLevel(rootLevelElement.getAttributeValue("level"));
 
-        @SuppressWarnings("unchecked")
-        List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
+        @SuppressWarnings("unchecked") List<Element> rootAppenderRefsElements =
+                rootLevelElement.getChildren("appender-ref");
         for (Element element : rootAppenderRefsElements) {
             String value = element.getAttributeValue("ref");
             if (value.equals("wpsfile")) {
@@ -117,11 +116,10 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 
         Element root = document.getRootElement();
 
-        @SuppressWarnings("unchecked")
-        List<Element> appenders = root.getChildren("appender");
+        @SuppressWarnings("unchecked") List<Element> appenders = root.getChildren("appender");
 
-        Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
-                .getChild("fileNamePattern");
+        Element fileAppenderFileNamePatternElement =
+                appenders.get(0).getChild("rollingPolicy").getChild("fileNamePattern");
         setElement(fileAppenderFileNamePatternElement, logConfigurations.getWpsfileAppenderFileNamePattern());
 
         Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
@@ -167,13 +165,15 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
         return null;
     }
 
-    private void setElement(Element element, String value) {
+    private void setElement(Element element,
+            String value) {
         if (element != null) {
             element.setText(value);
         }
     }
 
-    private void setAppender(Element rootLevelElement, String appender) {
+    private void setAppender(Element rootLevelElement,
+            String appender) {
         Element appenderElement = new Element("appender-ref");
         appenderElement.setAttribute("ref", appender);
         rootLevelElement.addContent(appenderElement);

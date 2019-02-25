@@ -41,8 +41,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 /**
- * An implementation for the {@link UserDAO} interface. This implementation uses JDBC through Spring's
- * {@code NamedParameterJdbcTemplate}.
+ * An implementation for the {@link UserDAO} interface. This implementation uses
+ * JDBC through Spring's {@code NamedParameterJdbcTemplate}.
  */
 @Repository("userDAO")
 public class JdbcUserDAO implements UserDAO {
@@ -58,7 +58,8 @@ public class JdbcUserDAO implements UserDAO {
         List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
             @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            public User mapRow(ResultSet rs,
+                    int rowNum) throws SQLException {
                 User u = new User();
                 u.setUserId(rs.getInt("user_id"));
                 u.setUsername(rs.getString("username"));
@@ -85,7 +86,8 @@ public class JdbcUserDAO implements UserDAO {
         List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
             @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            public User mapRow(ResultSet rs,
+                    int rowNum) throws SQLException {
                 User u = new User();
                 u.setUserId(rs.getInt("user_id"));
                 u.setUsername(rs.getString("username"));
@@ -110,7 +112,8 @@ public class JdbcUserDAO implements UserDAO {
         List<User> users = namedParameterJdbcTemplate.query(sql, new RowMapper<User>() {
 
             @Override
-            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            public User mapRow(ResultSet rs,
+                    int rowNum) throws SQLException {
                 User u = new User();
                 u.setUserId(rs.getInt("user_id"));
                 u.setUsername(rs.getString("username"));

@@ -50,28 +50,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
-* An anstract-layer to the databases.
-*
-* @author Janne Kovanen
-*
-*/
-public abstract class AbstractDatabase implements IDatabase{
+ * An anstract-layer to the databases.
+ *
+ * @author Janne Kovanen
+ *
+ */
+public abstract class AbstractDatabase implements IDatabase {
     /** Property of the path to the location of the database */
     public static final String PROPERTY_NAME_DATABASE_PATH = "databasePath";
 
-    /** Property of the path to the location of the database - Actual name of the database. */
+    /**
+     * Property of the path to the location of the database - Actual name of the
+     * database.
+     */
     public static final String PROPERTY_NAME_DATABASE_NAME = "databaseName";
 
-    /** Property of the path to the location of the database - name of database type: DERBY, HSQL, ...*/
+    /**
+     * Property of the path to the location of the database - name of database
+     * type: DERBY, HSQL, ...
+     */
     public static final String PROPERTY_NAME_DATABASE = "database";
 
     /** SQL to create a response in the DB **/
-    public static final String     creationString = "CREATE TABLE RESULTS (" +
-    "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
-    "REQUEST_DATE TIMESTAMP, " +
-    "RESPONSE_TYPE VARCHAR(100), " +
-    "RESPONSE CLOB, " +
-    "RESPONSE_MIMETYPE VARCHAR(100))";
+    public static final String creationString =
+            "CREATE TABLE RESULTS (" + "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " + "REQUEST_DATE TIMESTAMP, "
+                    + "RESPONSE_TYPE VARCHAR(100), " + "RESPONSE CLOB, " + "RESPONSE_MIMETYPE VARCHAR(100))";
 
     /** SQL to insert a response into the database */
     public static final String insertionString = "INSERT INTO RESULTS VALUES (?, ?, ?, ?, ?)";
@@ -80,7 +83,8 @@ public abstract class AbstractDatabase implements IDatabase{
     public static final String updateString = "UPDATE RESULTS SET RESPONSE = (?) WHERE REQUEST_ID = (?)";
 
     /** SQL to retrieve a response from the database */
-    public static final String selectionString = "SELECT RESPONSE, RESPONSE_MIMETYPE FROM RESULTS WHERE REQUEST_ID = (?)";
+    public static final String selectionString =
+            "SELECT RESPONSE, RESPONSE_MIMETYPE FROM RESULTS WHERE REQUEST_ID = (?)";
 
     /** The column of "response" in the select statement. */
     protected static final int SELECT_COLUMN_RESPONSE = 1;
@@ -109,20 +113,21 @@ public abstract class AbstractDatabase implements IDatabase{
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractDatabase.class);
 
     protected static PreparedStatement insertSQL = null;
+
     protected static PreparedStatement updateSQL = null;
+
     protected static PreparedStatement selectSQL = null;
 
     @Autowired
     private ConfigurationManager configurationManager;
-    private Server serverConfigurationModule;
 
+    private Server serverConfigurationModule;
 
     public Server getServerConfigurationModule() {
 
         if (serverConfigurationModule == null) {
-            serverConfigurationModule = (Server) configurationManager
-                    .getConfigurationServices().getConfigurationModule(
-                            Server.class.getName());
+            serverConfigurationModule = (Server) configurationManager.getConfigurationServices()
+                    .getConfigurationModule(Server.class.getName());
         }
         return serverConfigurationModule;
     }
@@ -134,42 +139,54 @@ public abstract class AbstractDatabase implements IDatabase{
      * startup, to serve additional calls in less time. When the
      * Database-application is started, it first tries to connect to an existing
      * database. If it is not found, this method tries to create a new one.
-     * Implementations can have additional properties, such as username/password.
+     * Implementations can have additional properties, such as
+     * username/password.
      *
      * @return A static instance of Database.
      */
     public static IDatabase getInstance() {
         throw new SubclassNotImplementingException(
-            "Subclasses of AbstractDatabase must implement the method \"static String getInstance()\"");
+                "Subclasses of AbstractDatabase must implement the method \"static String getInstance()\"");
     }
 
-
     @Override
-    public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {
+    public synchronized void insertRequest(String id,
+            InputStream inputStream,
+            boolean xml) {
         insertResultEntity(inputStream, "REQ_" + id, "ExecuteRequest", xml ? "text/xml" : "text/plain");
     }
 
     /**
      * Insert a new Response into the Database.
      *
-     * @param inputStream the Response to insert as <code>InputStream</code>
+     * @param inputStream
+     *            the Response to insert as <code>InputStream</code>
      * @return URL to obtain the result from the WPS
      * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized String insertResponse(String id, InputStream inputStream) {
+    public synchronized String insertResponse(String id,
+            InputStream inputStream) {
         return insertResultEntity(inputStream, id, "ExecuteResponse", "text/xml");
     }
 
     /**
      * Inserts any result, which has to be stored in the DB.
-     * @param stream <code>InputStream</code> containing the data
-     * @param id the id of the data
-     * @param type the type of the data
-     * @param mimeType the mime type of the data
+     * 
+     * @param stream
+     *            <code>InputStream</code> containing the data
+     * @param id
+     *            the id of the data
+     * @param type
+     *            the type of the data
+     * @param mimeType
+     *            the mime type of the data
      * @return URL to obtain the result from the WPS
      */
-    protected synchronized String insertResultEntity(InputStream stream, String id, String type, String mimeType) {
+    protected synchronized String insertResultEntity(InputStream stream,
+            String id,
+            String type,
+            String mimeType) {
         // Use Calendar to get the current timestamp.
         // Uses java.sql.Date !
         Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
@@ -181,13 +198,13 @@ public abstract class AbstractDatabase implements IDatabase{
             AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
             AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, stream);
             AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
-            // AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
+            // AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE,
+            // bais, b.length);
 
             AbstractDatabase.insertSQL.executeUpdate();
             getConnection().commit();
         } catch (SQLException e) {
-            LOGGER.error("Could not insert Response into database: "
-                    + e.getMessage());
+            LOGGER.error("Could not insert Response into database: " + e.getMessage());
         }
         return generateRetrieveResultURL(id);
     }
@@ -195,23 +212,22 @@ public abstract class AbstractDatabase implements IDatabase{
     /**
      * Update the Response in the Database, based on the Identifier.
      *
-     * @param inputStream the Response to update as <code>InputStream</code>
+     * @param inputStream
+     *            the Response to update as <code>InputStream</code>
      * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized void updateResponse(String id, InputStream inputStream) {
+    public synchronized void updateResponse(String id,
+            InputStream inputStream) {
 
         // Try to update the row of data into the database.
         try {
-            AbstractDatabase.updateSQL.setString(
-                    UPDATE_COLUMN_REQUEST_ID, id);
-            AbstractDatabase.updateSQL.setAsciiStream(
-                    UPDATE_COLUMN_RESPONSE, inputStream);
+            AbstractDatabase.updateSQL.setString(UPDATE_COLUMN_REQUEST_ID, id);
+            AbstractDatabase.updateSQL.setAsciiStream(UPDATE_COLUMN_RESPONSE, inputStream);
             AbstractDatabase.updateSQL.executeUpdate();
             getConnection().commit();
         } catch (SQLException e) {
-            LOGGER.error("Could not insert Response into database: "
-                    + e.getMessage());
+            LOGGER.error("Could not insert Response into database: " + e.getMessage());
         }
     }
 
@@ -219,11 +235,13 @@ public abstract class AbstractDatabase implements IDatabase{
      * Store the Response of a deferred Request. It either gets inserted into
      * the database, or it updates a previous Response, based on the identifier.
      *
-     * @param inputStream the Response to update as <code>InputStream</code>
+     * @param inputStream
+     *            the Response to update as <code>InputStream</code>
      * @return URL to obtain the result from the WPS or null
      */
     @Override
-    public synchronized String storeResponse(String id, InputStream inputStream) {
+    public synchronized String storeResponse(String id,
+            InputStream inputStream) {
         if (lookupResponse(id) == null) {
             return insertResponse(id, inputStream);
         } else {
@@ -242,13 +260,11 @@ public abstract class AbstractDatabase implements IDatabase{
                 LOGGER.warn("Query did not return a valid result.");
                 return null;
             } else {
-                LOGGER.info("Successfully retrieved the Request: "
-                        + request_id);
+                LOGGER.info("Successfully retrieved the Request: " + request_id);
                 return res.getAsciiStream(1);
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException with request_id: " + request_id
-                    + "and message: " + e.getMessage());
+            LOGGER.error("SQLException with request_id: " + request_id + "and message: " + e.getMessage());
             return null;
         }
     }
@@ -271,47 +287,54 @@ public abstract class AbstractDatabase implements IDatabase{
                 LOGGER.warn("Query did not return a valid result.");
                 return null;
             } else {
-                LOGGER.info("Successfully retrieved the Response of Request: "
-                        + request_id);
+                LOGGER.info("Successfully retrieved the Response of Request: " + request_id);
                 return res.getAsciiStream(1);
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException with request_id: " + request_id
-                    + "and message: " + e.getMessage());
+            LOGGER.error("SQLException with request_id: " + request_id + "and message: " + e.getMessage());
             return null;
         }
     }
 
     @Override
-    public synchronized String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
+    public synchronized String storeComplexValue(String id,
+            InputStream stream,
+            String type,
+            String mimeType) {
         return insertResultEntity(stream, id, type, mimeType);
     }
 
     /**
-     * The URL referencing the location from which the ExecuteResponse can be retrieved.
-     * If "status" is "true" in the Execute request, the ExecuteResponse should also be
-     * found here as soon as the process returns the initial response to the client.
-     * It should persist at this location as long as the outputs are accessible from the server.
-     * The outputs may be stored for as long as the implementer of the server decides.
-     * If the process takes a long time, this URL can be repopulated on an ongoing basis
-     * in order to keep the client updated on progress. Before the process has succeeded,
-     * the ExecuteResponse contains information about the status of the process, including
-     * whether or not processing has started, and the percentage completed. It may also
-     * optionally contain the inputs and any ProcessStartedType interim results. When the
-     * process has succeeded, the ExecuteResponse found at this URL shall contain the output
-     * values or references to them.
+     * The URL referencing the location from which the ExecuteResponse can be
+     * retrieved. If "status" is "true" in the Execute request, the
+     * ExecuteResponse should also be found here as soon as the process returns
+     * the initial response to the client. It should persist at this location as
+     * long as the outputs are accessible from the server. The outputs may be
+     * stored for as long as the implementer of the server decides. If the
+     * process takes a long time, this URL can be repopulated on an ongoing
+     * basis in order to keep the client updated on progress. Before the process
+     * has succeeded, the ExecuteResponse contains information about the status
+     * of the process, including whether or not processing has started, and the
+     * percentage completed. It may also optionally contain the inputs and any
+     * ProcessStartedType interim results. When the process has succeeded, the
+     * ExecuteResponse found at this URL shall contain the output values or
+     * references to them.
+     * 
      * @return
      */
     @Override
     public String generateRetrieveResultURL(String id) {
         return WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getProtocol() + "://"
-                + getServerConfigurationModule().getHostname() + ":"
-                + getServerConfigurationModule().getHostport() + "/"
-                + getServerConfigurationModule().getWebappPath() + "/"
-                + "RetrieveResultServlet?id=";   // TODO:  Parameterize this... Execution Context..?
+                + getServerConfigurationModule().getHostname() + ":" + getServerConfigurationModule().getHostport()
+                + "/" + getServerConfigurationModule().getWebappPath() + "/" + "RetrieveResultServlet?id="; // TODO:
+                                                                                                            // Parameterize
+                                                                                                            // this...
+                                                                                                            // Execution
+                                                                                                            // Context..?
     }
 
     public abstract Connection getConnection();
+
     public abstract String getConnectionURL();
 
     /**
@@ -326,21 +349,23 @@ public abstract class AbstractDatabase implements IDatabase{
 
     static String getDatabaseProperties(String propertyName) {
 
-        Map<String, ConfigurationModule> activeDatabaseConfigModules = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
+        Map<String, ConfigurationModule> activeDatabaseConfigModules = WPSConfig.getInstance().getConfigurationManager()
+                .getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
 
         ConfigurationModule databaseConfigModule = null;
 
-        try{
-            //there should be only one
-            databaseConfigModule = activeDatabaseConfigModules.get(activeDatabaseConfigModules.keySet().iterator().next());
-        }catch(Exception e){
+        try {
+            // there should be only one
+            databaseConfigModule =
+                    activeDatabaseConfigModules.get(activeDatabaseConfigModules.keySet().iterator().next());
+        } catch (Exception e) {
             throw new RuntimeException("Could not load any active database configuration module.");
         }
 
         List<? extends ConfigurationEntry<?>> configurationEntries = databaseConfigModule.getConfigurationEntries();
 
-        for(ConfigurationEntry<?> property : configurationEntries){
-            if(property.getKey().equalsIgnoreCase(propertyName)){
+        for (ConfigurationEntry<?> property : configurationEntries) {
+            if (property.getKey().equalsIgnoreCase(propertyName)) {
                 return property.getValue().toString();
             }
         }
@@ -358,14 +383,14 @@ public abstract class AbstractDatabase implements IDatabase{
         String dbTypeName = getDatabaseProperties(PROPERTY_NAME_DATABASE);
 
         if (dbPath == null || dbPath.compareTo("") == 0) {
-            // TODO:  parameterize base path
+            // TODO: parameterize base path
             dbPath = System.getProperty("java.io.tmpdir", ".") + File.separator + "Databases";
-            if(dbTypeName!=null && !dbTypeName.equals("")) {
+            if (dbTypeName != null && !dbTypeName.equals("")) {
                 dbPath += File.separator + dbTypeName.toUpperCase();
             } else {
                 dbPath += File.separator + "DERBY";
             }
-            if(dbName!=null && !dbName.equals("")) {
+            if (dbName != null && !dbName.equals("")) {
                 dbPath += File.separator + dbName.toUpperCase();
             } else {
                 dbPath += File.separator + "wps";
@@ -394,13 +419,11 @@ public abstract class AbstractDatabase implements IDatabase{
                 LOGGER.warn("Query did not return a valid result.");
                 return null;
             } else {
-                LOGGER.info("Successfully retrieved the Mimetype of the response: "
-                        + id);
+                LOGGER.info("Successfully retrieved the Mimetype of the response: " + id);
                 return res.getString(2);
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException with request_id: " + id
-                    + "and message: " + e.getMessage());
+            LOGGER.error("SQLException with request_id: " + id + "and message: " + e.getMessage());
             return null;
         }
     }

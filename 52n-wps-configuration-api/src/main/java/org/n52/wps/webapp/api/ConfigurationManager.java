@@ -35,8 +35,9 @@ import org.n52.wps.webapp.service.LogConfigurationsService;
 import org.n52.wps.webapp.service.UserService;
 
 /**
- * The entry point for all the services in the application. Clients should use the manager to access the services
- * instead of contacting the services directly.
+ * The entry point for all the services in the application. Clients should use
+ * the manager to access the services instead of contacting the services
+ * directly.
  */
 public interface ConfigurationManager {
     /**

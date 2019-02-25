@@ -40,8 +40,7 @@ import org.w3c.dom.Document;
 /**
  * Handles an ExecuteRequest
  */
-public abstract class ExecuteRequest extends Request{
-
+public abstract class ExecuteRequest extends Request {
 
     public ExecuteRequest(Document doc) throws ExceptionReport {
         super(doc);
@@ -58,22 +57,22 @@ public abstract class ExecuteRequest extends Request{
      */
     public abstract String getAlgorithmIdentifier();
 
-    public abstract  Map<String, IData> getAttachedResult();
+    public abstract Map<String, IData> getAttachedResult();
 
-    public abstract  boolean isStoreResponse();
+    public abstract boolean isStoreResponse();
 
-    public abstract  ExecuteResponseBuilder getExecuteResponseBuilder();
+    public abstract ExecuteResponseBuilder getExecuteResponseBuilder();
 
-    public abstract  boolean isRawData();
+    public abstract boolean isRawData();
 
-    public abstract  void update(ISubject subject);
+    public abstract void update(ISubject subject);
 
-    public abstract  void updateStatusAccepted();
+    public abstract void updateStatusAccepted();
 
-    public abstract  void updateStatusStarted();
+    public abstract void updateStatusStarted();
 
-    public abstract  void updateStatusSuccess();
+    public abstract void updateStatusSuccess();
 
-    public abstract  void updateStatusError(String errorMessage);
+    public abstract void updateStatusError(String errorMessage);
 
 }

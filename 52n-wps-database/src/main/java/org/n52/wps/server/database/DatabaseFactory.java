@@ -42,38 +42,41 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class DatabaseFactory implements IDatabase
-{
+public class DatabaseFactory implements IDatabase {
     private static Logger LOGGER = LoggerFactory.getLogger(DatabaseFactory.class);
-    // Property of the name of the database. Used to define the database implementation.
+
+    // Property of the name of the database. Used to define the database
+    // implementation.
     public static final String PROPERTY_NAME_DATABASE_CLASS_NAME = "databaseClass";
+
     private static IDatabase database;
 
     private static PropertyChangeListener propertyChangeListener;
 
     public static IDatabase getDatabase() {
 
-        // FvK: create and register listener to the WPSConfig if not yet happend.
-        if (propertyChangeListener == null){
-            propertyChangeListener =  new PropertyChangeListener(){
-                public void propertyChange(
-                    final PropertyChangeEvent propertyChangeEvent) {
-                        //shutdown Database connection and instance
-                        DatabaseFactory.database.shutdown();
-                        DatabaseFactory.database = null;
-                        DatabaseFactory.getDatabase();
-                        LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                    }
+        // FvK: create and register listener to the WPSConfig if not yet
+        // happend.
+        if (propertyChangeListener == null) {
+            propertyChangeListener = new PropertyChangeListener() {
+                public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
+                    // shutdown Database connection and instance
+                    DatabaseFactory.database.shutdown();
+                    DatabaseFactory.database = null;
+                    DatabaseFactory.getDatabase();
+                    LOGGER.info(this.getClass().getName() + ": Received Property Change Event: "
+                            + propertyChangeEvent.getPropertyName());
+                }
             };
-            org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, propertyChangeListener);
+            org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(
+                    org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, propertyChangeListener);
         }
 
-        if(DatabaseFactory.database == null) {
+        if (DatabaseFactory.database == null) {
             try {
-                String databaseClassName =
-                    AbstractDatabase.getDatabaseProperties(PROPERTY_NAME_DATABASE_CLASS_NAME);
+                String databaseClassName = AbstractDatabase.getDatabaseProperties(PROPERTY_NAME_DATABASE_CLASS_NAME);
                 // if databaseClassName is not defined take derby.
-                if(databaseClassName == null || databaseClassName.equals("")) {
+                if (databaseClassName == null || databaseClassName.equals("")) {
                     LOGGER.info("Database class name was not found in properties. FlatFileDatabase will be used.");
                     databaseClassName = "org.n52.wps.server.database.FlatFileDatabase";
                 }
@@ -81,23 +84,20 @@ public class DatabaseFactory implements IDatabase
                 Method method = cls.getMethod("getInstance", new Class[0]);
                 IDatabase db = (IDatabase) method.invoke(cls, new Object[0]);
                 DatabaseFactory.database = db;
-            } catch(NoSuchMethodException nsm_ex) {
-                LOGGER.error("Instance returning method was not found while creating database instance. " +
-                        nsm_ex.getMessage());
+            } catch (NoSuchMethodException nsm_ex) {
+                LOGGER.error("Instance returning method was not found while creating database instance. "
+                        + nsm_ex.getMessage());
                 return null;
-            } catch(InvocationTargetException it_ex) {
-                LOGGER.error("Invocation target exception while creating database instance. " +
-                        it_ex.getMessage());
+            } catch (InvocationTargetException it_ex) {
+                LOGGER.error("Invocation target exception while creating database instance. " + it_ex.getMessage());
                 return null;
-            } catch(IllegalAccessException ia_ex) {
-                LOGGER.error("Illegal access exception while creating database instance. " +
-                        ia_ex.getMessage());
+            } catch (IllegalAccessException ia_ex) {
+                LOGGER.error("Illegal access exception while creating database instance. " + ia_ex.getMessage());
                 return null;
-            } catch(ClassNotFoundException cnf_ex) {
-                LOGGER.error("Database class could not be found. " +
-                        cnf_ex.getMessage());
+            } catch (ClassNotFoundException cnf_ex) {
+                LOGGER.error("Database class could not be found. " + cnf_ex.getMessage());
                 return null;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 LOGGER.error("Database class could not be found.");
                 return null;
             }
@@ -122,37 +122,48 @@ public class DatabaseFactory implements IDatabase
     /**
      * Insert a new Request into the Database.
      *
-     * @param id the id of the response
-     * @param inputStream the Response to insert as <code>InputStream</code>
-     * @param xml indicates, whether the response is XML
+     * @param id
+     *            the id of the response
+     * @param inputStream
+     *            the Response to insert as <code>InputStream</code>
+     * @param xml
+     *            indicates, whether the response is XML
      * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {
+    public synchronized void insertRequest(String id,
+            InputStream inputStream,
+            boolean xml) {
         DatabaseFactory.database.insertRequest(id, inputStream, xml);
     }
 
     /**
      * Insert a new Response into the Database.
      *
-     * @param id the id of the response
-     * @param inputStream the Response to insert as <code>InputStream</code>
+     * @param id
+     *            the id of the response
+     * @param inputStream
+     *            the Response to insert as <code>InputStream</code>
      * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized String insertResponse(String id, InputStream inputStream) {
+    public synchronized String insertResponse(String id,
+            InputStream inputStream) {
         return DatabaseFactory.database.insertResponse(id, inputStream);
     }
 
     /**
      * Update the Response in the Database, based on the Identifier.
      *
-     * @param id the id of the response
-     * @param inputStream the Response to insert as <code>InputStream</code>
+     * @param id
+     *            the id of the response
+     * @param inputStream
+     *            the Response to insert as <code>InputStream</code>
      * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized void updateResponse(String id, InputStream inputStream) {
+    public synchronized void updateResponse(String id,
+            InputStream inputStream) {
         DatabaseFactory.database.updateResponse(id, inputStream);
     }
 
@@ -160,11 +171,14 @@ public class DatabaseFactory implements IDatabase
      * Store the Response of a deferred Request. It either gets inserted into
      * the database, or it updates a previous Response, based on the identifier.
      *
-     * @param id the id of the response
-     * @param inputStream the Response to insert as <code>InputStream</code>
+     * @param id
+     *            the id of the response
+     * @param inputStream
+     *            the Response to insert as <code>InputStream</code>
      */
     @Override
-    public synchronized String storeResponse(String id, InputStream inputStream) {
+    public synchronized String storeResponse(String id,
+            InputStream inputStream) {
         return DatabaseFactory.database.storeResponse(id, inputStream);
     }
 
@@ -177,7 +191,8 @@ public class DatabaseFactory implements IDatabase
      * Retrieve the Response on a previous Request, based on an unique
      * identifier, which was already given to the client for reference.
      *
-     * @param request_id  The identifier of the Request
+     * @param request_id
+     *            The identifier of the Request
      * @return null, if an SQLException occurred, else an InputStream with the
      *         Response
      */
@@ -187,22 +202,28 @@ public class DatabaseFactory implements IDatabase
     }
 
     @Override
-    public synchronized String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
+    public synchronized String storeComplexValue(String id,
+            InputStream stream,
+            String type,
+            String mimeType) {
         return DatabaseFactory.database.storeComplexValue(id, stream, type, mimeType);
     }
 
     /**
-     * The URL referencing the location from which the ExecuteResponse can be retrieved.
-     * If "status" is "true" in the Execute request, the ExecuteResponse should also be
-     * found here as soon as the process returns the initial response to the client.
-     * It should persist at this location as long as the outputs are accessible from the server.
-     * The outputs may be stored for as long as the implementer of the server decides. If the
-     * process takes a long time, this URL can be repopulated on an ongoing basis in order to
-     * keep the client updated on progress. Before the process has succeeded, the ExecuteResponse
-     * contains information about the status of the process, including whether or not processing
-     * has started, and the percentage completed. It may also optionally contain the inputs and
-     * any ProcessStartedType interim results. When the process has succeeded, the ExecuteResponse
-     * found at this URL shall contain the output values or references to them.
+     * The URL referencing the location from which the ExecuteResponse can be
+     * retrieved. If "status" is "true" in the Execute request, the
+     * ExecuteResponse should also be found here as soon as the process returns
+     * the initial response to the client. It should persist at this location as
+     * long as the outputs are accessible from the server. The outputs may be
+     * stored for as long as the implementer of the server decides. If the
+     * process takes a long time, this URL can be repopulated on an ongoing
+     * basis in order to keep the client updated on progress. Before the process
+     * has succeeded, the ExecuteResponse contains information about the status
+     * of the process, including whether or not processing has started, and the
+     * percentage completed. It may also optionally contain the inputs and any
+     * ProcessStartedType interim results. When the process has succeeded, the
+     * ExecuteResponse found at this URL shall contain the output values or
+     * references to them.
      */
     @Override
     public String generateRetrieveResultURL(String id) {

@@ -44,7 +44,8 @@ public class TestClientController {
      *
      * @return The test client view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String display() {
         return "test_client";
     }

@@ -68,12 +68,10 @@ public class CustomDataTypeManager {
         try {
             addCustomDataTypesFromConfigFile();
             datatypeRegistry.logDataTypeTable();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Invalid r config file. Costum R data types cannot be registered.", e);
             datatypeRegistry.clearCustomDataTypes();
-        }
-        catch (ExceptionReport e) {
+        } catch (ExceptionReport e) {
             LOGGER.error("Failed to retrieve r config file. Costum R data types cannot be registered.", e);
             datatypeRegistry.clearCustomDataTypes();
         }
@@ -109,7 +107,9 @@ public class CustomDataTypeManager {
         }
     }
 
-    private void addNewDataType(String key, String mimetype, String hint) {
+    private void addNewDataType(String key,
+            String mimetype,
+            String hint) {
         LOGGER.debug("Adding new data type with key '{}', mimetype '{}', and hint '{}'", key, mimetype, hint);
 
         CustomDataType type = new CustomDataType();

@@ -88,8 +88,7 @@ public class RSessionManager {
         try {
             RLogger.log(connection, "CLEANING R SESSION!");
             this.connection.eval("rm(list = ls())");
-        }
-        catch (RserveException e) {
+        } catch (RserveException e) {
             log.error("Problem cleaning session", e);
         }
     }
@@ -103,11 +102,9 @@ public class RSessionManager {
         cleanSession();
     }
 
-    public void configureSession(String processWKN, RExecutor executor) throws ExceptionReport,
-            RserveException,
-            FileNotFoundException,
-            IOException,
-            RAnnotationException {
+    public void configureSession(String processWKN,
+            RExecutor executor)
+            throws ExceptionReport, RserveException, FileNotFoundException, IOException, RAnnotationException {
         log.debug("Configuring R session...");
 
         if (cleanOnStartup) {
@@ -125,12 +122,11 @@ public class RSessionManager {
         try {
             REXP expr = this.connection.eval(cmd.toString());
             log.debug("Memory limit is '{}' (configuration value is '{}')", expr.asString(), memoryLimit);
-            this.connection.eval("cat(\"Memory info > memory.size = \", toString(memory.size()), \" (max: \", toString(memory.size(TRUE)), \"); memory.limit = \", memory.limit(), \"\n\")");
-        }
-        catch (RserveException e) {
+            this.connection.eval(
+                    "cat(\"Memory info > memory.size = \", toString(memory.size()), \" (max: \", toString(memory.size(TRUE)), \"); memory.limit = \", memory.limit(), \"\n\")");
+        } catch (RserveException e) {
             log.error("Problem setting the memory limit", e);
-        }
-        catch (REXPMismatchException e) {
+        } catch (REXPMismatchException e) {
             log.error("Problem setting the memory limit", e);
         }
 
@@ -150,11 +146,8 @@ public class RSessionManager {
         return getConsoleOutput("sessionInfo()");
     }
 
-    private void loadUtilityScripts(RExecutor executor) throws RserveException,
-            IOException,
-            FileNotFoundException,
-            RAnnotationException,
-            ExceptionReport {
+    private void loadUtilityScripts(RExecutor executor)
+            throws RserveException, IOException, FileNotFoundException, RAnnotationException, ExceptionReport {
         log.debug("Loading utility scripts.");
 
         Collection<File> utils = config.getUtilsFiles();
@@ -162,8 +155,7 @@ public class RSessionManager {
         for (File file : utils) {
             if (file.exists()) {
                 executor.executeScript(file, this.connection);
-            }
-            else {
+            } else {
                 log.warn("Configured script file does not longer exist: {}", file);
             }
         }
@@ -193,8 +185,7 @@ public class RSessionManager {
             String scriptUrl;
             try {
                 scriptUrl = urlGenerator.getScriptURL(processWKN).toExternalForm();
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 log.warn("Could not retrieve script URL", e);
                 scriptUrl = "N/A";
             }
@@ -210,16 +201,15 @@ public class RSessionManager {
 
             RLogger.log(connection, "workspace content after loading session variables:");
             RLogger.logSessionContent(connection);
-        }
-        catch (RserveException e) {
+        } catch (RserveException e) {
             log.error("Error loading WPS session variables for process {}", processWKN);
             throw new ExceptionReport("Could not load session variables for " + processWKN,
-                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
-                                      e);
+                    ExceptionReport.REMOTE_COMPUTATION_ERROR, e);
         }
     }
 
-    private void assignAndLog(String name, String value) throws RserveException {
+    private void assignAndLog(String name,
+            String value) throws RserveException {
         connection.assign(name, value);
         RLogger.logVariable(connection, name);
         log.debug("Assigned process description to variable '{}': {}", name, value);
@@ -228,20 +218,21 @@ public class RSessionManager {
     /**
      * Retrieves warnings that occured during the last execution of a script
      *
-     * Note that the warnings()-method is not reliable for Rserve because it does not return warnings in most
-     * cases. Therefore a specific warnings function is used to retrieve the warnings.
+     * Note that the warnings()-method is not reliable for Rserve because it
+     * does not return warnings in most cases. Therefore a specific warnings
+     * function is used to retrieve the warnings.
      */
     private String getWarnings() throws RserveException, REXPMismatchException {
         REXP result = connection.eval(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
 
         StringBuilder warnings = new StringBuilder();
-        if ( !result.isNull()) {
+        if (!result.isNull()) {
             String[] warningsArray = result.asStrings();
             for (int i = 0; i < warningsArray.length; i++) {
                 String currentWarning = warningsArray[i];
 
                 warnings.append("warning ");
-                warnings.append( (i));
+                warnings.append((i));
                 warnings.append(": '");
                 warnings.append(currentWarning);
                 warnings.append("'\n");
@@ -258,36 +249,30 @@ public class RSessionManager {
         try {
             String sessionInfo = getSessionInfo();
             InputStream sessionInfoStream = new ByteArrayInputStream(sessionInfo.getBytes("UTF-8"));
-            result.put(SESSION_INFO_OUTPUT_NAME,
-                       new GenericFileDataBinding(new GenericFileData(sessionInfoStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
+            result.put(SESSION_INFO_OUTPUT_NAME, new GenericFileDataBinding(
+                    new GenericFileData(sessionInfoStream, GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
             sessionInfoStream.close();
 
             String warnings = getWarnings();
             InputStream warningsStream = new ByteArrayInputStream(warnings.getBytes("UTF-8"));
-            result.put(WARNING_OUTPUT_NAME,
-                       new GenericFileDataBinding(new GenericFileData(warningsStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
+            result.put(WARNING_OUTPUT_NAME, new GenericFileDataBinding(
+                    new GenericFileData(warningsStream, GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
             warningsStream.close();
-        }
-        catch (IOException | REXPMismatchException | RserveException e) {
+        } catch (IOException | REXPMismatchException | RserveException e) {
             log.error("Could not save session info and warnings.", e);
         }
 
         return result;
     }
 
-    public void loadImportedScripts(RExecutor executor, Collection<File> imports) throws RserveException,
-            IOException,
-            RAnnotationException,
-            ExceptionReport {
+    public void loadImportedScripts(RExecutor executor,
+            Collection<File> imports) throws RserveException, IOException, RAnnotationException, ExceptionReport {
         log.debug("Loading {} imports: {}", imports.size(), Arrays.toString(imports.toArray()));
 
         for (File file : imports) {
             if (file.exists()) {
                 executor.executeScript(file, this.connection);
-            }
-            else {
+            } else {
                 log.warn("Imported script does not exist: {}", file);
             }
         }

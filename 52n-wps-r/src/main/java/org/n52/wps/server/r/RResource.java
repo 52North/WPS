@@ -60,8 +60,8 @@ import org.n52.wps.server.r.util.ResourceUrlGenerator;
 
 /**
  *
- * A class providing service endpoints to retrieve publicly available resources realted to R script-based
- * algorithms.
+ * A class providing service endpoints to retrieve publicly available resources
+ * realted to R script-based algorithms.
  *
  * This class also provides URL building as static methods.
  *
@@ -88,11 +88,11 @@ public class RResource {
 
     public static final String IMPORT_PATH = "/import";
 
-    private static final String RESOURCE_PATH_PARAMS = RESOURCE_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{"
-            + REQUEST_PARAM_RESOURCEID + ":.+}";
+    private static final String RESOURCE_PATH_PARAMS =
+            RESOURCE_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{" + REQUEST_PARAM_RESOURCEID + ":.+}";
 
-    private static final String IMPORT_PATH_PARAMS = IMPORT_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{"
-            + REQUEST_PARAM_RESOURCEID + ":.+}";
+    private static final String IMPORT_PATH_PARAMS =
+            IMPORT_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{" + REQUEST_PARAM_RESOURCEID + ":.+}";
 
     public static final String SCRIPT_PATH = "/script";
 
@@ -125,7 +125,10 @@ public class RResource {
         this.urlGenerator = new ResourceUrlGenerator(WPSConfig.getInstance().getServiceBaseUrl());
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
+    @RequestMapping(
+            value = "/",
+            method = RequestMethod.GET,
+            produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
     public ResponseEntity<String> index() {
 
         StringBuilder sb = new StringBuilder();
@@ -138,12 +141,13 @@ public class RResource {
         return entity;
     }
 
-    @RequestMapping(value = RESOURCE_PATH_PARAMS, method = RequestMethod.GET)
+    @RequestMapping(
+            value = RESOURCE_PATH_PARAMS,
+            method = RequestMethod.GET)
     public ResponseEntity<Resource> getResource(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
             @PathVariable(REQUEST_PARAM_RESOURCEID) String resourceId) throws ExceptionReport {
         if (!config.isResourceDownloadEnabled()) {
-            return new ResponseEntity<>(new ByteArrayResource("Access forbidden.".getBytes()),
-                    HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new ByteArrayResource("Access forbidden.".getBytes()), HttpStatus.FORBIDDEN);
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -159,8 +163,9 @@ public class RResource {
 
             if (!f.exists()) {
                 log.debug("Resource file '{}' does not exist for process '{}'", resourceId, scriptId);
-                throw new ExceptionReport("Requested resourcce file does not exist: " + resourceId + " for script "
-                        + resourceId, ExceptionReport.NO_APPLICABLE_CODE);
+                throw new ExceptionReport(
+                        "Requested resourcce file does not exist: " + resourceId + " for script " + resourceId,
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
 
             if (f.isDirectory()) {
@@ -176,8 +181,7 @@ public class RResource {
         } catch (IOException e) {
             log.debug("Could not create zip file resource '{}' for process '{}'", resourceId, scriptId);
             throw new ExceptionReport("Error creating zip file resource " + resourceId,
-                    ExceptionReport.NO_APPLICABLE_CODE,
-                    e);
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
         }
 
         FileSystemResource fsr = new FileSystemResource(f);
@@ -192,12 +196,15 @@ public class RResource {
         return entity;
     }
 
-    @RequestMapping(value = SCRIPT_PATH_PARAMS, method = RequestMethod.GET, produces = {MediaType.TEXT_PLAIN_VALUE,
-        RConstants.R_SCRIPT_TYPE_VALUE})
-    public ResponseEntity<Resource> getScript(@PathVariable(REQUEST_PARAM_SCRIPTID) String id) throws ExceptionReport,
-            IOException {
+    @RequestMapping(
+            value = SCRIPT_PATH_PARAMS,
+            method = RequestMethod.GET,
+            produces = { MediaType.TEXT_PLAIN_VALUE, RConstants.R_SCRIPT_TYPE_VALUE })
+    public ResponseEntity<Resource> getScript(@PathVariable(REQUEST_PARAM_SCRIPTID) String id)
+            throws ExceptionReport, IOException {
         if (!config.isScriptDownloadEnabled()) {
-            return new ResponseEntity<>(new ByteArrayResource("Access to resources forbidden for all processes.".getBytes()),
+            return new ResponseEntity<>(
+                    new ByteArrayResource("Access to resources forbidden for all processes.".getBytes()),
                     HttpStatus.FORBIDDEN);
         }
 
@@ -223,12 +230,14 @@ public class RResource {
         return entity;
     }
 
-    @RequestMapping(value = IMPORT_PATH_PARAMS, method = RequestMethod.GET, produces = {RConstants.R_SCRIPT_TYPE_VALUE})
+    @RequestMapping(
+            value = IMPORT_PATH_PARAMS,
+            method = RequestMethod.GET,
+            produces = { RConstants.R_SCRIPT_TYPE_VALUE })
     public ResponseEntity<Resource> getImport(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
             @PathVariable(REQUEST_PARAM_RESOURCEID) String importId) throws ExceptionReport {
         if (!config.isImportDownloadEnabled()) {
-            return new ResponseEntity<>(new ByteArrayResource("Access forbidden.".getBytes()),
-                    HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new ByteArrayResource("Access forbidden.".getBytes()), HttpStatus.FORBIDDEN);
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -251,7 +260,9 @@ public class RResource {
         return entity;
     }
 
-    @RequestMapping(value = SESSION_INFO_PATH, produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
+    @RequestMapping(
+            value = SESSION_INFO_PATH,
+            produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
     public ResponseEntity<String> sessionInfo() {
         if (!config.isSessionInfoLinkEnabled()) {
             return new ResponseEntity<>("Access to sessionInfo() output forbidden.", HttpStatus.FORBIDDEN);
@@ -268,8 +279,8 @@ public class RResource {
             return entity;
         } catch (RserveException | REXPMismatchException e) {
             log.error("Could not open connection to retrieve sesion information.", e);
-            ResponseEntity<String> entity = new ResponseEntity<>("R exception: " + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseEntity<String> entity =
+                    new ResponseEntity<>("R exception: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             return entity;
         } finally {
             if (rCon != null) {

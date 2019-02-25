@@ -52,49 +52,53 @@ import org.xml.sax.SAXException;
 public class IOUtils {
 
     private static final int BUFFER_SIZE = 4096;
+
     /**
-     * Reads the given input stream as a string and decodes that base64 string into a file with the specified
-     * extension
+     * Reads the given input stream as a string and decodes that base64 string
+     * into a file with the specified extension
      *
      * @param input
-     *        the stream with the base64 string
+     *            the stream with the base64 string
      * @param extension
-     *        the extension of the result file (without the '.' at the beginning)
+     *            the extension of the result file (without the '.' at the
+     *            beginning)
      * @return the decoded base64 file written to disk
      * @throws IOException
-     *         if an error occurs while writing the contents to disk
+     *             if an error occurs while writing the contents to disk
      */
 
     private static Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
-    public static File writeBase64ToFile(InputStream input, String extension) throws IOException {
+    public static File writeBase64ToFile(InputStream input,
+            String extension) throws IOException {
 
-        File file = File.createTempFile("file" + UUID.randomUUID(),
-                                        "." + extension,
-                                        new File(System.getProperty("java.io.tmpdir")));
+        File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension,
+                new File(System.getProperty("java.io.tmpdir")));
         OutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(file);
             copyLarge(new Base64InputStream(input), outputStream);
-        }
-        finally {
+        } finally {
             closeQuietly(outputStream);
         }
 
         return file;
     }
 
-    public static File writeStreamToFile(InputStream inputStream, String extension) throws IOException {
+    public static File writeStreamToFile(InputStream inputStream,
+            String extension) throws IOException {
         File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension);
         return writeStreamToFile(inputStream, extension, file);
     }
 
-    public static File writeStreamToFile(InputStream inputStream, String extension, File file) throws IOException {
+    public static File writeStreamToFile(InputStream inputStream,
+            String extension,
+            File file) throws IOException {
         FileOutputStream output = new FileOutputStream(file);
 
         byte buf[] = new byte[1024];
         int len;
-        while ( (len = inputStream.read(buf)) > 0) {
+        while ((len = inputStream.read(buf)) > 0) {
             output.write(buf, 0, len);
         }
         output.close();
@@ -103,11 +107,9 @@ public class IOUtils {
         return file;
     }
 
-    public static File writeBase64XMLToFile(InputStream stream, String extension) throws SAXException,
-            IOException,
-            ParserConfigurationException,
-            DOMException,
-            TransformerException {
+    public static File writeBase64XMLToFile(InputStream stream,
+            String extension)
+            throws SAXException, IOException, ParserConfigurationException, DOMException, TransformerException {
 
         // ToDo: look at StAX to stream XML parsing instead of in memory DOM
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
@@ -117,8 +119,7 @@ public class IOUtils {
         try {
             byteStream = new ByteArrayInputStream(binaryContent.getBytes());
             return writeBase64ToFile(byteStream, extension);
-        }
-        finally {
+        } finally {
             closeQuietly(byteStream);
         }
     }
@@ -127,23 +128,24 @@ public class IOUtils {
      * Zip the files. Returns a zipped file and delete the specified files
      *
      * @param files
-     *        files to zipped
+     *            files to zipped
      * @return the zipped file
      * @throws IOException
-     *         if the zipping process fails.
+     *             if the zipping process fails.
      */
     public static File zip(File... files) throws IOException {
         return zipIt(true, files);
     }
 
-    private static File zipIt(boolean deleteAfterwards, File... files) throws IOException, FileNotFoundException {
+    private static File zipIt(boolean deleteAfterwards,
+            File... files) throws IOException, FileNotFoundException {
         File zip = File.createTempFile("zip" + UUID.randomUUID(), ".zip");
 
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
 
         byte[] buffer = new byte[BUFFER_SIZE];
         for (File file : files) {
-            if ( !file.exists()) {
+            if (!file.exists()) {
                 LOGGER.debug("Could not zip " + file.getAbsolutePath());
                 continue;
             }
@@ -152,7 +154,7 @@ public class IOUtils {
             FileInputStream in = new FileInputStream(file);
 
             int len;
-            while ( (len = in.read(buffer)) > 0) {
+            while ((len = in.read(buffer)) > 0) {
                 out.write(buffer, 0, len);
             }
 
@@ -160,7 +162,7 @@ public class IOUtils {
             in.close();
         }
 
-        if (deleteAfterwards){
+        if (deleteAfterwards) {
             deleteResources(files);
         }
 
@@ -173,9 +175,10 @@ public class IOUtils {
         return zipDirectory("dir" + UUID.randomUUID(), directory);
     }
 
-    public static File zipDirectory(String targetFileName, File directory) throws IOException {
+    public static File zipDirectory(String targetFileName,
+            File directory) throws IOException {
         String filename = targetFileName;
-        if (targetFileName.endsWith(".zip")){
+        if (targetFileName.endsWith(".zip")) {
             filename = targetFileName.replace(".zip", "");
         }
         File zip = File.createTempFile(filename, ".zip");
@@ -183,11 +186,12 @@ public class IOUtils {
         return zipDirectory(zip, directory);
     }
 
-    public static File zipDirectory(File zip, File directory) throws IOException {
+    public static File zipDirectory(File zip,
+            File directory) throws IOException {
         LOGGER.debug("Zipping directoy {} to file {}", directory, zip);
 
         try (FileOutputStream fout = new FileOutputStream(zip);) {
-            try(ZipOutputStream zout = new ZipOutputStream(fout);){
+            try (ZipOutputStream zout = new ZipOutputStream(fout);) {
                 zipSubDirectory("", directory, zout);
             }
         }
@@ -195,7 +199,9 @@ public class IOUtils {
         return zip;
     }
 
-    private static void zipSubDirectory(String basePath, File dir, ZipOutputStream zout) throws IOException {
+    private static void zipSubDirectory(String basePath,
+            File dir,
+            ZipOutputStream zout) throws IOException {
         byte[] buffer = new byte[BUFFER_SIZE];
         File[] files = dir.listFiles();
 
@@ -205,12 +211,11 @@ public class IOUtils {
                 zout.putNextEntry(new ZipEntry(path));
                 zipSubDirectory(path, file, zout);
                 zout.closeEntry();
-            }
-            else {
+            } else {
                 FileInputStream fin = new FileInputStream(file);
                 zout.putNextEntry(new ZipEntry(basePath + file.getName()));
                 int length;
-                while ( (length = fin.read(buffer)) > 0) {
+                while ((length = fin.read(buffer)) > 0) {
                     zout.write(buffer, 0, length);
                 }
                 zout.closeEntry();
@@ -220,21 +225,25 @@ public class IOUtils {
     }
 
     /**
-     * Unzip the file. Returns the unzipped file with the specified extension and deletes the zipped file
+     * Unzip the file. Returns the unzipped file with the specified extension
+     * and deletes the zipped file
      *
      * @param file
-     *        the file to unzip
+     *            the file to unzip
      * @param extension
-     *        the extension to search in the content files
+     *            the extension to search in the content files
      * @return the file with the specified extension
      * @throws IOException
-     *         if the unzipping process fails
+     *             if the unzipping process fails
      */
-    public static List<File> unzip(File file, String extension) throws IOException {
+    public static List<File> unzip(File file,
+            String extension) throws IOException {
         return unzip(file, extension, null);
     }
 
-    public static List<File> unzip(File file, String extension, File directory) throws IOException {
+    public static List<File> unzip(File file,
+            String extension,
+            File directory) throws IOException {
         int bufferLength = 2048;
         byte buffer[] = new byte[bufferLength];
         List<File> foundFiles = new ArrayList<File>();
@@ -242,19 +251,18 @@ public class IOUtils {
         ZipEntry entry;
         File tempDir = directory;
         if (tempDir == null || !directory.isDirectory()) {
-            tempDir = File.createTempFile("unzipped" + UUID.randomUUID(),
-                                          "",
-                                          new File(System.getProperty("java.io.tmpdir")));
+            tempDir = File.createTempFile("unzipped" + UUID.randomUUID(), "",
+                    new File(System.getProperty("java.io.tmpdir")));
             tempDir.delete();
             tempDir.mkdir();
         }
-        while ( (entry = zipInputStream.getNextEntry()) != null) {
+        while ((entry = zipInputStream.getNextEntry()) != null) {
             int count;
             File entryFile = new File(tempDir, entry.getName());
             entryFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(entryFile);
             BufferedOutputStream dest = new BufferedOutputStream(fos, bufferLength);
-            while ( (count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
+            while ((count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
                 dest.write(buffer, 0, count);
             }
             dest.flush();
@@ -279,18 +287,17 @@ public class IOUtils {
         List<File> foundFiles = new ArrayList<File>();
         ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
         ZipEntry entry;
-        File tempDir = File.createTempFile("unzipped" + UUID.randomUUID(),
-                                           "",
-                                           new File(System.getProperty("java.io.tmpdir")));
+        File tempDir =
+                File.createTempFile("unzipped" + UUID.randomUUID(), "", new File(System.getProperty("java.io.tmpdir")));
         tempDir.delete();
         tempDir.mkdir();
-        while ( (entry = zipInputStream.getNextEntry()) != null) {
+        while ((entry = zipInputStream.getNextEntry()) != null) {
             int count;
             File entryFile = new File(tempDir, entry.getName());
             entryFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(entryFile);
             BufferedOutputStream dest = new BufferedOutputStream(fos, bufferLength);
-            while ( (count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
+            while ((count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
                 dest.write(buffer, 0, count);
             }
             dest.flush();
@@ -308,11 +315,12 @@ public class IOUtils {
     }
 
     /**
-     * Delete the given files and all the files with the same name but different extension. If some file is
-     * <code>null</code> just doesn't process it and continue to the next element of the array
+     * Delete the given files and all the files with the same name but different
+     * extension. If some file is <code>null</code> just doesn't process it and
+     * continue to the next element of the array
      *
      * @param files
-     *        the files to delete
+     *            the files to delete
      */
     public static void deleteResources(File... files) {
         for (File file : files) {
@@ -320,7 +328,7 @@ public class IOUtils {
                 if (file.getAbsolutePath().startsWith(System.getProperty("java.io.tmpdir"))) {
                     delete(file);
                     File parent = file.getAbsoluteFile().getParentFile();
-                    if (parent != null && ! (parent.getAbsolutePath().equals(System.getProperty("java.io.tmpdir")))) {
+                    if (parent != null && !(parent.getAbsolutePath().equals(System.getProperty("java.io.tmpdir")))) {
                         parent.deleteOnExit();
                     }
                 }
@@ -329,11 +337,12 @@ public class IOUtils {
     }
 
     /**
-     * Delete the given files and all the files with the same name but different extension. If some file is
-     * <code>null</code> just doesn't process it and continue to the next element of the array
+     * Delete the given files and all the files with the same name but different
+     * extension. If some file is <code>null</code> just doesn't process it and
+     * continue to the next element of the array
      *
      * @param files
-     *        the files to delete
+     *            the files to delete
      */
     private static void delete(File... files) {
         for (File file : files) {

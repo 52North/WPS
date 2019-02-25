@@ -48,6 +48,7 @@ public class MetadataDescriptor extends Descriptor {
         public BuilderTyped() {
             super();
         }
+
         @Override
         protected BuilderTyped self() {
             return this;

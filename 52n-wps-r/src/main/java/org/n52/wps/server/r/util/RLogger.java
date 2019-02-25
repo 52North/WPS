@@ -42,7 +42,8 @@ public class RLogger {
 
     private static DateFormat format = DateFormat.getDateTimeInstance();
 
-    public static void logGenericRProcess(RConnection rCon, String message) {
+    public static void logGenericRProcess(RConnection rCon,
+            String message) {
         String msg = prepareMessage(message);
 
         StringBuilder evalString = new StringBuilder();
@@ -54,13 +55,13 @@ public class RLogger {
 
         try {
             rCon.eval(evalString.toString());
-        }
-        catch (RserveException e) {
+        } catch (RserveException e) {
             LOGGER.warn("Could not log message '" + msg + "'", e);
         }
     }
 
-    public static void log(RConnection rCon, String message) {
+    public static void log(RConnection rCon,
+            String message) {
         String msg = prepareMessage(message);
 
         StringBuilder evalString = new StringBuilder();
@@ -73,16 +74,17 @@ public class RLogger {
         logIt(rCon, evalString);
     }
 
-    private static void logIt(RConnection rCon, String evalString) {
+    private static void logIt(RConnection rCon,
+            String evalString) {
         try {
             rCon.eval(evalString);
-        }
-        catch (RserveException e) {
+        } catch (RserveException e) {
             LOGGER.warn("Could not log message '{}'", evalString.toString(), e);
         }
     }
 
-    private static void logIt(RConnection rCon, StringBuilder evalString) {
+    private static void logIt(RConnection rCon,
+            StringBuilder evalString) {
         logIt(rCon, evalString.toString());
     }
 
@@ -97,7 +99,8 @@ public class RLogger {
         return new String(message);
     }
 
-    public static void logVariable(RConnection rCon, String var) {
+    public static void logVariable(RConnection rCon,
+            String var) {
         StringBuilder evalString = new StringBuilder();
         evalString.append("cat(");
         appendPre(evalString);

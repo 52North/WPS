@@ -33,11 +33,12 @@ import java.util.List;
 import org.springframework.validation.FieldError;
 
 /**
- * Used to return error objects to clients. The class is loaded with error fields and messages and returned as a JSON
- * object by controller classes.
+ * Used to return error objects to clients. The class is loaded with error
+ * fields and messages and returned as a JSON object by controller classes.
  */
 public class ValidationResponse {
     private String status;
+
     private List<FieldError> errorMessageList;
 
     public String getStatus() {

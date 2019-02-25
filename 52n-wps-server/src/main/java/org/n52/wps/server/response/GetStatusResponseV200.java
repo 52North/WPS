@@ -43,17 +43,22 @@ public class GetStatusResponseV200 extends Response {
 
     /**
      * Serves the Request with a Response
-     * @param request The GetCapabilities request
+     * 
+     * @param request
+     *            The GetCapabilities request
      */
-    public GetStatusResponseV200(GetStatusRequestV200 request){
+    public GetStatusResponseV200(GetStatusRequestV200 request) {
         super(request);
     }
 
     /**
      * Save this Response to an InputStream
-     * @throws ExceptionReport if an exception occurred while creating the response <code>InputStream</code>
+     * 
+     * @throws ExceptionReport
+     *             if an exception occurred while creating the response
+     *             <code>InputStream</code>
      */
-    public InputStream getAsStream() throws ExceptionReport{
-        return ((StatusInfoDocument)getRequest().getAttachedResult()).newInputStream();
+    public InputStream getAsStream() throws ExceptionReport {
+        return ((StatusInfoDocument) getRequest().getAttachedResult()).newInputStream();
     }
 }

@@ -44,10 +44,9 @@ public class CustomClassLoader extends ClassLoader {
 
     private String baseDir;
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(CustomClassLoader.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(CustomClassLoader.class);
 
-    public CustomClassLoader(String baseDir){
+    public CustomClassLoader(String baseDir) {
         this.baseDir = baseDir;
     }
 
@@ -78,8 +77,7 @@ public class CustomClassLoader extends ClassLoader {
         try {
             classData = loadClassData(name);
         } catch (IOException e) {
-            throw new ClassNotFoundException("Class [" + name
-                    + "] could not be found", e);
+            throw new ClassNotFoundException("Class [" + name + "] could not be found", e);
         }
 
         Class<?> c = defineClass(null, classData, 0, classData.length);
@@ -99,18 +97,19 @@ public class CustomClassLoader extends ClassLoader {
      */
     private byte[] loadClassData(String name) throws IOException {
 
-        String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/") + ".class";
+        String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)
+                + name.replace(".", "/") + ".class";
 
         InputStream classBytesStream = null;
 
         File classFile = new File(pathToClassFile);
 
-        if(classFile.isAbsolute()){
-            //absolute file path was passed, so try to load file
+        if (classFile.isAbsolute()) {
+            // absolute file path was passed, so try to load file
             classBytesStream = new FileInputStream(classFile);
-        }else{
-            //relative path was passed, so try to get resource as stream
-            classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(pathToClassFile);
+        } else {
+            // relative path was passed, so try to get resource as stream
+            classBytesStream = UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(pathToClassFile);
         }
 
         BufferedInputStream in = new BufferedInputStream(classBytesStream);

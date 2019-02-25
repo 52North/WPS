@@ -41,6 +41,7 @@ import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 /**
  * Parse and write to and from XML files.
  */
@@ -66,7 +67,7 @@ public class JDomUtil {
             document = sb.build(inputStream);
             LOGGER.info("{} is parsed and a Document is returned.", filePath);
         } catch (JDOMException | IOException e) {
-            throw new RuntimeException("Unable to parse '" + filePath +"': ", e);
+            throw new RuntimeException("Unable to parse '" + filePath + "': ", e);
         }
         return document;
     }
@@ -81,14 +82,15 @@ public class JDomUtil {
      * @throws RuntimeException
      *             if the path is invalid or the document is null
      */
-    public void write(Document document, String filePath) {
+    public void write(Document document,
+            String filePath) {
         XMLOutputter xmlOutputter = new XMLOutputter();
         xmlOutputter.setFormat(Format.getPrettyFormat());
         try (FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
             xmlOutputter.output(document, outputStream);
             LOGGER.info("{} is written successfully.", filePath);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to write Document to '" + filePath +"': ");
+            throw new RuntimeException("Unable to write Document to '" + filePath + "': ");
         }
     }
 }

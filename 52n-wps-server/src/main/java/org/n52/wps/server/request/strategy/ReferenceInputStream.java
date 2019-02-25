@@ -38,6 +38,7 @@ import java.io.InputStream;
 public class ReferenceInputStream extends FilterInputStream {
 
     private final String mimeType;
+
     private final String encoding;
 
     public ReferenceInputStream(InputStream inputStream, String mimeType, String encoding) {

@@ -73,27 +73,38 @@ public final class FlatFileDatabase implements IDatabase {
     private final static Logger LOGGER = LoggerFactory.getLogger(FlatFileDatabase.class);
 
     private final static String KEY_DATABASE_ROOT = "org.n52.wps.server.database";
+
     private final static String KEY_DATABASE_PATH = "path";
+
     private final static String KEY_DATABASE_WIPE_ENABLED = "wipe.enabled";
+
     private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
+
     private final static String KEY_DATABASE_WIPE_THRESHOLD = "wipe.threshold";
+
     private final static String KEY_DATABASE_COMPLEX_GZIP = "complex.gzip";
 
     private final static String DEFAULT_DATABASE_PATH =
-            Joiner.on(File.separator).join(
-                System.getProperty("java.io.tmpdir", "."),
-                "Database",
-                "Results");
+            Joiner.on(File.separator).join(System.getProperty("java.io.tmpdir", "."), "Database", "Results");
+
     private final static boolean DEFAULT_DATABASE_WIPE_ENABLED = true;
-    private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60;  // P1H
+
+    private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60; // P1H
+
     private final static long DEFAULT_DATABASE_WIPE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // P7D
+
     private final static boolean DEFAULT_DATABASE_COMPLEX_GZIP = true; // P7D
 
     private final static String SUFFIX_MIMETYPE = "mime-type";
+
     private final static String SUFFIX_CONTENT_LENGTH = "content-length";
+
     private final static String SUFFIX_XML = "xml";
+
     private final static String SUFFIX_TEMP = "tmp";
+
     private final static String SUFFIX_GZIP = "gz";
+
     private final static String SUFFIX_PROPERTIES = "properties";
 
     // If the delimiter changes, examine Patterns below.
@@ -103,12 +114,14 @@ public final class FlatFileDatabase implements IDatabase {
     // change examine findLatestResponseIndex(...), generateResponseFile(...)
     // and generateResponseFile(...)
     private final static Pattern PATTERN_RESPONSE = Pattern.compile("([\\d]+)\\." + SUFFIX_XML);
-    private final static Pattern PATTERN_RESPONSE_TEMP = Pattern.compile("([\\d]+)\\." + SUFFIX_XML + "(:?\\."
-            + SUFFIX_TEMP + ")?");
+
+    private final static Pattern PATTERN_RESPONSE_TEMP =
+            Pattern.compile("([\\d]+)\\." + SUFFIX_XML + "(:?\\." + SUFFIX_TEMP + ")?");
 
     private static FlatFileDatabase instance;
 
-    // This method is required by the DatabaseFactory, it is found using reflection
+    // This method is required by the DatabaseFactory, it is found using
+    // reflection
     public synchronized static IDatabase getInstance() {
         if (instance == null) {
             instance = new FlatFileDatabase();
@@ -130,13 +143,17 @@ public final class FlatFileDatabase implements IDatabase {
 
     protected FlatFileDatabase() {
 
-        FlatFileDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (FlatFileDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(FlatFileDatabaseConfigurationModule.class.getName());
+        FlatFileDatabaseConfigurationModule flatFileDatabaseConfigurationModule =
+                (FlatFileDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager()
+                        .getConfigurationServices()
+                        .getConfigurationModule(FlatFileDatabaseConfigurationModule.class.getName());
 
         Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
         PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
 
-        // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
+        // NOTE: The hostname and port are hard coded as part of the 52n
+        // framework design/implementation.
         baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
                 server.getHostname(), server.getHostport(), server.getWebappPath());
         LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
@@ -144,20 +161,22 @@ public final class FlatFileDatabase implements IDatabase {
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         baseDirectory = new File(baseDirectoryPath);
         LOGGER.info("Using \"{}\" as base directory for results database", baseDirectoryPath);
-        if ( !baseDirectory.exists()) {
+        if (!baseDirectory.exists()) {
             LOGGER.info("Results database does not exist, creating.", baseDirectoryPath);
             baseDirectory.mkdirs();
         }
 
         if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
 
-            long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
-            long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
+            long periodMillis =
+                    propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
+            long thresholdMillis =
+                    propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
 
             wipeTimer = new Timer(getClass().getSimpleName() + " File Wiper", true);
             wipeTimer.scheduleAtFixedRate(new FlatFileDatabase.WipeTimerTask(thresholdMillis), 0, periodMillis);
             LOGGER.info("Started {} file wiper timer; period {} ms, threshold {} ms",
-                    new Object[] {getDatabaseName(),periodMillis,thresholdMillis});
+                    new Object[] { getDatabaseName(), periodMillis, thresholdMillis });
         } else {
             wipeTimer = null;
         }
@@ -178,7 +197,9 @@ public final class FlatFileDatabase implements IDatabase {
     }
 
     @Override
-    public void insertRequest(String id, InputStream inputStream, boolean xml) {
+    public void insertRequest(String id,
+            InputStream inputStream,
+            boolean xml) {
         // store request in response directory...
         File responseDirectory = generateResponseDirectory(id);
         responseDirectory.mkdir();
@@ -186,33 +207,24 @@ public final class FlatFileDatabase implements IDatabase {
         try {
             if (xml) {
                 outputStream = new BufferedOutputStream(
-                        new FileOutputStream(
-                            new File(
-                                responseDirectory,
-                                JOINER.join("request", SUFFIX_XML)),
-                        false));
+                        new FileOutputStream(new File(responseDirectory, JOINER.join("request", SUFFIX_XML)), false));
                 XMLUtil.copyXML(inputStream, outputStream, indentXML);
             } else {
-                outputStream = new BufferedOutputStream(
-                        new FileOutputStream(
-                            new File(
-                                responseDirectory,
-                                JOINER.join("request", SUFFIX_PROPERTIES)),
-                        false));
+                outputStream = new BufferedOutputStream(new FileOutputStream(
+                        new File(responseDirectory, JOINER.join("request", SUFFIX_PROPERTIES)), false));
                 IOUtils.copy(inputStream, outputStream);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Exception storing request for id {}: {}", id, e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(outputStream);
         }
     }
 
     @Override
-    public String insertResponse(String id, InputStream outputStream) {
+    public String insertResponse(String id,
+            InputStream outputStream) {
         return this.storeResponse(id, outputStream);
     }
 
@@ -223,8 +235,7 @@ public final class FlatFileDatabase implements IDatabase {
             LOGGER.debug("Request file for {} is {}", id, requestFile.getPath());
             try {
                 return new FileInputStream(requestFile);
-            }
-            catch (FileNotFoundException ex) {
+            } catch (FileNotFoundException ex) {
                 // should never get here due to checks above...
                 LOGGER.warn("Request not found for id {}", id);
             }
@@ -239,14 +250,13 @@ public final class FlatFileDatabase implements IDatabase {
         if (responseFile != null && responseFile.exists()) {
             LOGGER.debug("Response file for {} is {}", id, responseFile.getPath());
             try {
-                return responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile))
-                                                                   : new FileInputStream(responseFile);
-            }
-            catch (FileNotFoundException ex) {
+                return responseFile.getName().endsWith(SUFFIX_GZIP)
+                        ? new GZIPInputStream(new FileInputStream(responseFile))
+                        : new FileInputStream(responseFile);
+            } catch (FileNotFoundException ex) {
                 // should never get here due to checks above...
                 LOGGER.warn("Response not found for id {}", id);
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 LOGGER.warn("Error processing response for id {}", id);
             }
         }
@@ -262,10 +272,10 @@ public final class FlatFileDatabase implements IDatabase {
         if (responseDirectory.exists()) {
             synchronized (storeResponseSerialNumberLock) {
                 requestAsFile = new File(responseDirectory, JOINER.join("request", SUFFIX_XML));
-                if ( !requestAsFile.exists()) {
+                if (!requestAsFile.exists()) {
                     requestAsFile = new File(responseDirectory, JOINER.join("request", SUFFIX_PROPERTIES));
                 }
-                if ( !requestAsFile.exists()) {
+                if (!requestAsFile.exists()) {
                     requestAsFile = null;
                 }
             }
@@ -276,23 +286,23 @@ public final class FlatFileDatabase implements IDatabase {
     @Override
     public File lookupResponseAsFile(String id) {
         File responseFile = null;
-        // if response resolved to directory, this means the response is a status update
+        // if response resolved to directory, this means the response is a
+        // status update
         File responseDirectory = generateResponseDirectory(id);
         if (responseDirectory.exists()) {
             synchronized (storeResponseSerialNumberLock) {
                 return findLatestResponseFile(responseDirectory);
             }
-        }
-        else {
+        } else {
             String mimeType = getMimeTypeForStoreResponse(id);
             if (mimeType != null) {
                 // ignore gzipComplexValues in case file was stored when value
                 // was inconsistent with current value;
                 responseFile = generateComplexDataFile(id, mimeType, false);
-                if ( !responseFile.exists()) {
+                if (!responseFile.exists()) {
                     responseFile = generateComplexDataFile(id, mimeType, true);
                 }
-                if ( !responseFile.exists()) {
+                if (!responseFile.exists()) {
                     responseFile = null;
                 }
             }
@@ -308,7 +318,10 @@ public final class FlatFileDatabase implements IDatabase {
     }
 
     @Override
-    public String storeComplexValue(String id, InputStream resultInputStream, String type, String mimeType) {
+    public String storeComplexValue(String id,
+            InputStream resultInputStream,
+            String type,
+            String mimeType) {
 
         String resultId = JOINER.join(id, UUID.randomUUID().toString());
         try {
@@ -323,10 +336,9 @@ public final class FlatFileDatabase implements IDatabase {
             OutputStream resultOutputStream = null;
             try {
                 resultOutputStream = gzipComplexValues ? new GZIPOutputStream(new FileOutputStream(resultFile))
-                                                      : new BufferedOutputStream(new FileOutputStream(resultFile));
+                        : new BufferedOutputStream(new FileOutputStream(resultFile));
                 contentLength = IOUtils.copyLarge(resultInputStream, resultOutputStream);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(resultInputStream);
                 IOUtils.closeQuietly(resultOutputStream);
             }
@@ -335,8 +347,7 @@ public final class FlatFileDatabase implements IDatabase {
             try {
                 mimeTypeOutputStream = new BufferedOutputStream(new FileOutputStream(mimeTypeFile));
                 IOUtils.write(mimeType, mimeTypeOutputStream);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(mimeTypeOutputStream);
             }
 
@@ -344,22 +355,21 @@ public final class FlatFileDatabase implements IDatabase {
             try {
                 contentLengthOutputStream = new BufferedOutputStream(new FileOutputStream(contentLengthFile));
                 IOUtils.write(Long.toString(contentLength), contentLengthOutputStream);
-            }
-            finally {
+            } finally {
                 IOUtils.closeQuietly(contentLengthOutputStream);
             }
 
             LOGGER.debug("completed storage of complex value for {} as {}", id, resultFile.getPath());
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Error storing complex value for " + resultId, e);
         }
         return generateRetrieveResultURL(resultId);
     }
 
     @Override
-    public String storeResponse(String id, InputStream inputStream) {
+    public String storeResponse(String id,
+            InputStream inputStream) {
 
         try {
             File responseTempFile;
@@ -370,19 +380,19 @@ public final class FlatFileDatabase implements IDatabase {
                 int responseIndex = findLatestResponseIndex(responseDirectory, true);
                 if (responseIndex < 0) {
                     responseIndex = 0;
-                }
-                else {
+                } else {
                     responseIndex++;
                 }
                 responseFile = generateResponseFile(responseDirectory, responseIndex);
                 responseTempFile = generateResponseTempFile(responseDirectory, responseIndex);
                 try {
-                    // create the file so that the reponse serial number is correctly
-                    // incremented if this method is called again for this reponse
+                    // create the file so that the reponse serial number is
+                    // correctly
+                    // incremented if this method is called again for this
+                    // reponse
                     // before this reponse is completed.
                     responseTempFile.createNewFile();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException("Error storing response to {}", e);
                 }
                 LOGGER.debug("Creating temp file for {} as {}", id, responseTempFile.getPath());
@@ -393,12 +403,14 @@ public final class FlatFileDatabase implements IDatabase {
                 responseInputStream = inputStream;
                 responseOutputStream = new BufferedOutputStream(new FileOutputStream(responseTempFile));
                 // In order to allow the prior response to be available we write
-                // to a temp file and rename these when completed. Large responses
-                // can cause the call below to take a significant amount of time.
+                // to a temp file and rename these when completed. Large
+                // responses
+                // can cause the call below to take a significant amount of
+                // time.
                 XMLUtil.copyXML(responseInputStream, responseOutputStream, indentXML);
-            }catch(XMLStreamException e){
-                LOGGER.info("Could not store XML response for job: " +id);
-            }finally {
+            } catch (XMLStreamException e) {
+                LOGGER.info("Could not store XML response for job: " + id);
+            } finally {
                 IOUtils.closeQuietly(responseInputStream);
                 IOUtils.closeQuietly(responseOutputStream);
             }
@@ -410,14 +422,14 @@ public final class FlatFileDatabase implements IDatabase {
 
             return generateRetrieveResultURL(id);
 
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new RuntimeException("Error storing response for " + id, e);
         }
     }
 
     @Override
-    public void updateResponse(String id, InputStream inputStream) {
+    public void updateResponse(String id,
+            InputStream inputStream) {
         this.storeResponse(id, inputStream);
     }
 
@@ -427,19 +439,16 @@ public final class FlatFileDatabase implements IDatabase {
         File responseDirectory = generateResponseDirectory(id);
         if (responseDirectory.exists()) {
             return "text/xml";
-        }
-        else {
+        } else {
             File mimeTypeFile = generateComplexDataMimeTypeFile(id);
             if (mimeTypeFile.canRead()) {
                 InputStream mimeTypeInputStream = null;
                 try {
                     mimeTypeInputStream = new FileInputStream(mimeTypeFile);
                     return IOUtils.toString(mimeTypeInputStream);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
-                }
-                finally {
+                } finally {
                     IOUtils.closeQuietly(mimeTypeInputStream);
                 }
             }
@@ -456,24 +465,20 @@ public final class FlatFileDatabase implements IDatabase {
                 File responseFile = findLatestResponseFile(responseDirectory);
                 return responseFile.length();
             }
-        }
-        else {
+        } else {
             File contentLengthFile = generateComplexDataContentLengthFile(id);
             if (contentLengthFile.canRead()) {
                 InputStream contentLengthInputStream = null;
                 try {
                     contentLengthInputStream = new FileInputStream(contentLengthFile);
                     return Long.parseLong(IOUtils.toString(contentLengthInputStream));
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     LOGGER.error("Unable to extract content-length for response id {} from {}, exception message: {}",
-                                 new Object[] {id, contentLengthFile.getAbsolutePath(), e.getMessage()});
-                }
-                catch (NumberFormatException e) {
+                            new Object[] { id, contentLengthFile.getAbsolutePath(), e.getMessage() });
+                } catch (NumberFormatException e) {
                     LOGGER.error("Unable to parse content-length for response id {} from {}, exception message: {}",
-                                 new Object[] {id, contentLengthFile.getAbsolutePath(), e.getMessage()});
-                }
-                finally {
+                            new Object[] { id, contentLengthFile.getAbsolutePath(), e.getMessage() });
+                } finally {
                     IOUtils.closeQuietly(contentLengthInputStream);
                 }
             }
@@ -493,20 +498,23 @@ public final class FlatFileDatabase implements IDatabase {
             LOGGER.debug("Response file for {} is {}", request_id, responseFile.getPath());
             try {
 
-                InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile)) : new FileInputStream(responseFile);
+                InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP)
+                        ? new GZIPInputStream(new FileInputStream(responseFile))
+                        : new FileInputStream(responseFile);
 
                 /*
-                 * Check if status doc
-                 * Status docs and result docs are saved in the same folder and
-                 * there is no other possibility to differentiate between them other than the following
+                 * Check if status doc Status docs and result docs are saved in
+                 * the same folder and there is no other possibility to
+                 * differentiate between them other than the following
                  */
                 XmlObject object;
                 try {
                     object = XmlObject.Factory.parse(inputStream);
                 } catch (XmlException e) {
                     LOGGER.error("Could not look up status. XMLException while trying to parse xml file.", e);
-                    //check exception code
-                    throw new ExceptionReport("Status info for specified JobID not found.", ExceptionReport.NO_APPLICABLE_CODE, "JobID");
+                    // check exception code
+                    throw new ExceptionReport("Status info for specified JobID not found.",
+                            ExceptionReport.NO_APPLICABLE_CODE, "JobID");
                 }
 
                 if (object instanceof StatusInfoDocument) {
@@ -521,7 +529,9 @@ public final class FlatFileDatabase implements IDatabase {
 
                     File latestStatusFile = generateResponseFile(responseDirectory, lastFileIndex - 1);
 
-                    inputStream = latestStatusFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(latestStatusFile)) : new FileInputStream(latestStatusFile);
+                    inputStream = latestStatusFile.getName().endsWith(SUFFIX_GZIP)
+                            ? new GZIPInputStream(new FileInputStream(latestStatusFile))
+                            : new FileInputStream(latestStatusFile);
                 }
                 return inputStream;
             } catch (FileNotFoundException ex) {
@@ -535,11 +545,12 @@ public final class FlatFileDatabase implements IDatabase {
         return null;
     }
 
-    private int findLatestResponseIndex(File responseDirectory, boolean includeTemp) {
+    private int findLatestResponseIndex(File responseDirectory,
+            boolean includeTemp) {
         int responseIndex = Integer.MIN_VALUE;
         for (File file : responseDirectory.listFiles()) {
             Matcher matcher = includeTemp ? PATTERN_RESPONSE_TEMP.matcher(file.getName())
-                                         : PATTERN_RESPONSE.matcher(file.getName());
+                    : PATTERN_RESPONSE.matcher(file.getName());
             if (matcher.matches()) {
                 int fileIndex = Integer.parseInt(matcher.group(1));
                 if (fileIndex > responseIndex) {
@@ -555,11 +566,13 @@ public final class FlatFileDatabase implements IDatabase {
         return responseIndex < 0 ? null : generateResponseFile(responseDirectory, responseIndex);
     }
 
-    private File generateResponseFile(File responseDirectory, int index) {
+    private File generateResponseFile(File responseDirectory,
+            int index) {
         return new File(responseDirectory, JOINER.join(index, SUFFIX_XML));
     }
 
-    private File generateResponseTempFile(File responseDirectory, int index) {
+    private File generateResponseTempFile(File responseDirectory,
+            int index) {
         return new File(responseDirectory, JOINER.join(index, SUFFIX_XML, SUFFIX_TEMP));
     }
 
@@ -567,9 +580,11 @@ public final class FlatFileDatabase implements IDatabase {
         return new File(baseDirectory, id);
     }
 
-    private File generateComplexDataFile(String id, String mimeType, boolean gzip) {
+    private File generateComplexDataFile(String id,
+            String mimeType,
+            boolean gzip) {
         String fileName = gzip ? JOINER.join(id, MIMEUtil.getSuffixFromMIMEType(mimeType), SUFFIX_GZIP)
-                              : JOINER.join(id, MIMEUtil.getSuffixFromMIMEType(mimeType));
+                : JOINER.join(id, MIMEUtil.getSuffixFromMIMEType(mimeType));
         return new File(baseDirectory, fileName);
     }
 
@@ -594,13 +609,13 @@ public final class FlatFileDatabase implements IDatabase {
             wipe(baseDirectory, thresholdMillis);
         }
 
-        private void wipe(File rootFile, long thresholdMillis) {
+        private void wipe(File rootFile,
+                long thresholdMillis) {
             // SimpleDataFormat is not thread-safe.
             SimpleDateFormat iso8601DateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
             long currentTimeMillis = System.currentTimeMillis();
             LOGGER.info(getDatabaseName() + " file wiper, checking {} for files older than {} ms",
-                        rootFile.getAbsolutePath(),
-                        thresholdMillis);
+                    rootFile.getAbsolutePath(), thresholdMillis);
 
             File[] files = rootFile.listFiles();
             if (files != null) {
@@ -608,9 +623,8 @@ public final class FlatFileDatabase implements IDatabase {
                     long lastModifiedMillis = file.lastModified();
                     long ageMillis = currentTimeMillis - lastModifiedMillis;
                     if (ageMillis > thresholdMillis) {
-                        LOGGER.info("Deleting {}, last modified date is {}",
-                                    file.getName(),
-                                    iso8601DateFormat.format(new Date(lastModifiedMillis)));
+                        LOGGER.info("Deleting {}, last modified date is {}", file.getName(),
+                                iso8601DateFormat.format(new Date(lastModifiedMillis)));
                         delete(file);
                         if (file.exists()) {
                             LOGGER.warn("Deletion of {} failed", file.getName());
@@ -618,7 +632,8 @@ public final class FlatFileDatabase implements IDatabase {
                     }
                 }
             } else {
-                LOGGER.warn("Cannot delete files, no files in root directory {}  > file list is null. ", rootFile.getAbsolutePath());
+                LOGGER.warn("Cannot delete files, no files in root directory {}  > file list is null. ",
+                        rootFile.getAbsolutePath());
             }
         }
 

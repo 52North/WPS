@@ -46,20 +46,24 @@ import org.w3c.dom.NodeList;
 public class CapabilitiesRequest extends Request {
 
     private static final String ACCEPT_VERSIONS_ELEMENT_NAME = "AcceptVersions";
+
     private static final String PARAM_SERVICE = "service";
+
     private static final String PARAM_VERSION = "version";
+
     private static final Object REQUEST_DOC = "document";
 
     /**
      * Creates a CapabilitesRequest based on a Map (HTTP_GET)
      *
      * @param ciMap
-     *        The client input
-     * @throws ExceptionReport if an exception occurred during construction
+     *            The client input
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
     public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
-        //Fix for https://bugzilla.52north.org/show_bug.cgi?id=907
+        // Fix for https://bugzilla.52north.org/show_bug.cgi?id=907
         String providedAcceptVersionsString = Request.getMapValue("acceptversions", ciMap, false);
 
         if (providedAcceptVersionsString != null) {
@@ -83,7 +87,7 @@ public class CapabilitiesRequest extends Request {
         Node serviceItem = fc.getAttributes().getNamedItem("service");
         if (serviceItem != null) {
             String service = serviceItem.getNodeValue();
-            String[] serviceArray = {service};
+            String[] serviceArray = { service };
 
             this.map.put(PARAM_SERVICE, serviceArray);
         }
@@ -111,7 +115,7 @@ public class CapabilitiesRequest extends Request {
             }
         }
 
-        if ( !versionList.isEmpty()) {
+        if (!versionList.isEmpty()) {
             this.map.put(PARAM_VERSION, versionList.toArray(new String[versionList.size()]));
         }
 
@@ -120,20 +124,22 @@ public class CapabilitiesRequest extends Request {
     /**
      * Validates the client input
      *
-     * @throws ExceptionReport if an exception occurred during validation
+     * @throws ExceptionReport
+     *             if an exception occurred during validation
      * @return True if the input is valid, False otherwise
      */
     public boolean validate() throws ExceptionReport {
         String services = getMapValue(PARAM_SERVICE, true);
-        if ( !services.equalsIgnoreCase("wps")) {
+        if (!services.equalsIgnoreCase("wps")) {
             throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services,
-                                      ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "service");
         }
 
         String[] versions = getMapArray(PARAM_VERSION, false);
-        if ( !requireVersion(WPSConfig.SUPPORTED_VERSIONS, false)) {
-            throw new ExceptionReport("Requested versions are not supported, you requested: "
-                    + Request.accumulateString(versions), ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
+        if (!requireVersion(WPSConfig.SUPPORTED_VERSIONS, false)) {
+            throw new ExceptionReport(
+                    "Requested versions are not supported, you requested: " + Request.accumulateString(versions),
+                    ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
         }
 
         return true;
@@ -142,7 +148,8 @@ public class CapabilitiesRequest extends Request {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * @throws ExceptionReport
+     *             if an exception occurred while handling the request
      * @return Response The result of the computation
      */
     public Response call() throws ExceptionReport {

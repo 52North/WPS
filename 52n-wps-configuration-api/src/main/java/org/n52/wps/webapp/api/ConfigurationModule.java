@@ -39,12 +39,14 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
 /**
- * Configuration modules in the application need to implement this interface to recognized and added to the application.
- * Spring will scan the context for any class implementing this interface and register it as a configuration module.
+ * Configuration modules in the application need to implement this interface to
+ * recognized and added to the application. Spring will scan the context for any
+ * class implementing this interface and register it as a configuration module.
  */
 public interface ConfigurationModule {
     /**
-     * The name of the module which will appear on the user interface. (e.g. Grass Repository)
+     * The name of the module which will appear on the user interface. (e.g.
+     * Grass Repository)
      *
      * @return the name of the configuration module
      */
@@ -66,16 +68,17 @@ public interface ConfigurationModule {
     void setActive(boolean active);
 
     /**
-     * Identify the category for the configuration module. See {@code ConfigurationCategory} for a list of avaliable
-     * categories.
+     * Identify the category for the configuration module. See
+     * {@code ConfigurationCategory} for a list of avaliable categories.
      *
      * @return the category for the configuration module
      */
     ConfigurationCategory getCategory();
 
     /**
-     * List of all configurations entries for this configuration module. Configuration entries can be of type String,
-     * Integer, Boolean, Double, File, and URI
+     * List of all configurations entries for this configuration module.
+     * Configuration entries can be of type String, Integer, Boolean, Double,
+     * File, and URI
      *
      * @return the list of configuration entries
      * @see StringConfigurationEntry

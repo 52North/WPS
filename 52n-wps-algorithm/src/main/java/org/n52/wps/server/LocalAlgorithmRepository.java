@@ -37,13 +37,14 @@ import org.slf4j.LoggerFactory;
  * @author foerster
  *
  */
-public class LocalAlgorithmRepository implements
-        ITransactionalAlgorithmRepository {
+public class LocalAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static Logger LOGGER = LoggerFactory
-            .getLogger(LocalAlgorithmRepository.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LocalAlgorithmRepository.class);
+
     private Map<String, ProcessDescription> processDescriptionMap;
+
     private Map<String, IAlgorithm> algorithmMap;
+
     private ConfigurationModule localAlgorithmRepoConfigModule;
 
     public LocalAlgorithmRepository() {
@@ -51,14 +52,12 @@ public class LocalAlgorithmRepository implements
         algorithmMap = new HashMap<String, IAlgorithm>();
 
         localAlgorithmRepoConfigModule = WPSConfig.getInstance()
-                .getConfigurationModuleForClass(this.getClass().getName(),
-                        ConfigurationCategory.REPOSITORY);
+                .getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 
         // check if the repository is active
         if (localAlgorithmRepoConfigModule.isActive()) {
 
-            List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule
-                    .getAlgorithmEntries();
+            List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule.getAlgorithmEntries();
 
             for (AlgorithmEntry algorithmEntry : algorithmEntries) {
                 if (algorithmEntry.isActive()) {
@@ -75,7 +74,7 @@ public class LocalAlgorithmRepository implements
     }
 
     public IAlgorithm getAlgorithm(String className) {
-        if(getAlgorithmNames().contains(className)){
+        if (getAlgorithmNames().contains(className)) {
             return algorithmMap.get(className);
         }
         return null;
@@ -85,8 +84,7 @@ public class LocalAlgorithmRepository implements
 
         Collection<String> algorithmNames = new ArrayList<>();
 
-        List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule
-                .getAlgorithmEntries();
+        List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule.getAlgorithmEntries();
 
         for (AlgorithmEntry algorithmEntry : algorithmEntries) {
             if (algorithmEntry.isActive()) {
@@ -101,10 +99,8 @@ public class LocalAlgorithmRepository implements
         return getAlgorithmNames().contains(className);
     }
 
-    private IAlgorithm loadAlgorithm(String algorithmClassName)
-            throws Exception {
-        Class<?> algorithmClass = LocalAlgorithmRepository.class
-                .getClassLoader().loadClass(algorithmClassName);
+    private IAlgorithm loadAlgorithm(String algorithmClassName) throws Exception {
+        Class<?> algorithmClass = LocalAlgorithmRepository.class.getClassLoader().loadClass(algorithmClassName);
         IAlgorithm algorithm = null;
         if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
             algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());
@@ -113,24 +109,24 @@ public class LocalAlgorithmRepository implements
             // wrap it in a proxy class
             algorithm = new AbstractAnnotatedAlgorithm.Proxy(algorithmClass);
         } else {
-            throw new Exception(
-                    "Could not load algorithm "
-                            + algorithmClassName
-                            + " does not implement IAlgorithm or have a Algorithm annotation.");
+            throw new Exception("Could not load algorithm " + algorithmClassName
+                    + " does not implement IAlgorithm or have a Algorithm annotation.");
         }
 
         boolean isNoProcessDescriptionValid = false;
 
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
-            isNoProcessDescriptionValid = isNoProcessDescriptionValid
-                    && !algorithm.processDescriptionIsValid(supportedVersion);
+            isNoProcessDescriptionValid =
+                    isNoProcessDescriptionValid && !algorithm.processDescriptionIsValid(supportedVersion);
         }
 
         if (isNoProcessDescriptionValid) {
-            LOGGER.warn("Algorithm description is not valid: "
-                    + algorithmClassName);// TODO add version to exception/log
-            throw new Exception("Could not load algorithm "
-                    + algorithmClassName + ". ProcessDescription Not Valid.");
+            LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);// TODO
+                                                                                     // add
+                                                                                     // version
+                                                                                     // to
+                                                                                     // exception/log
+            throw new Exception("Could not load algorithm " + algorithmClassName + ". ProcessDescription Not Valid.");
         }
 
         return algorithm;
@@ -146,15 +142,13 @@ public class LocalAlgorithmRepository implements
 
             IAlgorithm algorithm = loadAlgorithm(algorithmClassName);
 
-            processDescriptionMap.put(algorithmClassName,
-                    algorithm.getDescription());
+            processDescriptionMap.put(algorithmClassName, algorithm.getDescription());
             algorithmMap.put(algorithmClassName, algorithm);
             LOGGER.info("Algorithm class registered: " + algorithmClassName);
 
             return true;
         } catch (Exception e) {
-            LOGGER.error("Exception while trying to add algorithm {}",
-                    algorithmClassName);
+            LOGGER.error("Exception while trying to add algorithm {}", algorithmClassName);
             LOGGER.error(e.getMessage());
 
         }
@@ -176,6 +170,7 @@ public class LocalAlgorithmRepository implements
     }
 
     @Override
-    public void shutdown() {}
+    public void shutdown() {
+    }
 
 }

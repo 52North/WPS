@@ -35,9 +35,10 @@ import org.n52.wps.server.ProcessDescription;
  * @author Benjamin Pross (bpross-52n)
  *
  */
-public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
+public abstract class GenericGrassAlgorithm extends AbstractAlgorithm {
 
     private ProcessDescription description;
+
     private final String wkName;
 
     /**
@@ -52,22 +53,26 @@ public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
      * default constructor, calls the initializeDescription() Method
      */
     public GenericGrassAlgorithm(String wellKnownName) {
-        this.wkName = wellKnownName; // Has to be initialized before the description.
+        this.wkName = wellKnownName; // Has to be initialized before the
+                                     // description.
         this.description = initializeDescription();
     }
 
     /**
-     * This method should be overwritten, in case you want to have a way of initializing.
+     * This method should be overwritten, in case you want to have a way of
+     * initializing.
      *
-     * In detail it looks for a xml descfile, which is located in the same directory as the implementing class and has the same
-     * name as the class, but with the extension XML.
+     * In detail it looks for a xml descfile, which is located in the same
+     * directory as the implementing class and has the same name as the class,
+     * but with the extension XML.
+     * 
      * @return
      */
     protected ProcessDescription initializeDescription() {
         return null;
     }
 
-    public ProcessDescription getDescription()  {
+    public ProcessDescription getDescription() {
         return description;
     }
 
@@ -78,10 +83,5 @@ public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
     public String getWellKnownName() {
         return this.wkName;
     }
-
-
-
-
-
 
 }

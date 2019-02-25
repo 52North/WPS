@@ -34,16 +34,15 @@ import java.util.UUID;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
 
-
 abstract public class Response {
 
     protected Request request;
 
-    public Response(Request request){
+    public Response(Request request) {
         this.request = request;
     }
 
-    public UUID getUniqueId(){
+    public UUID getUniqueId() {
         return this.request.getUniqueId();
     }
 
@@ -53,9 +52,8 @@ abstract public class Response {
 
     public abstract InputStream getAsStream() throws ExceptionReport;
 
-    public Request getRequest(){
+    public Request getRequest() {
         return request;
     }
-
 
 }

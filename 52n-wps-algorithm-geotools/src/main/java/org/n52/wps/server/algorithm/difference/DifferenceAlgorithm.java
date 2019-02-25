@@ -72,8 +72,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.locationtech.jts.geom.Geometry;
 
-
-
 public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(DifferenceAlgorithm.class);
@@ -83,19 +81,18 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
     }
 
     private List<String> errors = new ArrayList<String>();
+
     public List<String> getErrors() {
         return errors;
     }
 
-
-
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         /*----------------------Polygons Input------------------------------------------*/
-        if(inputData==null || !inputData.containsKey("Polygons1")){
+        if (inputData == null || !inputData.containsKey("Polygons1")) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         List<IData> dataList = inputData.get("Polygons1");
-        if(dataList == null || dataList.size() != 1){
+        if (dataList == null || dataList.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = dataList.get(0);
@@ -103,17 +100,16 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
         FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
 
         /*----------------------LineStrings Input------------------------------------------*/
-        if(inputData==null || !inputData.containsKey("Polygons2")){
+        if (inputData == null || !inputData.containsKey("Polygons2")) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         List<IData> dataListLS = inputData.get("Polygons2");
-        if(dataListLS == null || dataListLS.size() != 1){
+        if (dataListLS == null || dataListLS.size() != 1) {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData secondInputData = dataListLS.get(0);
 
         FeatureCollection lineStrings = ((GTVectorDataBinding) secondInputData).getPayload();
-
 
         System.out.println("****************************************************************");
         System.out.println("difference algorithm started");
@@ -126,56 +122,52 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
         int j = 1;
 
         String uuid = UUID.randomUUID().toString();
-        while(polygonIterator.hasNext()){
+        while (polygonIterator.hasNext()) {
             SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
-
 
             FeatureIterator<?> lineStringIterator = lineStrings.features();
             int i = 1;
-            System.out.println("Polygon = " + j +"/"+ polygons.size());
+            System.out.println("Polygon = " + j + "/" + polygons.size());
             SimpleFeatureType featureType = null;
-            while(lineStringIterator.hasNext()){
+            while (lineStringIterator.hasNext()) {
                 SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
                 Geometry lineStringGeometry = null;
                 lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
 
-                try{
+                try {
                     Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
                     Geometry intersection = polygonGeometry.difference(lineStringGeometry);
-                    if(i==1){
-                         featureType = GTHelper.createFeatureType(polygon.getProperties(), intersection, uuid, polygon.getFeatureType().getCoordinateReferenceSystem());
-                         QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
-                         SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+                    if (i == 1) {
+                        featureType = GTHelper.createFeatureType(polygon.getProperties(), intersection, uuid,
+                                polygon.getFeatureType().getCoordinateReferenceSystem());
+                        QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+                        SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
                     }
 
-
-                    SimpleFeature resultFeature = GTHelper.createFeature(""+j+"_"+i, intersection,featureType, polygon.getProperties());
-                    if(resultFeature!=null){
+                    SimpleFeature resultFeature = GTHelper.createFeature("" + j + "_" + i, intersection, featureType,
+                            polygon.getProperties());
+                    if (resultFeature != null) {
 
                         featureList.add(resultFeature);
                         System.out.println("result feature added. resultCollection = " + featureList.size());
                     }
-                }catch(Exception e){
-                        e.printStackTrace();
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 i++;
             }
             j++;
-            //if(featureCollection.size()>10){
-            //    break;
-            //}
+            // if(featureCollection.size()>10){
+            // break;
+            // }
         }
 
-
-        HashMap<String,IData> resulthash = new HashMap<String,IData>();
-        resulthash.put("result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
+        HashMap<String, IData> resulthash = new HashMap<String, IData>();
+        resulthash.put("result",
+                new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
         return resulthash;
     }
-
-
-
-
 
     public Class getInputDataType(String id) {
         return GTVectorDataBinding.class;
@@ -188,7 +180,7 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 
     @Override
     public List<String> getInputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add("Polygons1");
         identifierList.add("Polygons2");
         return identifierList;
@@ -196,7 +188,7 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 
     @Override
     public List<String> getOutputIdentifiers() {
-        List<String> identifierList =  new ArrayList<String>();
+        List<String> identifierList = new ArrayList<String>();
         identifierList.add("result");
         return identifierList;
     }

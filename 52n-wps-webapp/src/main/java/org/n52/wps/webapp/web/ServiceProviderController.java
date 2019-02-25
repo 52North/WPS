@@ -58,10 +58,12 @@ public class ServiceProviderController {
     /**
      * Display the service provider module
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The service provider view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String display(Model model) {
         ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
         model.addAttribute("serviceProvider", serviceProvider);
@@ -70,21 +72,27 @@ public class ServiceProviderController {
     }
 
     /**
-     * Process form submission. The method will return an HTTP 200 status code if there
-     * are no errors, else, it will return a 400 status code.
+     * Process form submission. The method will return an HTTP 200 status code
+     * if there are no errors, else, it will return a 400 status code.
      *
      * @param serviceProvider
      *            The model holding the service provider values
-     * @param result the <code>BindingResult</code>
-     * @param model the model
-     * @param response the servlet response
-     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-     *         errors.
+     * @param result
+     *            the <code>BindingResult</code>
+     * @param model
+     *            the model
+     * @param response
+     *            the servlet response
+     * @return A {@code ValidationResponse} object with the list of form errors
+     *         which can be empty if there are no errors.
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(
+            method = RequestMethod.POST)
     @ResponseBody
     public ValidationResponse processPost(@ModelAttribute("serviceProvider") @Valid ServiceProvider serviceProvider,
-            BindingResult result, Model model, HttpServletResponse response) {
+            BindingResult result,
+            Model model,
+            HttpServletResponse response) {
         ValidationResponse validationResponse = new ValidationResponse();
         if (result.hasErrors()) {
             validationResponse.setErrorMessageList(result.getFieldErrors());

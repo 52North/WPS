@@ -31,31 +31,43 @@ public interface IGenerator extends IOHandler {
 
     /**
      *
-     * @param data the data
-     * @param mimeType the mime type of the data
-     * @param schema the schema of the data
+     * @param data
+     *            the data
+     * @param mimeType
+     *            the mime type of the data
+     * @param schema
+     *            the schema of the data
      * @return an <code>InputStream</code> containing the data
-     * @throws IOException if the <code>InputStream</code> cannot be created
+     * @throws IOException
+     *             if the <code>InputStream</code> cannot be created
      *
-     * generates final output data produced by an IAlgorithm
-     * and returns an InputStream for subsequent access.
+     *             generates final output data produced by an IAlgorithm and
+     *             returns an InputStream for subsequent access.
      *
      */
-    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException;
-
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException;
 
     /**
      *
-     * @param data the data
-     * @param mimeType the mime type of the data
-     * @param schema the schema of the data
+     * @param data
+     *            the data
+     * @param mimeType
+     *            the mime type of the data
+     * @param schema
+     *            the schema of the data
      * @return an <code>InputStream</code> containing the data encoded in base64
-     * @throws IOException if the <code>InputStream</code> cannot be created
+     * @throws IOException
+     *             if the <code>InputStream</code> cannot be created
      *
-     * generates final output data produced by an IAlgorithm, encodes it in Base64
-     * and returns an InputStream for subsequent access.
+     *             generates final output data produced by an IAlgorithm,
+     *             encodes it in Base64 and returns an InputStream for
+     *             subsequent access.
      *
      */
-    public InputStream generateBase64Stream(IData data, String mimeType, String schema) throws IOException;
+    public InputStream generateBase64Stream(IData data,
+            String mimeType,
+            String schema) throws IOException;
 
 }

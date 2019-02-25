@@ -82,51 +82,58 @@ public class GML3BasicGenerator extends AbstractGenerator {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicGenerator.class);
 
-    public GML3BasicGenerator(){
+    public GML3BasicGenerator() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
 
-    public void writeToStream(IData coll, OutputStream os) {
-        FeatureCollection<?,?> fc = ((GTVectorDataBinding)coll).getPayload();
+    public void writeToStream(IData coll,
+            OutputStream os) {
+        FeatureCollection<?, ?> fc = ((GTVectorDataBinding) coll).getPayload();
 
-        FeatureCollection<?,?> correctFeatureCollection = createCorrectFeatureCollection(fc);
-        //get the namespace from the features to pass into the encoder
+        FeatureCollection<?, ?> correctFeatureCollection = createCorrectFeatureCollection(fc);
+        // get the namespace from the features to pass into the encoder
         FeatureType schema = correctFeatureCollection.getSchema();
         String namespace = null;
         String schemaLocation = null;
-        if(schema !=null){
+        if (schema != null) {
             namespace = schema.getName().getNamespaceURI();
             schemaLocation = SchemaRepository.getSchemaLocation(namespace);
         }
 
         Configuration configuration = null;
         org.geotools.xml.Encoder encoder = null;
-        if(schemaLocation==null || namespace==null){
+        if (schemaLocation == null || namespace == null) {
             namespace = "http://www.opengis.net/gml";
             schemaLocation = "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd";
-            configuration = new GMLConfiguration();//new ApplicationSchemaConfiguration(namespace, schemaLocation);
+            configuration = new GMLConfiguration();// new
+                                                   // ApplicationSchemaConfiguration(namespace,
+                                                   // schemaLocation);
 
-            encoder = new org.geotools.xml.Encoder(configuration );
+            encoder = new org.geotools.xml.Encoder(configuration);
             encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+            encoder.setSchemaLocation("http://www.opengis.net/gml",
+                    "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
 
-        }else{
+        } else {
 
             configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
 
-            encoder = new org.geotools.xml.Encoder(configuration );
+            encoder = new org.geotools.xml.Encoder(configuration);
             encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation("http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", namespace + " " + schemaLocation);
+            encoder.setSchemaLocation(
+                    "http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
+                    namespace + " " + schemaLocation);
 
         }
 
         fc.features().close();
-        //use the gml namespace with the FeatureCollection element to start parsing the collection
-        QName ns = new QName("http://www.opengis.net/gml","FeatureCollection","wfs");
-        try{
+        // use the gml namespace with the FeatureCollection element to start
+        // parsing the collection
+        QName ns = new QName("http://www.opengis.net/gml", "FeatureCollection", "wfs");
+        try {
             encoder.encode(correctFeatureCollection, ns, os);
-        }catch(IOException e){
+        } catch (IOException e) {
             LOGGER.error("Exception while trying to encode FeatureCollection.", e);
             throw new RuntimeException(e);
         }
@@ -134,14 +141,16 @@ public class GML3BasicGenerator extends AbstractGenerator {
     }
 
     @Override
-    public InputStream generateStream(final IData data, String mimeType, String schema) throws IOException {
+    public InputStream generateStream(final IData data,
+            String mimeType,
+            String schema) throws IOException {
         String uuid = UUID.randomUUID().toString();
-        File file = File.createTempFile("gml3"+uuid, ".xml");
+        File file = File.createTempFile("gml3" + uuid, ".xml");
         FileOutputStream outputStream = new FileOutputStream(file);
         this.writeToStream(data, outputStream);
         outputStream.flush();
         outputStream.close();
-        if(file.length() <= 0) {
+        if (file.length() <= 0) {
             return null;
         }
         FileInputStream inputStream = new FileInputStream(file);
@@ -150,22 +159,25 @@ public class GML3BasicGenerator extends AbstractGenerator {
 
     }
 
-    private SimpleFeatureCollection createCorrectFeatureCollection(FeatureCollection<?,?> fc) {
+    private SimpleFeatureCollection createCorrectFeatureCollection(FeatureCollection<?, ?> fc) {
 
         List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
         SimpleFeatureType featureType = null;
         FeatureIterator<?> iterator = fc.features();
         String uuid = UUID.randomUUID().toString();
         int i = 0;
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             SimpleFeature feature = (SimpleFeature) iterator.next();
 
-            if(i==0){
-                featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
+            if (i == 0) {
+                featureType =
+                        GTHelper.createFeatureType(feature.getProperties(), (Geometry) feature.getDefaultGeometry(),
+                                uuid, feature.getFeatureType().getCoordinateReferenceSystem());
                 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
                 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
             }
-            SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+            SimpleFeature resultFeature = GTHelper.createFeature("ID" + i, (Geometry) feature.getDefaultGeometry(),
+                    featureType, feature.getProperties());
 
             simpleFeatureList.add(resultFeature);
             i++;

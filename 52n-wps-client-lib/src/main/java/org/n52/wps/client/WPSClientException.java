@@ -28,13 +28,14 @@
  */
 package org.n52.wps.client;
 
-
 import net.opengis.ows.x11.ExceptionReportDocument;
 
 public class WPSClientException extends Exception {
     // Universal version identifier for a Serializable class.
-    // Should be used here, because Exception implements the java.io.Serializable
+    // Should be used here, because Exception implements the
+    // java.io.Serializable
     private static final long serialVersionUID = -6012433945141734834L;
+
     private ExceptionReportDocument doc;
 
     public WPSClientException(String message, ExceptionReportDocument doc) {
@@ -45,6 +46,7 @@ public class WPSClientException extends Exception {
     public WPSClientException(String message) {
         super(message);
     }
+
     public WPSClientException(String message, Exception e) {
         super(message);
     }

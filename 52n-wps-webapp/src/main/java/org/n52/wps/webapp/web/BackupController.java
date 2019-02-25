@@ -67,21 +67,27 @@ public class BackupController {
      *
      * @return the backup view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String displayBackupPage() {
         return "backup";
     }
 
     /**
-     * Process the backup request. The method will pass the user selection of items to backup to the service.
+     * Process the backup request. The method will pass the user selection of
+     * items to backup to the service.
      *
-     * @param request the servlet request
-     * @param response the servlet response
+     * @param request
+     *            the servlet request
+     * @param response
+     *            the servlet response
      * @return the created Zip archive URL
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(
+            method = RequestMethod.POST)
     @ResponseBody
-    public String processBackup(HttpServletRequest request, HttpServletResponse response) {
+    public String processBackup(HttpServletRequest request,
+            HttpServletResponse response) {
         String[] itemsToBackup = request.getParameterValues("backupSelections");
         String zipUrl = null;
         if (itemsToBackup == null) {
@@ -101,15 +107,21 @@ public class BackupController {
     }
 
     /**
-     * Upload the Zip archive and pass it to the service to overwrite configurations.
+     * Upload the Zip archive and pass it to the service to overwrite
+     * configurations.
      *
-     * @param request the servlet request
-     * @param response the servlet response
+     * @param request
+     *            the servlet request
+     * @param response
+     *            the servlet response
      * @return {@code ValidationResponse}
      */
-    @RequestMapping(value = "restore", method = RequestMethod.POST)
+    @RequestMapping(
+            value = "restore",
+            method = RequestMethod.POST)
     @ResponseBody
-    public ValidationResponse processRestore(MultipartHttpServletRequest request, HttpServletResponse response) {
+    public ValidationResponse processRestore(MultipartHttpServletRequest request,
+            HttpServletResponse response) {
 
         ValidationResponse validationResponse = new ValidationResponse();
         List<FieldError> listOfErros = new ArrayList<FieldError>();
@@ -128,7 +140,16 @@ public class BackupController {
             } else {
                 try {
                     configurationManager.getBackupServices().restoreBackup(zipFile.getInputStream());
-                } catch (IOException | WPSConfigurationException | NestedRuntimeException e) {//added NestedRuntimeException so spring-core will be included at scope compile
+                } catch (IOException | WPSConfigurationException | NestedRuntimeException e) {// added
+                                                                                              // NestedRuntimeException
+                                                                                              // so
+                                                                                              // spring-core
+                                                                                              // will
+                                                                                              // be
+                                                                                              // included
+                                                                                              // at
+                                                                                              // scope
+                                                                                              // compile
                     FieldError error = new FieldError(zipFile.getOriginalFilename(), zipFile.getName(),
                             "Error in restoring backup. It's possible that the file is not a correct WPSBackup Zip archive.");
                     listOfErros.add(error);

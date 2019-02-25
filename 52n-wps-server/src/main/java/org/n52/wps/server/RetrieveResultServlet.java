@@ -57,7 +57,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Controller
-@RequestMapping(value = "/" + RetrieveResultServlet.SERVLET_PATH)
+@RequestMapping(
+        value = "/" + RetrieveResultServlet.SERVLET_PATH)
 public class RetrieveResultServlet {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RetrieveResultServlet.class);
@@ -74,8 +75,10 @@ public class RetrieveResultServlet {
         LOGGER.debug("NEW {}", this);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @RequestMapping(
+            method = RequestMethod.GET)
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
 
         // id of result to retrieve.
         String id = request.getParameter("id");
@@ -88,14 +91,15 @@ public class RetrieveResultServlet {
             altName = true;
         }
 
-        // return result as attachment (instructs browser to offer user "Save" dialog)
+        // return result as attachment (instructs browser to offer user "Save"
+        // dialog)
         String attachment = request.getParameter("attachment");
 
         if (StringUtils.isEmpty(id)) {
             errorResponse("id parameter missing", response);
         } else {
 
-            if(!isIDValid(id)){
+            if (!isIDValid(id)) {
                 errorResponse("id parameter not valid", response);
             }
 
@@ -115,13 +119,16 @@ public class RetrieveResultServlet {
                 } else {
                     String suffix = MIMEUtil.getSuffixFromMIMEType(mimeType).toLowerCase();
 
-                    // if attachment parameter unset, default to false for mime-type of 'xml' and true for everything else.
-                    boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix)) || Boolean.parseBoolean(attachment);
+                    // if attachment parameter unset, default to false for
+                    // mime-type of 'xml' and true for everything else.
+                    boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix))
+                            || Boolean.parseBoolean(attachment);
                     if (useAttachment) {
                         String attachmentName = (new StringBuilder(id)).append('.').append(suffix).toString();
 
                         if (altName) {
-                            attachmentName = (new StringBuilder(alternateFilename)).append('.').append(suffix).toString();
+                            attachmentName =
+                                    (new StringBuilder(alternateFilename)).append('.').append(suffix).toString();
                         }
                         response.addHeader("Content-Disposition", "attachment; filename=\"" + attachmentName + "\"");
                     }
@@ -130,7 +137,8 @@ public class RetrieveResultServlet {
 
                     if ("xml".equals(suffix)) {
 
-                        // NOTE:  We don't set "Content-Length" header, xml may be modified
+                        // NOTE: We don't set "Content-Length" header, xml may
+                        // be modified
 
                         // need these to work around aggressive IE 8 caching.
                         response.addHeader("Cache-Control", "no-cache, no-store");
@@ -146,7 +154,8 @@ public class RetrieveResultServlet {
                     } else {
 
                         if (contentLength > -1) {
-                            // Can't use response.setContentLength(...) as it accepts an int (max of 2^31 - 1) ?!
+                            // Can't use response.setContentLength(...) as it
+                            // accepts an int (max of 2^31 - 1) ?!
                             // response.setContentLength(contentLength);
                             response.setHeader("Content-Length", Long.toString(contentLength));
                         } else {
@@ -170,7 +179,8 @@ public class RetrieveResultServlet {
         }
     }
 
-    protected void errorResponse(String error, HttpServletResponse response) throws IOException {
+    protected void errorResponse(String error,
+            HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         PrintWriter writer = response.getWriter();
@@ -179,8 +189,7 @@ public class RetrieveResultServlet {
         LOGGER.warn("Error processing response: " + error);
     }
 
-    protected void copyResponseStream(
-            InputStream inputStream,
+    protected void copyResponseStream(InputStream inputStream,
             OutputStream outputStream,
             String id,
             long contentLength) throws IOException {
@@ -194,15 +203,16 @@ public class RetrieveResultServlet {
             }
         } catch (IOException e) {
             String exceptionMessage = contentLength > -1
-                    ? String.format("Error writing response to output stream for id %s, %d of %d bytes written", id, contentWritten, contentLength)
-                    : String.format("Error writing response to output stream for id %s, %d bytes written", id, contentWritten);
+                    ? String.format("Error writing response to output stream for id %s, %d of %d bytes written", id,
+                            contentWritten, contentLength)
+                    : String.format("Error writing response to output stream for id %s, %d bytes written", id,
+                            contentWritten);
             throw new IOException(exceptionMessage, e);
         }
         LOGGER.info("{} bytes written in response to id {}", contentWritten, id);
     }
 
-    protected void copyResponseAsXML(
-            InputStream inputStream,
+    protected void copyResponseAsXML(InputStream inputStream,
             OutputStream outputStream,
             boolean indent,
             String id) throws IOException {
@@ -226,23 +236,23 @@ public class RetrieveResultServlet {
         return t.getCause() == null ? t : getRootCause(t.getCause());
     }
 
-    public boolean isIDValid(String id){
+    public boolean isIDValid(String id) {
 
-        if(id.length() <= uuid_length){
+        if (id.length() <= uuid_length) {
 
             try {
                 UUID checkUUID = UUID.fromString(id);
 
-                if(checkUUID.toString().equals(id)){
+                if (checkUUID.toString().equals(id)) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             } catch (Exception e) {
                 return false;
             }
 
-        }else {
+        } else {
 
             String uuidPartOne = id.substring(0, uuid_length);
             String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());

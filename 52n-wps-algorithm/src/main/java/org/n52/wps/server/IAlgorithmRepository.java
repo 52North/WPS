@@ -19,7 +19,7 @@ package org.n52.wps.server;
 import java.util.Collection;
 
 /**
- * @author     Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
+ * @author Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
  *
  */
 public interface IAlgorithmRepository {
@@ -35,6 +35,5 @@ public interface IAlgorithmRepository {
      * use to free resources
      */
     public void shutdown();
-
 
 }

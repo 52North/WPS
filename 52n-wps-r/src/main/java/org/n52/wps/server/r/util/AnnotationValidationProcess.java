@@ -51,7 +51,13 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.0.0", identifier = "org.n52.wps.server.algorithm.r.AnnotationValidation", title = "R Annotation Validation", statusSupported = false, storeSupported = false, abstrakt = "Validate the annotations of a WPS4R script without deploying it")
+@Algorithm(
+        version = "1.0.0",
+        identifier = "org.n52.wps.server.algorithm.r.AnnotationValidation",
+        title = "R Annotation Validation",
+        statusSupported = false,
+        storeSupported = false,
+        abstrakt = "Validate the annotations of a WPS4R script without deploying it")
 public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
 
     private static final String RESULT_OK = "OK";
@@ -76,22 +82,35 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
         LOGGER.debug("NEW {}", this);
     }
 
-    @ComplexDataInput(identifier = "script", title = "annotated R script (as CDATA)", abstrakt = "An annotated R script to be validated for use within WPS4R. IMPORTANT: Wrap script in CDATA elements.", binding = PlainStringBinding.class)
+    @ComplexDataInput(
+            identifier = "script",
+            title = "annotated R script (as CDATA)",
+            abstrakt = "An annotated R script to be validated for use within WPS4R. IMPORTANT: Wrap script in CDATA elements.",
+            binding = PlainStringBinding.class)
     public void setScriptToValidate(Object script) {
         this.script = (String) script;
     }
 
-    @LiteralDataOutput(identifier = "validationResultString", title = "Validation output as text", binding = LiteralStringBinding.class)
+    @LiteralDataOutput(
+            identifier = "validationResultString",
+            title = "Validation output as text",
+            binding = LiteralStringBinding.class)
     public String returnValidationResult() {
         return this.validationResult;
     }
 
-    @LiteralDataOutput(identifier = "validationResultBool", title = "Validation output as boolean", binding = LiteralBooleanBinding.class)
+    @LiteralDataOutput(
+            identifier = "validationResultBool",
+            title = "Validation output as boolean",
+            binding = LiteralBooleanBinding.class)
     public boolean returnValidationResultBool() {
         return this.validationResult.contains(RESULT_OK);
     }
 
-    @LiteralDataOutput(identifier = "annotations", title = "A string representation of the Java objects of the parsed annotations", binding = LiteralStringBinding.class)
+    @LiteralDataOutput(
+            identifier = "annotations",
+            title = "A string representation of the Java objects of the parsed annotations",
+            binding = LiteralStringBinding.class)
     public String returnAnnotationsString() {
         return this.annotationsString;
     }
@@ -105,8 +124,7 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
             List<RAnnotation> annotations = parser.parseAnnotationsfromScript(inputStream);
             LOGGER.debug("Parsed {} annotations", annotations.size());
             this.annotationsString = Arrays.toString(annotations.toArray());
-        }
-        catch (RAnnotationException | IOException e) {
+        } catch (RAnnotationException | IOException e) {
             validation.append(RESULT_ERROR);
             validation.append("\nCould not parse annotations: ");
             validation.append(e.getMessage());
@@ -117,8 +135,7 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
         try (InputStream inputStream = IOUtils.toInputStream(script);) {
             valid = parser.validateScript(inputStream, VALIDATION_IDENTIFIER);
             LOGGER.debug("Valid script: {}", valid);
-        }
-        catch (RAnnotationException | IOException e) {
+        } catch (RAnnotationException | IOException e) {
             validation.append(RESULT_ERROR);
             validation.append("\nCould not validate script: ");
             validation.append(e.getMessage());
@@ -126,15 +143,12 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
             validation.append(Arrays.toString(e.getStackTrace()));
         }
 
-        if ( !valid) {
+        if (!valid) {
             try (InputStream inputStream = IOUtils.toInputStream(script);) {
                 Collection<Exception> errors = parser.validateScriptWithErrors(inputStream, VALIDATION_IDENTIFIER);
                 LOGGER.debug("Found {} errors.", errors.size());
-                errors.stream()
-                        .map(e -> e.getMessage())
-                        .collect(Collectors.joining(", \n"));
-            }
-            catch (RAnnotationException | IOException e) {
+                errors.stream().map(e -> e.getMessage()).collect(Collectors.joining(", \n"));
+            } catch (RAnnotationException | IOException e) {
                 validation.append(RESULT_ERROR);
                 validation.append("\nCould not validate script: ");
                 validation.append(e.getMessage());

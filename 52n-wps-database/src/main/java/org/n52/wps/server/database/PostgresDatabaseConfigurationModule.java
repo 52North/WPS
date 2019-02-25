@@ -58,34 +58,39 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
 
     private static final String saveResultsToDBKey = "saveResultsToDb";
 
-    private static final String databaseClassKey = "databaseClass";//TODO use ClassKnowingConfigModule??
+    private static final String databaseClassKey = "databaseClass";// TODO use
+                                                                   // ClassKnowingConfigModule??
 
-    private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey, "Database wipe enabled", "Enable database wiping based on values below",
-            false, true);
+    private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey,
+            "Database wipe enabled", "Enable database wiping based on values below", false, true);
+
     private ConfigurationEntry<String> wipePeriodEntry = new StringConfigurationEntry(wipePeriodKey, "Wipe period",
             "How often to scan database (PT1H = every hour)", false, "PT1H");
-    private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey, "Wipe threshold",
-            "Delete files older than this period (P7D = 7 days)", false, "P7D");
 
-    private ConfigurationEntry<String> databaseNameEntry = new StringConfigurationEntry(databaseNameKey, "Database name", "Name of the database",
-            true, "postgres");
+    private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey,
+            "Wipe threshold", "Delete files older than this period (P7D = 7 days)", false, "P7D");
 
-    private ConfigurationEntry<String> databasePathEntry = new StringConfigurationEntry(databasePathKey, "Database path", "Path database",
-            true, "//localhost:5432");
+    private ConfigurationEntry<String> databaseNameEntry =
+            new StringConfigurationEntry(databaseNameKey, "Database name", "Name of the database", true, "postgres");
 
-    private ConfigurationEntry<String> usernameEntry = new StringConfigurationEntry(usernameKey, "Username", "Postgres user name",
-            true, "postgres");
+    private ConfigurationEntry<String> databasePathEntry =
+            new StringConfigurationEntry(databasePathKey, "Database path", "Path database", true, "//localhost:5432");
 
-    private ConfigurationEntry<String> passwordEntry = new StringConfigurationEntry(passwordKey, "Password", "Postgres user password",
-            true, "postgres");
+    private ConfigurationEntry<String> usernameEntry =
+            new StringConfigurationEntry(usernameKey, "Username", "Postgres user name", true, "postgres");
 
-    private ConfigurationEntry<Boolean> saveResultsToDBEntry = new BooleanConfigurationEntry(saveResultsToDBKey, "Save results to DB", "Enable saving of results to DB (not recommended for large results!)",
-            false, false);
+    private ConfigurationEntry<String> passwordEntry =
+            new StringConfigurationEntry(passwordKey, "Password", "Postgres user password", true, "postgres");
 
-    private ConfigurationEntry<String> databaseClassEntry = new StringConfigurationEntry(databaseClassKey, "Database class name", "Database class name",
-            true, "org.n52.wps.server.database.PostgresDatabase");
+    private ConfigurationEntry<Boolean> saveResultsToDBEntry = new BooleanConfigurationEntry(saveResultsToDBKey,
+            "Save results to DB", "Enable saving of results to DB (not recommended for large results!)", false, false);
 
-    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry, databaseNameEntry, databasePathEntry, usernameEntry, passwordEntry, saveResultsToDBEntry, databaseClassEntry);
+    private ConfigurationEntry<String> databaseClassEntry = new StringConfigurationEntry(databaseClassKey,
+            "Database class name", "Database class name", true, "org.n52.wps.server.database.PostgresDatabase");
+
+    private List<? extends ConfigurationEntry<?>> configurationEntries =
+            Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry, databaseNameEntry, databasePathEntry,
+                    usernameEntry, passwordEntry, saveResultsToDBEntry, databaseClassEntry);
 
     private String databaseName;
 
@@ -146,7 +151,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return isWipeEnabled;
     }
 
-    @ConfigurationKey(key = isWipeEnabledKey)
+    @ConfigurationKey(
+            key = isWipeEnabledKey)
     public void setWipeEnabled(boolean isWipeEnabled) {
         this.isWipeEnabled = isWipeEnabled;
     }
@@ -155,7 +161,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return wipePeriod;
     }
 
-    @ConfigurationKey(key = wipePeriodKey)
+    @ConfigurationKey(
+            key = wipePeriodKey)
     public void setWipePeriod(String wipePeriod) {
         this.wipePeriod = wipePeriod;
     }
@@ -164,7 +171,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return wipeThreshold;
     }
 
-    @ConfigurationKey(key = wipeThresholdKey)
+    @ConfigurationKey(
+            key = wipeThresholdKey)
     public void setWipeThreshold(String wipeThreshold) {
         this.wipeThreshold = wipeThreshold;
     }
@@ -173,7 +181,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return databaseName;
     }
 
-    @ConfigurationKey(key = databaseNameKey)
+    @ConfigurationKey(
+            key = databaseNameKey)
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
     }
@@ -182,7 +191,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return databasePath;
     }
 
-    @ConfigurationKey(key = databasePathKey)
+    @ConfigurationKey(
+            key = databasePathKey)
     public void setDatabasePath(String databasePath) {
         this.databasePath = databasePath;
     }
@@ -191,7 +201,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return username;
     }
 
-    @ConfigurationKey(key = usernameKey)
+    @ConfigurationKey(
+            key = usernameKey)
     public void setUsername(String username) {
         this.username = username;
     }
@@ -200,7 +211,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return password;
     }
 
-    @ConfigurationKey(key = passwordKey)
+    @ConfigurationKey(
+            key = passwordKey)
     public void setPassword(String password) {
         this.password = password;
     }
@@ -209,7 +221,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return saveResultsToDB;
     }
 
-    @ConfigurationKey(key = saveResultsToDBKey)
+    @ConfigurationKey(
+            key = saveResultsToDBKey)
     public void setSaveResultsToDB(boolean saveResultsToDB) {
         this.saveResultsToDB = saveResultsToDB;
     }
@@ -218,7 +231,8 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
         return databaseClass;
     }
 
-    @ConfigurationKey(key = databaseClassKey)
+    @ConfigurationKey(
+            key = databaseClassKey)
     public void setDatabaseClass(String databaseClass) {
         this.databaseClass = databaseClass;
     }

@@ -51,14 +51,16 @@ public class ParsersController extends BaseConfigurationsController {
     /**
      * Display parsers configuration modules
      *
-     * @param model the model
+     * @param model
+     *            the model
      * @return The parsers view
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(
+            method = RequestMethod.GET)
     public String displayParsers(Model model) {
         ConfigurationCategory category = ConfigurationCategory.PARSER;
-        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-                .getConfigurationModulesByCategory(category);
+        Map<String, ConfigurationModule> configurations =
+                configurationManager.getConfigurationServices().getConfigurationModulesByCategory(category);
         model.addAttribute("configurations", configurations);
         LOGGER.info("Retrived '{}' configurations.", category);
         return "parsers";
@@ -76,11 +78,18 @@ public class ParsersController extends BaseConfigurationsController {
      * @param encoding
      *            The mime encoding
      */
-    @RequestMapping(value = "formats/add_format", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void addFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("mimeType") String mimeType, @RequestParam("schema") String schema, @RequestParam("encoding") String encoding) {
+    @RequestMapping(
+            value = "formats/add_format",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void addFormat(@RequestParam("moduleClassName") String moduleClassName,
+            @RequestParam("mimeType") String mimeType,
+            @RequestParam("schema") String schema,
+            @RequestParam("encoding") String encoding) {
         configurationManager.getConfigurationServices().addFormatEntry(moduleClassName, mimeType, schema, encoding);
-        LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
+        LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding,
+                moduleClassName);
     }
 
     /**
@@ -88,91 +97,116 @@ public class ParsersController extends BaseConfigurationsController {
      *
      * @param moduleClassName
      *            The fully qualified name of the module holding the format
-         * @param mimeType
-         *            The format mimeType
-         * @param schema
-         *            The format schema
-         * @param encoding
-         *            The format encoding
+     * @param mimeType
+     *            The format mimeType
+     * @param schema
+     *            The format schema
+     * @param encoding
+     *            The format encoding
      */
-    @RequestMapping(value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteFormat(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
+    @RequestMapping(
+            value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void deleteFormat(@PathVariable String moduleClassName,
+            @PathVariable String mimeType,
+            @PathVariable String schema,
+            @PathVariable String encoding) {
         mimeType = mimeType.replace("forwardslash", "/");
 
-        if(schema.equals("null")){
+        if (schema.equals("null")) {
             schema = "";
         }
-        if(encoding.equals("null")){
+        if (encoding.equals("null")) {
             encoding = "";
         }
 
         configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
-        LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
+        LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding,
+                moduleClassName);
     }
 
-        /**
-         * Set the status of a configuration format to active/inactive
-         *
-         * @param moduleClassName
-         *            The fully qualified name of the module holding the format
-         * @param mimeType
-         *            The format mimeType
-         * @param schema
-         *            The format schema
-         * @param encoding
-         *            The format encoding
-         * @param status
-         *            The new status
-         */
-    @RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    public void toggleFormatStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
+    /**
+     * Set the status of a configuration format to active/inactive
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the format
+     * @param mimeType
+     *            The format mimeType
+     * @param schema
+     *            The format schema
+     * @param encoding
+     *            The format encoding
+     * @param status
+     *            The new status
+     */
+    @RequestMapping(
+            value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void toggleFormatStatus(@PathVariable String moduleClassName,
+            @PathVariable String mimeType,
+            @PathVariable String schema,
+            @PathVariable String encoding,
             @PathVariable boolean status) {
 
         mimeType = mimeType.replace("forwardslash", "/");
 
-        if(schema.equals("null")){
+        if (schema.equals("null")) {
             schema = "";
         }
-        if(encoding.equals("null")){
+        if (encoding.equals("null")) {
             encoding = "";
         }
 
-        configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
-//        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
+        configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding,
+                status);
+        // LOGGER.info("Algorithm '{}' status in module '{}' has been updated to
+        // '{}'", algorithm, moduleClassName, status);
     }
 
+    /**
+     * Update a format
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the format
+     * @param oldMimetype
+     *            The old format mimetype
+     * @param oldSchema
+     *            The old format schema
+     * @param oldEncoding
+     *            The old format encoding
+     * @param newMimetype
+     *            The new format mimetype
+     * @param newSchema
+     *            The new format schema
+     * @param newEncoding
+     *            The new format encoding
+     */
+    @RequestMapping(
+            value = "formats/edit_format",
+            method = RequestMethod.POST)
+    @ResponseStatus(
+            value = HttpStatus.OK)
+    public void editFormat(@RequestParam("moduleClassName") String moduleClassName,
+            @RequestParam("old_mimetype") String oldMimetype,
+            @RequestParam("old_schema") String oldSchema,
+            @RequestParam("old_encoding") String oldEncoding,
+            @RequestParam("new_mimetype") String newMimetype,
+            @RequestParam("new_schema") String newSchema,
+            @RequestParam("new_encoding") String newEncoding) {
 
-        /**
-         * Update a format
-         *
-         * @param moduleClassName
-         *            The fully qualified name of the module holding the format
-         * @param oldMimetype
-         *            The old format mimetype
-         * @param oldSchema
-         *            The old format schema
-         * @param oldEncoding
-         *            The old format encoding
-         * @param newMimetype
-         *            The new format mimetype
-         * @param newSchema
-         *            The new format schema
-         * @param newEncoding
-         *            The new format encoding
-         */
-        @RequestMapping(value = "formats/edit_format", method = RequestMethod.POST)
-        @ResponseStatus(value = HttpStatus.OK)
-        public void editFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("old_mimetype") String oldMimetype, @RequestParam("old_schema") String oldSchema, @RequestParam("old_encoding") String oldEncoding, @RequestParam("new_mimetype") String newMimetype, @RequestParam("new_schema") String newSchema, @RequestParam("new_encoding") String newEncoding) {
-
-            if(oldSchema.equals("undefined")){
-                oldSchema = "";
-            }
-            if(oldEncoding.equals("undefined")){
-                oldEncoding = "";
-            }
-            configurationManager.getConfigurationServices().updateFormatEntry(moduleClassName, oldMimetype, oldSchema, oldEncoding, newMimetype, newSchema, newEncoding);
-            LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been changed to '{}', '{}', '{}'", oldMimetype, oldSchema, oldEncoding, moduleClassName, newMimetype, newSchema, newEncoding);
+        if (oldSchema.equals("undefined")) {
+            oldSchema = "";
         }
+        if (oldEncoding.equals("undefined")) {
+            oldEncoding = "";
+        }
+        configurationManager.getConfigurationServices().updateFormatEntry(moduleClassName, oldMimetype, oldSchema,
+                oldEncoding, newMimetype, newSchema, newEncoding);
+        LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been changed to '{}', '{}', '{}'", oldMimetype,
+                oldSchema, oldEncoding, moduleClassName, newMimetype, newSchema, newEncoding);
+    }
 }

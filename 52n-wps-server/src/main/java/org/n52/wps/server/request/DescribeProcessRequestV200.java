@@ -48,6 +48,7 @@ import net.opengis.wps.x20.ProcessOfferingsDocument;
 
 /**
  * Handles a DescribeProcessRequest
+ * 
  * @see Request
  */
 public class DescribeProcessRequestV200 extends Request {
@@ -56,22 +57,28 @@ public class DescribeProcessRequestV200 extends Request {
 
     /**
      * Creates a DescribeProcessRequest based on a Map (HTTP_GET)
-     * @param ciMap The client input
-     * @throws ExceptionReport if an exception occurred during construction
+     * 
+     * @param ciMap
+     *            The client input
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
-    public DescribeProcessRequestV200(CaseInsensitiveMap ciMap) throws ExceptionReport{
+    public DescribeProcessRequestV200(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
     }
 
     /**
      * Creates a DescribeProcessRequest based on a Document
-     * @param doc The client input
-     * @throws ExceptionReport if an exception occurred during construction
+     * 
+     * @param doc
+     *            The client input
+     * @throws ExceptionReport
+     *             if an exception occurred during construction
      */
-    public DescribeProcessRequestV200(Document doc) throws ExceptionReport{
+    public DescribeProcessRequestV200(Document doc) throws ExceptionReport {
         super(doc);
 
-        //put the respective elements of the document in the map
+        // put the respective elements of the document in the map
         NamedNodeMap nnm = doc.getFirstChild().getAttributes();
 
         map = new CaseInsensitiveMap();
@@ -79,13 +86,13 @@ public class DescribeProcessRequestV200 extends Request {
         for (int i = 0; i < nnm.getLength(); i++) {
 
             Node n = nnm.item(i);
-            if(n.getLocalName().equalsIgnoreCase("service")){
-            map.put(n.getLocalName(), new String[]{n.getNodeValue()});
-            }else if(n.getLocalName().equalsIgnoreCase("version")){
-                map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+            if (n.getLocalName().equalsIgnoreCase("service")) {
+                map.put(n.getLocalName(), new String[] { n.getNodeValue() });
+            } else if (n.getLocalName().equalsIgnoreCase("version")) {
+                map.put(n.getLocalName(), new String[] { n.getNodeValue() });
             }
         }
-        //get identifier
+        // get identifier
         String identifierList = "";
 
         NodeList nList = doc.getFirstChild().getChildNodes();
@@ -94,38 +101,41 @@ public class DescribeProcessRequestV200 extends Request {
 
         for (int i = 0; i < nList.getLength(); i++) {
             Node n = nList.item(i);
-            if(n.getLocalName() != null && n.getLocalName().equalsIgnoreCase("identifier")){
+            if (n.getLocalName() != null && n.getLocalName().equalsIgnoreCase("identifier")) {
                 identifierParameterExists = true;
                 String s = n.getTextContent();
-                if(s != null && !s.isEmpty()){
+                if (s != null && !s.isEmpty()) {
                     identifierList = identifierList.concat(s + ",");
                 }
             }
         }
-        if(identifierParameterExists){
-            map.put("identifier", new String[]{identifierList});
+        if (identifierParameterExists) {
+            map.put("identifier", new String[] { identifierList });
         }
     }
 
-
     /**
      * Validates the client input
-     * @throws ExceptionReport if an exception occurred during validation
+     * 
+     * @throws ExceptionReport
+     *             if an exception occurred during validation
      * @return True if the input is valid, False otherwise
      */
-    public boolean validate() throws ExceptionReport{
-        getMapValue("version", true, new String[]{WPSConfig.VERSION_200}); // required
-        getMapValue("identifier", true);  // required!
+    public boolean validate() throws ExceptionReport {
+        getMapValue("version", true, new String[] { WPSConfig.VERSION_200 }); // required
+        getMapValue("identifier", true); // required!
         return true;
     }
 
-    public Object getAttachedResult(){
+    public Object getAttachedResult() {
         return document;
     }
 
     /**
      * Actually serves the Request.
-     * @throws ExceptionReport if an exception occurred while handling the request
+     * 
+     * @throws ExceptionReport
+     *             if an exception occurred while handling the request
      * @return Response The result of the computation
      */
     public Response call() throws ExceptionReport {
@@ -134,41 +144,42 @@ public class DescribeProcessRequestV200 extends Request {
         document = ProcessOfferingsDocument.Factory.newInstance();
         document.addNewProcessOfferings();
 
-        XMLBeansHelper.addSchemaLocationToXMLObject(document, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+        XMLBeansHelper.addSchemaLocationToXMLObject(document,
+                "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 
         String[] identifiers = getMapValue("identifier", true).split(",");
 
-        if(identifiers.length==1 && identifiers[0].equalsIgnoreCase("all")){
+        if (identifiers.length == 1 && identifiers[0].equalsIgnoreCase("all")) {
             List<String> identifierList = RepositoryManagerSingletonWrapper.getInstance().getAlgorithms();
             identifiers = new String[identifierList.size()];
-            for(int i = 0;i<identifierList.size();i++){
+            for (int i = 0; i < identifierList.size(); i++) {
                 identifiers[i] = identifierList.get(i);
             }
         }
-        if(identifiers.length == 1){
-            if(identifiers[0] == null || identifiers[0].isEmpty()){
+        if (identifiers.length == 1) {
+            if (identifiers[0] == null || identifiers[0].isEmpty()) {
                 throw new ExceptionReport("Process description request with empty identifier.",
-                        ExceptionReport.INVALID_PARAMETER_VALUE,
-                        "identifier");
+                        ExceptionReport.INVALID_PARAMETER_VALUE, "identifier");
             }
         }
 
         List<ProcessOffering> processOfferings = new ArrayList<>(identifiers.length);
 
-        for(String algorithmName : identifiers) {
-            if(!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(algorithmName)) {
+        for (String algorithmName : identifiers) {
+            if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(algorithmName)) {
                 throw new ExceptionReport("Algorithm does not exist: " + algorithmName,
-                                            ExceptionReport.INVALID_PARAMETER_VALUE,
-                                            "identifier");
+                        ExceptionReport.INVALID_PARAMETER_VALUE, "identifier");
             }
             try {
-                ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_200);
+                ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper.getInstance()
+                        .getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_200);
                 processOfferings.add(offering);
             } catch (Exception e) {
                 LOGGER.warn("Could not get process description for algorithm: " + algorithmName, e);
             }
         }
-        document.getProcessOfferings().setProcessOfferingArray(processOfferings.toArray(new ProcessOffering[identifiers.length]));
+        document.getProcessOfferings()
+                .setProcessOfferingArray(processOfferings.toArray(new ProcessOffering[identifiers.length]));
 
         LOGGER.info("Handled Request successfully for: " + getMapValue("identifier", true));
         return new DescribeProcessResponse(this);

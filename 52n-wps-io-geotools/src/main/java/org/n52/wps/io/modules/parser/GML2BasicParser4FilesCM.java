@@ -57,7 +57,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GML2BasicParser4FilesCM extends ClassKnowingModule{
+public class GML2BasicParser4FilesCM extends ClassKnowingModule {
 
     private boolean isActive = true;
 
@@ -65,7 +65,7 @@ public class GML2BasicParser4FilesCM extends ClassKnowingModule{
 
     private List<FormatEntry> formatEntries;
 
-    public GML2BasicParser4FilesCM(){
+    public GML2BasicParser4FilesCM() {
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }

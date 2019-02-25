@@ -82,22 +82,16 @@ import org.slf4j.LoggerFactory;
 public class RIOHandler {
 
     /**
-     * these data bindings do not need any pre-procesing or wrapping when loaded into an R session
+     * these data bindings do not need any pre-procesing or wrapping when loaded
+     * into an R session
      */
-    protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleInputLiterals = Arrays.asList(LiteralByteBinding.class,
-                                                                                                            LiteralDoubleBinding.class,
-                                                                                                            LiteralFloatBinding.class,
-                                                                                                            LiteralIntBinding.class,
-                                                                                                            LiteralLongBinding.class,
-                                                                                                            LiteralShortBinding.class);
+    protected static List<Class<? extends AbstractLiteralDataBinding>> simpleInputLiterals =
+            Arrays.asList(LiteralByteBinding.class, LiteralDoubleBinding.class, LiteralFloatBinding.class,
+                    LiteralIntBinding.class, LiteralLongBinding.class, LiteralShortBinding.class);
 
-    protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleOutputLiterals = Arrays.asList(LiteralByteBinding.class,
-                                                                                                             LiteralDoubleBinding.class,
-                                                                                                             LiteralFloatBinding.class,
-                                                                                                             LiteralIntBinding.class,
-                                                                                                             LiteralLongBinding.class,
-                                                                                                             LiteralShortBinding.class,
-                                                                                                             LiteralStringBinding.class);
+    protected static List<Class<? extends AbstractLiteralDataBinding>> simpleOutputLiterals = Arrays.asList(
+            LiteralByteBinding.class, LiteralDoubleBinding.class, LiteralFloatBinding.class, LiteralIntBinding.class,
+            LiteralLongBinding.class, LiteralShortBinding.class, LiteralStringBinding.class);
 
     public static interface RInputFilter {
 
@@ -110,7 +104,7 @@ public class RIOHandler {
         public String filter(String input) throws ExceptionReport {
             if (input.contains("=") || input.contains("<-")) {
                 throw new ExceptionReport("Assignment operators found, not allowed, illegal input '" + input + "'",
-                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+                        ExceptionReport.INVALID_PARAMETER_VALUE);
             }
 
             return input;
@@ -131,11 +125,11 @@ public class RIOHandler {
         this.filter = new StringInputFilter();
     }
 
-    public Class< ? extends IData> getInputDataType(String id, Collection<RAnnotation> annotations) {
+    public Class<? extends IData> getInputDataType(String id,
+            Collection<RAnnotation> annotations) {
         try {
             return getIODataType(RAnnotationType.INPUT, id, annotations);
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             String message = "Data type for id " + id + " could not be retrieved, return null";
             log.error(message, e);
         }
@@ -143,18 +137,24 @@ public class RIOHandler {
     }
 
     /**
-     * Searches annotations (class attribute) for Inputs / Outputs with a specific referring id
+     * Searches annotations (class attribute) for Inputs / Outputs with a
+     * specific referring id
      *
-     * @param ioType the input/output type
-     * @param id the id
-     * @param annotations the annotations
+     * @param ioType
+     *            the input/output type
+     * @param id
+     *            the id
+     * @param annotations
+     *            the annotations
      * @return the matching <code>IData</code> class
-     * @throws RAnnotationException if an exception occurred while trying to figure out the  input/output data type
+     * @throws RAnnotationException
+     *             if an exception occurred while trying to figure out the
+     *             input/output data type
      */
-    protected Class< ? extends IData> getIODataType(RAnnotationType ioType,
-                                                    String id,
-                                                    Collection<RAnnotation> annotations) throws RAnnotationException {
-        Class< ? extends IData> dataType = null;
+    protected Class<? extends IData> getIODataType(RAnnotationType ioType,
+            String id,
+            Collection<RAnnotation> annotations) throws RAnnotationException {
+        Class<? extends IData> dataType = null;
         List<RAnnotation> ioNotations = RAnnotation.filterAnnotations(annotations, ioType, RAttribute.IDENTIFIER, id);
         if (ioNotations.isEmpty()) {
             log.error("Missing R-script-annotation of type " + ioType.toString().toLowerCase() + " for id \"" + id
@@ -177,15 +177,15 @@ public class RIOHandler {
         return dataType;
     }
 
-    public Class< ? extends IData> getOutputDataType(String id, Collection<RAnnotation> annotations) {
+    public Class<? extends IData> getOutputDataType(String id,
+            Collection<RAnnotation> annotations) {
         if (id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings")) {
             return GenericFileDataBinding.class;
         }
 
         try {
             return getIODataType(RAnnotationType.OUTPUT, id, annotations);
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             String message = "Data type for id " + id + " could not be retrieved, return null";
             log.error(message, e);
         }
@@ -193,25 +193,29 @@ public class RIOHandler {
     }
 
     /**
-     * parses iData values to string representations which can be evaluated by Rserve, complex data will be
-     * preprocessed and handled here, uses parseLiteralInput for parsing literal Data
+     * parses iData values to string representations which can be evaluated by
+     * Rserve, complex data will be preprocessed and handled here, uses
+     * parseLiteralInput for parsing literal Data
      *
      * @param input
-     *        input value as databinding
+     *            input value as databinding
      * @param connection
-     *        (open)
+     *            (open)
      * @return String which could be evaluated by RConnection.eval(String)
-     * @throws IOException if an exception occurred while parsing the input
-     * @throws RserveException if an exception occurred while parsing the input
-     * @throws REXPMismatchException if an exception occurred while parsing the input
-     * @throws RAnnotationException if an exception occurred while parsing the input
-     * @throws ExceptionReport if an exception occurred while parsing the input
+     * @throws IOException
+     *             if an exception occurred while parsing the input
+     * @throws RserveException
+     *             if an exception occurred while parsing the input
+     * @throws REXPMismatchException
+     *             if an exception occurred while parsing the input
+     * @throws RAnnotationException
+     *             if an exception occurred while parsing the input
+     * @throws ExceptionReport
+     *             if an exception occurred while parsing the input
      */
-    public String parseInput(List<IData> input, RConnection connection) throws IOException,
-            RserveException,
-            REXPMismatchException,
-            RAnnotationException,
-            ExceptionReport {
+    public String parseInput(List<IData> input,
+            RConnection connection)
+            throws IOException, RserveException, REXPMismatchException, RAnnotationException, ExceptionReport {
 
         String result = null;
         // building an R - vector of input entries containing more than one
@@ -236,7 +240,7 @@ public class RIOHandler {
         IData ivalue = input.get(0);
         log.debug("Handling input value {} with payload {}", ivalue, ivalue.getPayload());
 
-        Class< ? extends IData> iclass = ivalue.getClass();
+        Class<? extends IData> iclass = ivalue.getClass();
         if (ivalue instanceof ILiteralData) {
             return parseLiteralInput(iclass, ivalue.getPayload());
         }
@@ -300,36 +304,32 @@ public class RIOHandler {
         throw new RuntimeException(message);
     }
 
-    public String parseLiteralInput(Class< ? extends IData> iClass, Object value) throws ExceptionReport {
+    public String parseLiteralInput(Class<? extends IData> iClass,
+            Object value) throws ExceptionReport {
         String result = null;
 
         if (value == null) {
             log.warn("Value for is null for {} - setting it to 'NA' in R.", iClass);
             result = "NA";
-        }
-        else {
+        } else {
             String valueString = value.toString();
             valueString = this.filter.filter(valueString);
 
             if (simpleInputLiterals.contains(iClass)) {
                 result = valueString;
-            }
-            else if (iClass.equals(LiteralBooleanBinding.class)) {
+            } else if (iClass.equals(LiteralBooleanBinding.class)) {
                 boolean b = Boolean.parseBoolean(valueString);
                 if (b) {
                     result = "TRUE";
-                }
-                else {
+                } else {
                     result = "FALSE";
                 }
-            }
-            else if (iClass.equals(LiteralStringBinding.class)) {
+            } else if (iClass.equals(LiteralStringBinding.class)) {
                 result = "\"" + valueString + "\"";
-            }
-            else {
-                log.warn("An unsuported IData class occured for input {} with value {}. It will be interpreted as character value within R",
-                         iClass,
-                         valueString);
+            } else {
+                log.warn(
+                        "An unsuported IData class occured for input {} with value {}. It will be interpreted as character value within R",
+                        iClass, valueString);
                 result = "\"" + valueString + "\"";
             }
         }
@@ -339,14 +339,11 @@ public class RIOHandler {
 
     @SuppressWarnings("unchecked")
     public IData parseOutput(RConnection connection,
-                             String result_id,
-                             REXP result,
-                             Collection<RAnnotation> annotations,
-                             RWorkspace workspace) throws IOException,
-            REXPMismatchException,
-            RserveException,
-            RAnnotationException,
-            ExceptionReport {
+            String result_id,
+            REXP result,
+            Collection<RAnnotation> annotations,
+            RWorkspace workspace)
+            throws IOException, REXPMismatchException, RserveException, RAnnotationException, ExceptionReport {
         log.debug("parsing Output with id {} from result {}", result_id, result);
 
         boolean wpsWorkDirIsRWorkDir = workspace.isWpsWorkDirIsRWorkDir();
@@ -357,18 +354,16 @@ public class RIOHandler {
             throw new ExceptionReport("Result for output parsing is NULL for id " + result_id, result_id);
         }
 
-        Class< ? extends IData> iClass = getOutputDataType(result_id, annotations);
+        Class<? extends IData> iClass = getOutputDataType(result_id, annotations);
         log.debug("Output data type: {}", iClass.toString());
 
         // extract mimetype from annotations (TODO: might have to be
         // simplified somewhen)
-        List<RAnnotation> list = RAnnotation.filterAnnotations(annotations,
-                                                               RAnnotationType.OUTPUT,
-                                                               RAttribute.IDENTIFIER,
-                                                               result_id);
+        List<RAnnotation> list =
+                RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT, RAttribute.IDENTIFIER, result_id);
         if (list.size() > 1) {
             log.warn("Filtered for annotation by name but got more than one result! Just using the first one of : {}",
-                     Arrays.toString(list.toArray()));
+                    Arrays.toString(list.toArray()));
         }
 
         RAnnotation currentAnnotation = list.get(0);
@@ -384,15 +379,14 @@ public class RIOHandler {
             File resultFile = new File(filename);
             log.debug("Loading file " + resultFile.getAbsolutePath());
 
-            if ( !resultFile.isAbsolute()) {
+            if (!resultFile.isAbsolute()) {
                 // relative path names are relative to R work directory
                 resultFile = new File(connection.eval("getwd()").asString(), resultFile.getName());
             }
 
             if (resultFile.exists()) {
                 log.debug("Found file at {}", resultFile);
-            }
-            else {
+            } else {
                 log.warn("Result file does not exist at {}", resultFile);
             }
 
@@ -400,30 +394,28 @@ public class RIOHandler {
             File outputFile = null;
             if (wpsWorkDirIsRWorkDir) {
                 outputFile = resultFile;
-            }
-            else {
+            } else {
                 outputFile = streamFromRserveToWPS(connection, resultFile.getAbsolutePath(), wpsWorkDir);
             }
 
-            if ( !outputFile.exists()) {
+            if (!outputFile.exists()) {
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
             }
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
-            if(iClass.equals(GenericFileDataBinding.class)){
+            if (iClass.equals(GenericFileDataBinding.class)) {
                 GenericFileData out = new GenericFileData(outputFile, mimeType);
 
                 return new GenericFileDataBinding(out);
 
-            }else if(iClass.equals(GenericFileDataWithGTBinding.class)){
+            } else if (iClass.equals(GenericFileDataWithGTBinding.class)) {
                 GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
 
                 return new GenericFileDataWithGTBinding(out);
             }
-        }
-        else if (iClass.equals(GTVectorDataBinding.class)) {
+        } else if (iClass.equals(GTVectorDataBinding.class)) {
             RTypeDefinition dataType = currentAnnotation.getRDataType();
             File outputFile;
 
@@ -431,41 +423,40 @@ public class RIOHandler {
                 if (wpsWorkDirIsRWorkDir) {
                     // vector data binding needs "main" shapefile
                     String shpFileName = filename;
-                    if ( !shpFileName.endsWith(".shp")) {
+                    if (!shpFileName.endsWith(".shp")) {
                         shpFileName = filename + ".shp";
                     }
 
                     outputFile = new File(shpFileName);
-                    if ( !outputFile.isAbsolute()) {
-                        // relative path names are alway relative to R work directory
+                    if (!outputFile.isAbsolute()) {
+                        // relative path names are alway relative to R work
+                        // directory
                         outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
                     }
-                }
-                else {
-                    // if it is a shapefile and the r workdir is remote, I need to zip, trnasfer, and unzip it
+                } else {
+                    // if it is a shapefile and the r workdir is remote, I need
+                    // to zip, trnasfer, and unzip it
                     String baseName = null;
                     if (filename.endsWith(".shp")) {
                         baseName = filename.substring(0, filename.length() - ".shp".length());
-                    }
-                    else {
+                    } else {
                         baseName = filename;
                     }
 
-                    log.debug("Zipping output '{}' as shapefile with base '{}' with R util function: {}",
-                              result_id,
-                              baseName);
+                    log.debug("Zipping output '{}' as shapefile with base '{}' with R util function: {}", result_id,
+                            baseName);
                     REXP ev = connection.eval("zipShp(\"" + baseName + "\")");
 
-                    if ( !ev.isNull()) {
+                    if (!ev.isNull()) {
                         String zipfileName = ev.asString();
 
-                        // stream to WPS4R workdir, then the binding needs the files unzipped and the .shp
+                        // stream to WPS4R workdir, then the binding needs the
+                        // files unzipped and the .shp
                         // file as
                         // the "main" file
                         File zipfile = streamFromRserveToWPS(connection, zipfileName, wpsWorkDir);
                         outputFile = IOUtils.unzip(zipfile, "shp").get(0);
-                    }
-                    else {
+                    } else {
                         log.info("R call to zipShp() did not work, streaming of shapefile without zipping");
                         String[] dir = connection.eval("dir()").asStrings();
                         for (String f : dir) {
@@ -477,23 +468,22 @@ public class RIOHandler {
                         outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
                     }
                 }
-            }
-            else {
+            } else {
                 if (wpsWorkDirIsRWorkDir) {
                     outputFile = new File(filename);
-                    if ( !outputFile.isAbsolute()) {
-                        // relative path names are always relative to R work directory
+                    if (!outputFile.isAbsolute()) {
+                        // relative path names are always relative to R work
+                        // directory
                         outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
                     }
-                }
-                else {
+                } else {
                     outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
                 }
             }
 
-            if ( !outputFile.exists()) {
+            if (!outputFile.exists()) {
                 throw new ExceptionReport("Output file does not exist: " + outputFile,
-                                          ExceptionReport.NO_APPLICABLE_CODE);
+                        ExceptionReport.NO_APPLICABLE_CODE);
             }
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
@@ -502,8 +492,7 @@ public class RIOHandler {
             GenericFileDataWithGT gfd = new GenericFileDataWithGT(outputFile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
-        }
-        else if (iClass.equals(GTRasterDataBinding.class)) {
+        } else if (iClass.equals(GTRasterDataBinding.class)) {
             File tempfile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
@@ -515,8 +504,7 @@ public class RIOHandler {
             fis.close();
 
             return output;
-        }
-        else if (iClass.equals(LiteralBooleanBinding.class)) {
+        } else if (iClass.equals(LiteralBooleanBinding.class)) {
             log.debug("Creating output with LiteralBooleanBinding");
 
             int tresult = result.asInteger();
@@ -530,12 +518,12 @@ public class RIOHandler {
             }
         }
 
-        for (Class< ? > literal : simpleOutputLiterals) {
+        for (Class<?> literal : simpleOutputLiterals) {
             if (iClass.equals(literal)) {
                 Constructor<IData> cons = null;
                 try {
                     cons = (Constructor<IData>) iClass.getConstructors()[0];
-                    Constructor< ? > param = cons.getParameterTypes()[0].getConstructor(String.class);
+                    Constructor<?> param = cons.getParameterTypes()[0].getConstructor(String.class);
                     if (literal.equals(LiteralIntBinding.class)) {
                         // try to force conversion from R-datatype to integer
                         // (important for the R-data type "numeric"):
@@ -543,8 +531,7 @@ public class RIOHandler {
                         return cons.newInstance(param.newInstance(intString));
                     }
                     return cons.newInstance(param.newInstance(result.asString()));
-                }
-                catch (RuntimeException | InstantiationException | IllegalAccessException | InvocationTargetException
+                } catch (RuntimeException | InstantiationException | IllegalAccessException | InvocationTargetException
                         | NoSuchMethodException e) {
                     String message = "Error for parsing String to IData for " + result_id + " and class " + iClass
                             + "\n" + e.getMessage();
@@ -561,21 +548,25 @@ public class RIOHandler {
     }
 
     /**
-     * Streams a File from R workdirectory to a temporal file in the WPS4R workdirectory
-     * (R.Config.WORK_DIR/random folder)
+     * Streams a File from R workdirectory to a temporal file in the WPS4R
+     * workdirectory (R.Config.WORK_DIR/random folder)
      *
      * @param filename
-     *        name or path of the file located in the R workdirectory
-     * @param wpsWorkDir the working directory
+     *            name or path of the file located in the R workdirectory
+     * @param wpsWorkDir
+     *            the working directory
      * @return Location of a file which has been streamed
-     * @throws IOException if an exception occurred while streaming from Rserve to WPS
-     * @throws FileNotFoundException if an exception occurred while streaming from Rserve to WPS
+     * @throws IOException
+     *             if an exception occurred while streaming from Rserve to WPS
+     * @throws FileNotFoundException
+     *             if an exception occurred while streaming from Rserve to WPS
      */
-    private File streamFromRserveToWPS(RConnection connection, String filename, String wpsWorkDir) throws IOException,
-            FileNotFoundException {
+    private File streamFromRserveToWPS(RConnection connection,
+            String filename,
+            String wpsWorkDir) throws IOException, FileNotFoundException {
         File tempfile = new File(filename);
         File destination = new File(wpsWorkDir);
-        if ( !destination.exists()) {
+        if (!destination.exists()) {
             destination.mkdirs();
         }
         tempfile = new File(destination, tempfile.getName());
@@ -599,19 +590,19 @@ public class RIOHandler {
      * Streams a file from WPS to Rserve workdirectory
      *
      * @param connection
-     *        active RConnecion
+     *            active RConnecion
      * @param is
-     *        inputstream of the inputfile
+     *            inputstream of the inputfile
      * @param ext
-     *        basefile extension
+     *            basefile extension
      * @return
      * @throws IOException
      * @throws REXPMismatchException
      * @throws RserveException
      */
-    private String streamFromWPSToRserve(RConnection connection, InputStream is, String ext) throws IOException,
-            REXPMismatchException,
-            RserveException {
+    private String streamFromWPSToRserve(RConnection connection,
+            InputStream is,
+            String ext) throws IOException, REXPMismatchException, RserveException {
         String result;
         String randomname = UUID.randomUUID().toString();
         String inputFileName = randomname;
@@ -639,8 +630,9 @@ public class RIOHandler {
         // R unzips archive files and renames files with unique
         // random names
         // TODO: check whether input is a zip archive or not
-        result = connection.eval("unzipRename(" + "\"" + inputFileName + "\", " + "\"" + randomname + "\", " + "\""
-                + ext + "\")").asString();
+        result = connection
+                .eval("unzipRename(" + "\"" + inputFileName + "\", " + "\"" + randomname + "\", " + "\"" + ext + "\")")
+                .asString();
         result = "\"" + result + "\"";
         return result;
     }

@@ -53,7 +53,9 @@ public class RExecutor {
 
     private boolean debugScript = true; // TODO make configurable property
 
-    private boolean appendSwitchedOffCommandsAsComments = false; // TODO make configurable property
+    private boolean appendSwitchedOffCommandsAsComments = false; // TODO make
+                                                                 // configurable
+                                                                 // property
 
     private boolean appendComments = false; // TODO make configurable property
 
@@ -62,33 +64,33 @@ public class RExecutor {
 
         try {
             rScriptStream = new FileInputStream(rScriptFile);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.error("Error reading script file.", e);
-            throw new ExceptionReport("Could not read script file " + rScriptFile,
-                                      ExceptionReport.NO_APPLICABLE_CODE,
-                                      e);
+            throw new ExceptionReport("Could not read script file " + rScriptFile, ExceptionReport.NO_APPLICABLE_CODE,
+                    e);
         }
 
         return rScriptStream;
     }
 
-
     /**
      * @param script
-     *        R input script
+     *            R input script
      * @param rCon
-     *        Connection - should be open usually / otherwise it will be opened and closed separately
+     *            Connection - should be open usually / otherwise it will be
+     *            opened and closed separately
      * @return true if read was successful
-     * @throws RserveException if an exception occurred while executing the script
-     * @throws IOException if an exception occurred while executing the script
-     * @throws RAnnotationException if the script was invalid
-     * @throws ExceptionReport if an exception occurred while executing the script
+     * @throws RserveException
+     *             if an exception occurred while executing the script
+     * @throws IOException
+     *             if an exception occurred while executing the script
+     * @throws RAnnotationException
+     *             if the script was invalid
+     * @throws ExceptionReport
+     *             if an exception occurred while executing the script
      */
-    public boolean executeScript(File script, RConnection rCon) throws RserveException,
-            IOException,
-            RAnnotationException,
-            ExceptionReport {
+    public boolean executeScript(File script,
+            RConnection rCon) throws RserveException, IOException, RAnnotationException, ExceptionReport {
         log.debug("Executing script...");
 
         InputStream rScriptStream = openScriptStream(script);
@@ -96,7 +98,7 @@ public class RExecutor {
         boolean success = true;
 
         BufferedReader fr = new BufferedReader(new InputStreamReader(rScriptStream));
-        if ( !fr.ready()) {
+        if (!fr.ready()) {
             return false;
         }
 
@@ -125,28 +127,25 @@ public class RExecutor {
 
             if (line.contains(RegExp.WPS_OFF)) {
                 wpsoff_state = true;
-            }
-            else if (line.contains(RegExp.WPS_ON)) {
+            } else if (line.contains(RegExp.WPS_ON)) {
                 wpsoff_state = false;
-            }
-            else if (wpsoff_state) {
+            } else if (wpsoff_state) {
                 if (appendSwitchedOffCommandsAsComments) {
                     line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
                 }
-            }
-            else {
+            } else {
                 // not switched off:
                 if (line.trim().startsWith(COMMENT_CHARACTER) && line.contains("updateStatus")) {
-                    //remove comment in front of updateStatus call for execution
+                    // remove comment in front of updateStatus call for
+                    // execution
                     line = line.replaceFirst("#", "").trim();
                     scriptExecutionString.append(line);
                     scriptExecutionString.append("\n");
-                }else if (line.trim().startsWith(COMMENT_CHARACTER)) {
+                } else if (line.trim().startsWith(COMMENT_CHARACTER)) {
                     if (appendComments) {
                         scriptExecutionString.append(line);
                     }
-                }
-                else {
+                } else {
                     // actually append the line
                     if (line.contains("setwd(")) {
                         log.warn("The running R script contains a call to \"setwd(...)\". "
@@ -203,17 +202,14 @@ public class RExecutor {
                 success = false;
                 throw new ExceptionReport(message, ExceptionReport.REMOTE_COMPUTATION_ERROR);
             }
-        }
-        catch (REXPMismatchException e) {
+        } catch (REXPMismatchException e) {
             log.error("Error handling during R script execution failed.", e);
             success = false;
-        }
-        finally {
+        } finally {
             if (rScriptStream != null) {
                 try {
                     rScriptStream.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     log.error("Connection to R script cannot be closed for process file {}", script);
                 }
             }

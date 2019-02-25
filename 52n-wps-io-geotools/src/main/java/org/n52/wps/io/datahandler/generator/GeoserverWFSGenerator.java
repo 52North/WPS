@@ -65,7 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWFSGenerator.class);
@@ -76,7 +75,9 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
     }
 
     @Override
-    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
 
         InputStream stream = null;
         try {
@@ -92,7 +93,7 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         return stream;
     }
 
-    private String storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
+    private String storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException {
         GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
         File file = null;
         try {
@@ -103,17 +104,16 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
             throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
         }
 
-        //zip shp file
+        // zip shp file
         String path = file.getAbsolutePath();
         String baseName = path.substring(0, path.length() - ".shp".length());
         File shx = new File(baseName + ".shx");
         File dbf = new File(baseName + ".dbf");
         File prj = new File(baseName + ".prj");
-        File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
-
+        File zipped = org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
 
         String layerName = zipped.getName();
-        layerName = layerName +"_" + UUID.randomUUID();
+        layerName = layerName + "_" + UUID.randomUUID();
         GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 
         String result = geoserverUploader.createWorkspace();
@@ -121,10 +121,14 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         result = geoserverUploader.uploadShp(zipped, layerName);
         LOGGER.debug(result);
 
-        String getFeatureLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Version=1.1.0&Request=GetFeature&typeName="+ "N52:"+file.getName().subSequence(0, file.getName().length()-4);
-        //String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
+        String getFeatureLink =
+                "http://" + host + ":" + port + "/geoserver/wfs?Service=WFS&Version=1.1.0&Request=GetFeature&typeName="
+                        + "N52:" + file.getName().subSequence(0, file.getName().length() - 4);
+        // String directLink = geoserverBaseURL +
+        // "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0,
+        // file.getName().length()-4);
 
-        //delete shp files
+        // delete shp files
         zipped.delete();
         file.delete();
         shx.delete();
@@ -135,7 +139,8 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
 
     }
 
-    private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
+    private Document createXML(String layerName,
+            String getCapabilitiesLink) throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc = factory.newDocumentBuilder().newDocument();
 
@@ -150,10 +155,11 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
         root.appendChild(getCapabilitiesLinkElement);
         /*
-        Element directResourceLinkElement = doc.createElement("DirectResourceLink");
-        directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
-        root.appendChild(directResourceLinkElement);
-        */
+         * Element directResourceLinkElement =
+         * doc.createElement("DirectResourceLink");
+         * directResourceLinkElement.appendChild(doc.createTextNode(
+         * getMapRequest)); root.appendChild(directResourceLinkElement);
+         */
         doc.appendChild(root);
 
         return doc;
