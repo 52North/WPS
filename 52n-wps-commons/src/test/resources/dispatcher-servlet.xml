@@ -33,6 +33,17 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
             <context:exclude-filter type="regex" expression="org\.n52\.wps\.server\.r\..*" />
 		</context:component-scan>
 
+	<!-- Apache Tiles 3 -->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	</bean>
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<value>/WEB-INF/tiles.xml</value>
+		</property>
+	</bean>
+	<!-- End of Apache Tiles 3 -->
+
 	</beans>
 
 

@@ -29,6 +29,7 @@
 package org.n52.wps.webapp.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -49,11 +50,16 @@ public class ServerControllerIntegrationTest extends AbstractITClassForControlle
     private Server server;
 
     @Test
-    public void display() throws Exception {
+    public void display() {
         RequestBuilder builder = get("/server").accept(MediaType.TEXT_HTML);
-        ResultActions result = this.getMockedWebService().perform(builder);
-        result.andExpect(status().isOk()).andExpect(view().name("server"))
-                .andExpect(model().attributeExists("configurationModule"));
+        ResultActions result;
+		try {
+			result = this.getMockedWebService().perform(builder);
+	        result.andExpect(status().isOk()).andExpect(view().name("server"))
+            .andExpect(model().attributeExists("configurationModule"));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
     }
 
     @Test
