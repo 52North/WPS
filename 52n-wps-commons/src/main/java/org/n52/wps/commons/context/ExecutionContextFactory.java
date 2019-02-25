@@ -23,7 +23,7 @@ public class ExecutionContextFactory {
 
     private static Logger log = LoggerFactory.getLogger(ExecutionContextFactory.class);
 
-    private final static ThreadLocal<ExecutionContext> threadContexts = new ThreadLocal<ExecutionContext>();
+    private static final ThreadLocal<ExecutionContext> THREAD_CONTEXTS = new ThreadLocal<ExecutionContext>();
 
     private static ExecutionContext defaultContext;
 
@@ -33,8 +33,8 @@ public class ExecutionContextFactory {
 
     public static ExecutionContext getContext(boolean fallBackToDefault) {
         ExecutionContext executionContext = null;
-        synchronized (threadContexts) {
-            executionContext = threadContexts.get();
+        synchronized (THREAD_CONTEXTS) {
+            executionContext = THREAD_CONTEXTS.get();
             if (executionContext == null && fallBackToDefault) {
                 executionContext = getDefault();
             }
@@ -42,7 +42,7 @@ public class ExecutionContextFactory {
         return executionContext;
     }
 
-    public synchronized static ExecutionContext getDefault() {
+    public static synchronized ExecutionContext getDefault() {
         if (defaultContext == null) {
             defaultContext = new ExecutionContext();
         }
@@ -50,16 +50,16 @@ public class ExecutionContextFactory {
     }
 
     public static void registerContext(ExecutionContext context) {
-        synchronized (threadContexts) {
-            threadContexts.set(context);
+        synchronized (THREAD_CONTEXTS) {
+            THREAD_CONTEXTS.set(context);
         }
 
         log.info("Context registered");
     }
 
     public static void unregisterContext() {
-        synchronized (threadContexts) {
-            threadContexts.remove();
+        synchronized (THREAD_CONTEXTS) {
+            THREAD_CONTEXTS.remove();
         }
 
         log.info("Context unregistered");

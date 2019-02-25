@@ -75,6 +75,8 @@ import org.springframework.stereotype.Service;
 @Service("configurationService")
 public class ConfigurationServiceImpl implements ConfigurationService {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
+
     @Autowired
     private ListableBeanFactory listableBeanFactory;
 
@@ -83,8 +85,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private ValueParser valueParser;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
     private Map<String, ConfigurationModule> allConfigurationModules;
 
@@ -373,7 +373,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     configurationDAO.insertFormatEntry(module.getClass().getName(), entry.getMimeType(),
                             entry.getSchema(), entry.getEncoding(), entry.isActive());
                     LOGGER.debug(
-                            "Format '{}', '{}', '{}' with active status '{}' in module '{}' has been saved to the database.",
+                            "Format '{}', '{}', '{}' with active status '{}' "
+                            + "in module '{}' has been saved to the database.",
                             entry.getMimeType(), entry.getSchema(), entry.getEncoding(), entry.isActive(),
                             module.getClass().getName());
                 }
@@ -585,7 +586,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             boolean status) {
         configurationDAO.updateFormatEntry(moduleClassName, mimeType, schema, encoding, status);
         LOGGER.debug(
-                "Format with mime type '{}', schema '{}', encoding '{}' and status '{}' of module '{}' has been updated.",
+                "Format with mime type '{}', schema '{}', "
+                + "encoding '{}' and status '{}' of module '{}' has been updated.",
                 mimeType, schema, encoding, status, moduleClassName);
     }
 
@@ -600,7 +602,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
         module.getFormatEntries().add(formatEntry);
         LOGGER.debug(
-                "Format with mime type '{}', schema '{}', encoding '{}' and status '{}' has been added to module '{}' and saved to the database.",
+                "Format with mime type '{}', schema '{}', encoding '{}' "
+                + "and status '{}' has been added to module '{}' and saved to the database.",
                 mimeType, schema, encoding, status, moduleClassName);
     }
 
@@ -653,7 +656,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             String newMimeType,
             String newSchema,
             String newEncoding) {
-        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema,
+        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType,
+                oldSchema, oldEncoding, newMimeType, newSchema,
                 newEncoding);
 
     }

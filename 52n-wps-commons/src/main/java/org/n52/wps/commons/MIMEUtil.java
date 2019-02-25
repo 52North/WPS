@@ -23,6 +23,8 @@ package org.n52.wps.commons;
  */
 public class MIMEUtil {
 
+    private static final String RDATA = "rData";
+
     public static String getSuffixFromMIMEType(String mimeType) {
         String[] mimeTypeSplit = mimeType.split("/");
         String suffix = mimeTypeSplit[mimeTypeSplit.length - 1];
@@ -42,8 +44,8 @@ public class MIMEUtil {
             suffix = "csv";
         } else if ("text/x-markdown".equals(mimeType)) {
             suffix = "md";
-        } else if (mimeType.contains("rData")) {
-            suffix = "rData";
+        } else if (mimeType.contains(RDATA)) {
+            suffix = RDATA;
         }
         return suffix;
     }

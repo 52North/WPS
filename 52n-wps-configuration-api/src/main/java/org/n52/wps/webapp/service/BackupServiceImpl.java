@@ -54,13 +54,24 @@ import org.springframework.stereotype.Service;
  */
 @Service("backupService")
 public class BackupServiceImpl implements BackupService {
-    public final static String RESOURCES_FOLDER = "static";
 
-    public final static String DATABASE_FOLDER = "WEB-INF/classes/db/data";
+    public static final String RESOURCES_FOLDER = "static";
 
-    public final static String LOG = "WEB-INF/classes/logback.xml";
+    public static final String DATABASE_FOLDER = "WEB-INF/classes/db/data";
 
-    public final static String WPS_CAPABILITIES_SKELETON = "config/wpsCapabilitiesSkeleton.xml";
+    public static final String LOG = "WEB-INF/classes/logback.xml";
+
+    public static final String WPS_CAPABILITIES_SKELETON = "config/wpsCapabilitiesSkeleton.xml";
+
+    private static final String TRYING_TO_BACKUP = "Trying to backup '{}'.";
+
+    private static final String TRYING_TO_RESTORE = "Trying to restore '{}'.";
+
+    private static final String COULD_NOT_DELETE_FILE = "Could not delete file: ";
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+
+    private static final String TAR_GZ_SUFFIX = ".tar.gz";
 
     @Autowired
     private ResourcePathUtil resourcePathUtil;
@@ -77,7 +88,7 @@ public class BackupServiceImpl implements BackupService {
         if (itemsToBackup != null && itemsToBackup.length > 0) {
             // Zip archive will be saved as WPSConfig_{date}.zip (e.g.
             // WPSConfig_2013-09-12.zip)
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
             zipPath = getResourcesFolderPath() + File.separator + "WPSBackup_" + format.format(new Date()) + ".zip";
             ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipPath));
 
@@ -90,11 +101,11 @@ public class BackupServiceImpl implements BackupService {
                     backupDatabase(zipOutput);
                 }
                 if (s.equals("log")) {
-                    LOGGER.debug("Trying to backup '{}'.", logAbsolutePath);
+                    LOGGER.debug(TRYING_TO_BACKUP, logAbsolutePath);
                     writeToZip(new File(logAbsolutePath), zipOutput);
                 }
                 if (s.equals("wpscapabilities")) {
-                    LOGGER.debug("Trying to backup '{}'.", wpsCapabilitiesSkeletonAbsolutePath);
+                    LOGGER.debug(TRYING_TO_BACKUP, wpsCapabilitiesSkeletonAbsolutePath);
                     writeToZip(new File(wpsCapabilitiesSkeletonAbsolutePath), zipOutput);
                 }
             }
@@ -112,19 +123,19 @@ public class BackupServiceImpl implements BackupService {
             ZipInputStream zipInput = new ZipInputStream(zipFile);
             ZipEntry entry = null;
             while ((entry = zipInput.getNextEntry()) != null) {
-                if (entry.getName().endsWith(".tar.gz")) {
+                if (entry.getName().endsWith(TAR_GZ_SUFFIX)) {
                     LOGGER.debug("Trying to restore the database from '{}'.", entry.getName());
                     extractToFile(new File(getResourcesFolderPath() + "/" + entry.getName()), zipInput);
                     restoreDatabase(entry.getName());
                     numberOfItemsRestored++;
                 }
                 if (entry.getName().endsWith("logback.xml")) {
-                    LOGGER.debug("Trying to restore '{}'.", entry.getName());
+                    LOGGER.debug(TRYING_TO_RESTORE, entry.getName());
                     extractToFile(new File(getLogFilePath()), zipInput);
                     numberOfItemsRestored++;
                 }
                 if (entry.getName().endsWith("wpsCapabilitiesSkeleton.xml")) {
-                    LOGGER.debug("Trying to restore '{}'.", entry.getName());
+                    LOGGER.debug(TRYING_TO_RESTORE, entry.getName());
                     extractToFile(new File(getCapabilitiesPath()), zipInput);
                     numberOfItemsRestored++;
                 }
@@ -144,12 +155,12 @@ public class BackupServiceImpl implements BackupService {
      * Backup the HSQLDB database to a tar.gz file
      */
     private void backupDatabase(ZipOutputStream zipOutput) throws IOException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
 
         // Create a database backup with the following name
         // DbBackup_{date}.tar.gz
         String tarPath =
-                getResourcesFolderPath() + File.separator + "DbBackup_" + format.format(new Date()) + ".tar.gz";
+                getResourcesFolderPath() + File.separator + "DbBackup_" + format.format(new Date()) + TAR_GZ_SUFFIX;
         namedParameterJdbcTemplate.getJdbcOperations().execute("BACKUP DATABASE TO '" + tarPath + "'");
         File dbTarFile = new File(tarPath);
         writeToZip(dbTarFile, zipOutput);
@@ -160,7 +171,7 @@ public class BackupServiceImpl implements BackupService {
             try {
                 dbTarFile.delete();
             } catch (Exception e) {
-                LOGGER.error("Could not delete file: " + dbTarFile.getAbsolutePath());
+                LOGGER.error(COULD_NOT_DELETE_FILE + dbTarFile.getAbsolutePath());
             }
         }
     }
@@ -183,7 +194,7 @@ public class BackupServiceImpl implements BackupService {
             try {
                 new File(tarPath).delete();
             } catch (Exception e) {
-                LOGGER.error("Could not delete file: " + tarPath);
+                LOGGER.error(COULD_NOT_DELETE_FILE + tarPath);
             }
         }
     }

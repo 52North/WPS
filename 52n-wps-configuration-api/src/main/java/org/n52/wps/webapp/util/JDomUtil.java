@@ -90,7 +90,7 @@ public class JDomUtil {
             xmlOutputter.output(document, outputStream);
             LOGGER.info("{} is written successfully.", filePath);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to write Document to '" + filePath + "': ");
+            throw new RuntimeException("Unable to write Document to '" + filePath + "'.");
         }
     }
 }

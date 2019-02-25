@@ -47,13 +47,17 @@ import org.springframework.stereotype.Repository;
 @Repository("userDAO")
 public class JdbcUserDAO implements UserDAO {
 
+    protected static final String USER_ID = "user_id";
+    protected static final String USER_NAME = "username";
+    protected static final String PASSWORD = "password";
+    protected static final String ROLE = "role";
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public User getUserById(int userId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("user_id", userId);
+        parameters.put(USER_ID, userId);
         String sql = "SELECT * FROM users WHERE user_id = :user_id";
         List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
@@ -61,10 +65,10 @@ public class JdbcUserDAO implements UserDAO {
             public User mapRow(ResultSet rs,
                     int rowNum) throws SQLException {
                 User u = new User();
-                u.setUserId(rs.getInt("user_id"));
-                u.setUsername(rs.getString("username"));
-                u.setPassword(rs.getString("password"));
-                u.setRole(rs.getString("role"));
+                u.setUserId(rs.getInt(USER_ID));
+                u.setUsername(rs.getString(USER_NAME));
+                u.setPassword(rs.getString(PASSWORD));
+                u.setRole(rs.getString(ROLE));
                 return u;
             }
         });
@@ -81,7 +85,7 @@ public class JdbcUserDAO implements UserDAO {
     @Override
     public User getUserByUsername(String username) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("username", username);
+        parameters.put(USER_NAME, username);
         String sql = "SELECT * FROM users WHERE username = :username";
         List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
@@ -89,10 +93,10 @@ public class JdbcUserDAO implements UserDAO {
             public User mapRow(ResultSet rs,
                     int rowNum) throws SQLException {
                 User u = new User();
-                u.setUserId(rs.getInt("user_id"));
-                u.setUsername(rs.getString("username"));
-                u.setPassword(rs.getString("password"));
-                u.setRole(rs.getString("role"));
+                u.setUserId(rs.getInt(USER_ID));
+                u.setUsername(rs.getString(USER_NAME));
+                u.setPassword(rs.getString(PASSWORD));
+                u.setRole(rs.getString(ROLE));
                 return u;
             }
         });
@@ -115,10 +119,10 @@ public class JdbcUserDAO implements UserDAO {
             public User mapRow(ResultSet rs,
                     int rowNum) throws SQLException {
                 User u = new User();
-                u.setUserId(rs.getInt("user_id"));
-                u.setUsername(rs.getString("username"));
-                u.setPassword(rs.getString("password"));
-                u.setRole(rs.getString("role"));
+                u.setUserId(rs.getInt(USER_ID));
+                u.setUsername(rs.getString(USER_NAME));
+                u.setPassword(rs.getString(PASSWORD));
+                u.setRole(rs.getString(ROLE));
                 return u;
             }
         });
@@ -133,9 +137,9 @@ public class JdbcUserDAO implements UserDAO {
     @Override
     public void insertUser(User user) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("username", user.getUsername());
-        parameters.put("password", user.getPassword());
-        parameters.put("role", user.getRole());
+        parameters.put(USER_NAME, user.getUsername());
+        parameters.put(PASSWORD, user.getPassword());
+        parameters.put(ROLE, user.getRole());
         String sql = "INSERT INTO users (username, password, role) VALUES(:username," + ":password, :role)";
         namedParameterJdbcTemplate.update(sql, parameters);
 
@@ -144,9 +148,9 @@ public class JdbcUserDAO implements UserDAO {
     @Override
     public void updateUser(User user) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("user_id", user.getUserId());
-        parameters.put("password", user.getPassword());
-        parameters.put("role", user.getRole());
+        parameters.put(USER_ID, user.getUserId());
+        parameters.put(PASSWORD, user.getPassword());
+        parameters.put(ROLE, user.getRole());
         String sql = "UPDATE users SET password = :password, role = :role WHERE user_id = :user_id";
         namedParameterJdbcTemplate.update(sql, parameters);
     }
@@ -154,7 +158,7 @@ public class JdbcUserDAO implements UserDAO {
     @Override
     public void deleteUser(int userId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("user_id", userId);
+        parameters.put(USER_ID, userId);
         String sql = "DELETE FROM users WHERE user_id = :user_id";
         namedParameterJdbcTemplate.update(sql, parameters);
     }

@@ -164,6 +164,20 @@ public interface ConfigurationDAO {
             boolean active);
 
     /**
+     * Update class name of an algorithm entry
+     *
+     * @param moduleClassName
+     *            the fully qualified name of the module holding the algorithm
+     * @param newAlgorithmName
+     *            the new fully qualified name of the algorithm
+     * @param oldAlgorithmName
+     *            the old fully qualified name of the algorithm
+     */
+    void updateAlgorithmEntry(String moduleClassName,
+            String newAlgorithmName,
+            String oldAlgorithmName);
+
+    /**
      * Get all algorithm entries
      *
      * @param moduleClassName
@@ -247,6 +261,32 @@ public interface ConfigurationDAO {
             boolean active);
 
     /**
+     * Update a format
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the format
+     * @param oldMimeType
+     *            The old format mimeType
+     * @param oldSchema
+     *            The old format schema
+     * @param oldEncoding
+     *            The old format encoding
+     * @param newMimeType
+     *            The new format mimeType
+     * @param newSchema
+     *            The new format schema
+     * @param newEncoding
+     *            The new format encoding
+     */
+    void updateFormatEntry(String moduleClassName,
+            String oldMimeType,
+            String oldSchema,
+            String oldEncoding,
+            String newMimeType,
+            String newSchema,
+            String newEncoding);
+
+    /**
      * Get all format entries
      *
      * @param moduleClassName
@@ -272,44 +312,4 @@ public interface ConfigurationDAO {
             String mimeType,
             String schema,
             String encoding);
-
-    /**
-     * Update class name of an algorithm entry
-     *
-     * @param moduleClassName
-     *            the fully qualified name of the module holding the algorithm
-     * @param newAlgorithmName
-     *            the new fully qualified name of the algorithm
-     * @param oldAlgorithmName
-     *            the old fully qualified name of the algorithm
-     */
-    void updateAlgorithmEntry(String moduleClassName,
-            String newAlgorithmName,
-            String oldAlgorithmName);
-
-    /**
-     * Update a format
-     *
-     * @param moduleClassName
-     *            The fully qualified name of the module holding the format
-     * @param oldMimeType
-     *            The old format mimeType
-     * @param oldSchema
-     *            The old format schema
-     * @param oldEncoding
-     *            The old format encoding
-     * @param newMimeType
-     *            The new format mimeType
-     * @param newSchema
-     *            The new format schema
-     * @param newEncoding
-     *            The new format encoding
-     */
-    void updateFormatEntry(String moduleClassName,
-            String oldMimeType,
-            String oldSchema,
-            String oldEncoding,
-            String newMimeType,
-            String newSchema,
-            String newEncoding);
 }

@@ -40,7 +40,7 @@ import org.n52.wps.webapp.service.CapabilitiesService;
  */
 public class ServiceIdentification {
 
-    private static final String blankErrorMessage = "Field cannot be blank.";
+    private static final String BLANK_ERROR_MESSAGE = "Field cannot be blank.";
 
     private String title;
 
@@ -49,11 +49,11 @@ public class ServiceIdentification {
     private String keywords;
 
     @NotBlank(
-            message = blankErrorMessage)
+            message = BLANK_ERROR_MESSAGE)
     private String serviceType;
 
     @NotBlank(
-            message = blankErrorMessage)
+            message = BLANK_ERROR_MESSAGE)
     private String serviceTypeVersions;
 
     private String fees;

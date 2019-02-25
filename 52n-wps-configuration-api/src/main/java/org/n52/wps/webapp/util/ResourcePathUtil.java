@@ -46,10 +46,12 @@ import org.springframework.web.context.support.ServletContextResource;
 @Component
 public class ResourcePathUtil {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(ResourcePathUtil.class);
+
+    private static final String UNABLE_TO_RESOLVE = "Unable to resolve '{";
+
     @Autowired
     private ServletContext servletContext;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(ResourcePathUtil.class);
 
     /**
      * Returns the absolute path for web app resources and directories.
@@ -67,7 +69,7 @@ public class ResourcePathUtil {
             LOGGER.info("Resolved webapp resource'{}' to '{}'", relativePath, absolutePath);
             return absolutePath;
         } catch (IOException e) {
-            throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a webapp resource:", e);
+            throw new RuntimeException(UNABLE_TO_RESOLVE + relativePath + "}' to a webapp resource:", e);
         }
     }
 
@@ -87,7 +89,7 @@ public class ResourcePathUtil {
             LOGGER.info("Resolved classpath resource '{}' to '{}'", relativePath, absolutePath);
             return absolutePath;
         } catch (IOException e) {
-            throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a calsspath resource:", e);
+            throw new RuntimeException(UNABLE_TO_RESOLVE + relativePath + "}' to a classpath resource:", e);
         }
     }
 

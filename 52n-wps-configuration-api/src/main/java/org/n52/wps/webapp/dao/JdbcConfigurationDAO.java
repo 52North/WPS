@@ -59,13 +59,45 @@ import org.springframework.stereotype.Repository;
 @Repository("configurationDAO")
 public class JdbcConfigurationDAO implements ConfigurationDAO {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(JdbcConfigurationDAO.class);
+
+    private static final String MIME_TYPE = "mime_type";
+
+    private static final String SCHEMA = "schema";
+
+    private static final String ENCODING = "encoding";
+
+    private static final String STATUS = "status";
+
+    private static final String MODULE_CLASS_NAME = "module_class_name";
+
+    private static final String CONFIGURATION_VALUE = "configuration_value";
+
+    private static final String ENTRY_KEY = "entry_key";
+
+    private static final String CONFIGURATION_MODULE = "configuration_module";
+
+    private static final String ALGORITHM_NAME = "algorithm_name";
+
+    private static final String ACTIVE = "active";
+
+    private static final String AND_CONFIG_MODULE = "AND configuration_module = :configuration_module";
+
+    private static final String WHERE_CLAUSE_1 = "WHERE entry_key = :entry_key " + AND_CONFIG_MODULE;
+
+    private static final String WHERE_CLAUSE_2 = "WHERE mime_type = :mime_type "
+            + "AND schema = :schema AND encoding = :encoding ";
+
+    private static final String WHERE_CLAUSE_3 = "WHERE algorithm_name = :algorithm_name ";
+
+    private static final String UPDATING_FORMAT_ENTRY = "Updating format entry '{}', '{}', '{}' ";
+
+
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private DataSource dataSource;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(JdbcConfigurationDAO.class);
 
     @PostConstruct
     public void init() {
@@ -103,8 +135,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     public void insertConfigurationModule(ConfigurationModule module) {
         LOGGER.debug("Inserting configuration module '{}' into the database.", module.getClass().getName());
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("module_class_name", module.getClass().getName());
-        parameters.put("status", module.isActive());
+        parameters.put(MODULE_CLASS_NAME, module.getClass().getName());
+        parameters.put(STATUS, module.isActive());
         namedParameterJdbcTemplate.update(
                 "INSERT INTO configurationmodule (module_class_name, status)" + "VALUES(:module_class_name, :status)",
                 parameters);
@@ -114,8 +146,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     public void updateConfigurationModuleStatus(ConfigurationModule module) {
         LOGGER.debug("Updating configuration module '{}' in the database.", module.getClass().getName());
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("module_class_name", module.getClass().getName());
-        parameters.put("status", module.isActive());
+        parameters.put(MODULE_CLASS_NAME, module.getClass().getName());
+        parameters.put(STATUS, module.isActive());
         namedParameterJdbcTemplate.update(
                 "UPDATE configurationmodule SET status = :status " + "WHERE module_class_name = :module_class_name",
                 parameters);
@@ -125,14 +157,14 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     public Boolean getConfigurationModuleStatus(ConfigurationModule module) {
         LOGGER.debug("Getting configuration module '{}' status from the database.", module.getClass().getName());
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("module_class_name", module.getClass().getName());
+        parameters.put(MODULE_CLASS_NAME, module.getClass().getName());
         String sql = "SELECT status FROM configurationmodule WHERE module_class_name = :module_class_name";
 
         List<Boolean> status = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<Boolean>() {
             @Override
             public Boolean mapRow(ResultSet rs,
                     int rowNum) throws SQLException {
-                return rs.getBoolean("status");
+                return rs.getBoolean(STATUS);
             }
         });
 
@@ -151,16 +183,17 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         LOGGER.debug("Getting configuration entry '{}' in configuration module '{}' from the database.", entryKey,
                 moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("entry_key", entryKey);
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(ENTRY_KEY, entryKey);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         String sql =
-                "SELECT configuration_value FROM configurationentry WHERE entry_key = :entry_key AND configuration_module = :configuration_module";
+                "SELECT configuration_value FROM configurationentry "
+                + WHERE_CLAUSE_1;
 
         List<Object> values = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<Object>() {
             @Override
             public Object mapRow(ResultSet rs,
                     int rowNum) throws SQLException {
-                return rs.getObject("configuration_value");
+                return rs.getObject(CONFIGURATION_VALUE);
             }
         });
 
@@ -179,12 +212,13 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             Object value) {
         try {
             LOGGER.debug(
-                    "Inserting value '{}' for configuration entry '{}' in configuration module '{}' into the database.",
+                    "Inserting value '{}' for configuration entry '{}' "
+                    + "in configuration module '{}' into the database.",
                     value, entryKey, moduleClassName);
             Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("entry_key", entryKey);
-            parameters.put("configuration_module", moduleClassName);
-            parameters.put("configuration_value", value);
+            parameters.put(ENTRY_KEY, entryKey);
+            parameters.put(CONFIGURATION_MODULE, moduleClassName);
+            parameters.put(CONFIGURATION_VALUE, value);
             namedParameterJdbcTemplate
                     .update("INSERT INTO configurationentry (entry_key, configuration_module, configuration_value)"
                             + "VALUES(:entry_key, :configuration_module, :configuration_value)", parameters);
@@ -202,11 +236,11 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
                 "Updating configuration entry '{}' in configuration module '{}' to the value of '{}' in the database.",
                 entryKey, moduleClassName, value);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("entry_key", entryKey);
-        parameters.put("configuration_module", moduleClassName);
-        parameters.put("configuration_value", value);
+        parameters.put(ENTRY_KEY, entryKey);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        parameters.put(CONFIGURATION_VALUE, value);
         namedParameterJdbcTemplate.update("UPDATE configurationentry SET configuration_value = :configuration_value "
-                + "WHERE entry_key = :entry_key AND configuration_module = :configuration_module", parameters);
+                + WHERE_CLAUSE_1, parameters);
     }
 
     @Override
@@ -215,10 +249,11 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         LOGGER.debug("Getting algorithm entry '{}' in configuration module '{}' from the database.", algorithm,
                 moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("algorithm_name", algorithm);
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(ALGORITHM_NAME, algorithm);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         String sql =
-                "SELECT * FROM algorithmentry WHERE algorithm_name = :algorithm_name AND configuration_module = :configuration_module";
+                "SELECT * FROM algorithmentry " + WHERE_CLAUSE_3
+                + AND_CONFIG_MODULE;
 
         List<AlgorithmEntry> entries =
                 namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<AlgorithmEntry>() {
@@ -226,7 +261,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
                     @Override
                     public AlgorithmEntry mapRow(ResultSet rs,
                             int rowNo) throws SQLException {
-                        AlgorithmEntry e = new AlgorithmEntry(rs.getString("algorithm_name"), rs.getBoolean("active"));
+                        AlgorithmEntry e = new AlgorithmEntry(rs.getString(ALGORITHM_NAME), rs.getBoolean(ACTIVE));
                         return e;
                     }
 
@@ -246,12 +281,13 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             String algorithm,
             boolean active) {
         LOGGER.debug(
-                "Inserting algorithm entry '{}' in configuration module '{}' with the status of '{}' into the database.",
+                "Inserting algorithm entry '{}' in configuration "
+                + "module '{}' with the status of '{}' into the database.",
                 algorithm, moduleClassName, active);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("algorithm_name", algorithm);
-        parameters.put("configuration_module", moduleClassName);
-        parameters.put("active", active);
+        parameters.put(ALGORITHM_NAME, algorithm);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        parameters.put(ACTIVE, active);
         namedParameterJdbcTemplate.update("INSERT INTO algorithmentry (algorithm_name, configuration_module, active)"
                 + "VALUES(:algorithm_name, :configuration_module, :active)", parameters);
     }
@@ -264,12 +300,28 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
                 "Updating algorithm entry '{}' in configuration module '{}' to the status of '{}' in the database.",
                 algorithm, moduleClassName, active);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("algorithm_name", algorithm);
-        parameters.put("configuration_module", moduleClassName);
-        parameters.put("active", active);
+        parameters.put(ALGORITHM_NAME, algorithm);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        parameters.put(ACTIVE, active);
         namedParameterJdbcTemplate.update(
                 "UPDATE algorithmentry SET active = :active "
-                        + "WHERE algorithm_name = :algorithm_name AND configuration_module = :configuration_module",
+                        + WHERE_CLAUSE_3 + AND_CONFIG_MODULE,
+                parameters);
+    }
+
+    @Override
+    public void updateAlgorithmEntry(String moduleClassName,
+            String newAlgorithmName,
+            String oldAlgorithmName) {
+        LOGGER.debug("Updating algorithm entry '{}' in configuration module '{}' to new entry '{}' in the database.",
+                oldAlgorithmName, moduleClassName, newAlgorithmName);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("new_algorithm_name", newAlgorithmName);
+        parameters.put("old_algorithm_name", oldAlgorithmName);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        namedParameterJdbcTemplate.update(
+                "UPDATE algorithmentry SET algorithm_name = :new_algorithm_name "
+                        + "WHERE algorithm_name = :old_algorithm_name " + AND_CONFIG_MODULE,
                 parameters);
     }
 
@@ -277,7 +329,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     public List<AlgorithmEntry> getAlgorithmEntries(String moduleClassName) {
         LOGGER.debug("Getting all algorithm entries of configuration module '{}' from the database.", moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         String sql = "SELECT * FROM algorithmentry WHERE configuration_module = :configuration_module";
 
         List<AlgorithmEntry> algorithmEntries =
@@ -285,7 +337,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
                     @Override
                     public AlgorithmEntry mapRow(ResultSet rs,
                             int rowNum) throws SQLException {
-                        AlgorithmEntry e = new AlgorithmEntry(rs.getString("algorithm_name"), rs.getBoolean("active"));
+                        AlgorithmEntry e = new AlgorithmEntry(rs.getString(ALGORITHM_NAME), rs.getBoolean(ACTIVE));
                         return e;
                     }
                 });
@@ -298,11 +350,11 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             String algorithmName) {
         LOGGER.debug("Deleting algorithm entry '{}' from configuration module '{}'.", algorithmName, moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("algorithm_name", algorithmName);
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(ALGORITHM_NAME, algorithmName);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         int numberOfRowsAffected = namedParameterJdbcTemplate.update(
                 "DELETE FROM algorithmentry "
-                        + "WHERE algorithm_name = :algorithm_name AND configuration_module = :configuration_module",
+                        + WHERE_CLAUSE_3 + AND_CONFIG_MODULE,
                 parameters);
         LOGGER.debug("Number of rows affected: " + numberOfRowsAffected);
     }
@@ -315,10 +367,10 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         LOGGER.debug("Getting format entry '{}', '{}', '{}' in configuration module '{}' from the database.", mimeType,
                 schema, encoding, moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("mime_type", mimeType);
-        parameters.put("schema", schema);
-        parameters.put("encoding", encoding);
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(MIME_TYPE, mimeType);
+        parameters.put(SCHEMA, schema);
+        parameters.put(encoding, encoding);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         String sql = "SELECT * FROM formatentry WHERE id = :id";
 
         List<FormatEntry> entries = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<FormatEntry>() {
@@ -326,8 +378,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             @Override
             public FormatEntry mapRow(ResultSet rs,
                     int rowNo) throws SQLException {
-                FormatEntry e = new FormatEntry(rs.getString("mime_type"), rs.getString("schema"),
-                        rs.getString("encoding"), rs.getBoolean("active"));
+                FormatEntry e = new FormatEntry(rs.getString(MIME_TYPE), rs.getString(SCHEMA),
+                        rs.getString(ENCODING), rs.getBoolean(ACTIVE));
                 return e;
             }
 
@@ -350,7 +402,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             boolean active) {
         LOGGER.debug(
                 "Inserting format entry '{}' in configuration module '{}' with the status of '{}' into the database.",
-                mimeType, moduleClassName, active);// TODO update log
+                mimeType, moduleClassName, active);
+        // TODO update log
         // Map<String, Object> parameters = new HashMap<String, Object>();
         // parameters.put("mime_type", mimeType);
         // parameters.put("schema", schema);
@@ -360,11 +413,11 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-        parameterSource.addValue("mime_type", mimeType);
-        parameterSource.addValue("schema", schema);
-        parameterSource.addValue("encoding", encoding);
-        parameterSource.addValue("configuration_module", moduleClassName);
-        parameterSource.addValue("active", active);
+        parameterSource.addValue(MIME_TYPE, mimeType);
+        parameterSource.addValue(SCHEMA, schema);
+        parameterSource.addValue(ENCODING, encoding);
+        parameterSource.addValue(CONFIGURATION_MODULE, moduleClassName);
+        parameterSource.addValue(ACTIVE, active);
 
         namedParameterJdbcTemplate
                 .update("INSERT INTO formatentry (mime_type, schema, encoding, configuration_module, active)"
@@ -378,17 +431,45 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
             String schema,
             String encoding,
             boolean active) {
-        LOGGER.debug(
-                "Updating format entry '{}', '{}', '{}' of configuration module '{}' to the status of '{}' in the database.",
+        LOGGER.debug(UPDATING_FORMAT_ENTRY
+                + "of configuration module '{}' to the status of '{}' in the database.",
                 mimeType, schema, encoding, moduleClassName, active);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("mime_type", mimeType);
-        parameters.put("schema", schema);
-        parameters.put("encoding", encoding);
-        parameters.put("configuration_module", moduleClassName);
-        parameters.put("active", active);
+        parameters.put(MIME_TYPE, mimeType);
+        parameters.put(SCHEMA, schema);
+        parameters.put(ENCODING, encoding);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        parameters.put(ACTIVE, active);
         namedParameterJdbcTemplate.update("UPDATE formatentry SET active = :active "
-                + "WHERE mime_type = :mime_type AND schema = :schema AND encoding = :encoding AND configuration_module = :configuration_module",
+                + WHERE_CLAUSE_2
+                + AND_CONFIG_MODULE,
+                parameters);
+    }
+
+    @Override
+    public void updateFormatEntry(String moduleClassName,
+            String oldMimeType,
+            String oldSchema,
+            String oldEncoding,
+            String newMimeType,
+            String newSchema,
+            String newEncoding) {
+        LOGGER.debug(
+                UPDATING_FORMAT_ENTRY
+                + "in configuration module '{}' to entry '{}', '{}', '{}' in the database.",
+                oldMimeType, oldSchema, oldEncoding, moduleClassName, newMimeType, newSchema, newEncoding);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("new_mimetype", newMimeType);
+        parameters.put("new_schema", newSchema);
+        parameters.put("new_encoding", newEncoding);
+        parameters.put("old_mimetype", oldMimeType);
+        parameters.put("old_schema", oldSchema);
+        parameters.put("old_encoding", oldEncoding);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
+        namedParameterJdbcTemplate.update(
+                "UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding "
+                        + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding "
+                        + AND_CONFIG_MODULE,
                 parameters);
     }
 
@@ -396,7 +477,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     public List<FormatEntry> getFormatEntries(String moduleClassName) {
         LOGGER.debug("Getting all format entries of configuration module '{}' from the database.", moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         String sql = "SELECT * FROM formatentry WHERE configuration_module = :configuration_module";
 
         List<FormatEntry> formatEntries =
@@ -404,8 +485,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
                     @Override
                     public FormatEntry mapRow(ResultSet rs,
                             int rowNum) throws SQLException {
-                        FormatEntry e = new FormatEntry(rs.getString("mime_type"), rs.getString("schema"),
-                                rs.getString("encoding"), rs.getBoolean("active"));
+                        FormatEntry e = new FormatEntry(rs.getString(MIME_TYPE), rs.getString(SCHEMA),
+                                rs.getString(ENCODING), rs.getBoolean(ACTIVE));
                         return e;
                     }
                 });
@@ -421,62 +502,22 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         LOGGER.debug("Deleting format entry '{}', '{}', '{}' of module, '{}' from database", mimeType, schema, encoding,
                 moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("mime_type", mimeType);
-        parameters.put("schema", schema);
-        parameters.put("encoding", encoding);
-        parameters.put("configuration_module", moduleClassName);
+        parameters.put(MIME_TYPE, mimeType);
+        parameters.put(SCHEMA, schema);
+        parameters.put(encoding, encoding);
+        parameters.put(CONFIGURATION_MODULE, moduleClassName);
         namedParameterJdbcTemplate.update("DELETE FROM formatentry "
-                + "WHERE mime_type = :mime_type AND schema = :schema AND encoding = :encoding AND configuration_module = :configuration_module",
+                + WHERE_CLAUSE_2
+                + AND_CONFIG_MODULE,
                 parameters);
 
-    }
-
-    @Override
-    public void updateAlgorithmEntry(String moduleClassName,
-            String newAlgorithmName,
-            String oldAlgorithmName) {
-        LOGGER.debug("Updating algorithm entry '{}' in configuration module '{}' to new entry '{}' in the database.",
-                oldAlgorithmName, moduleClassName, newAlgorithmName);
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("new_algorithm_name", newAlgorithmName);
-        parameters.put("old_algorithm_name", oldAlgorithmName);
-        parameters.put("configuration_module", moduleClassName);
-        namedParameterJdbcTemplate.update(
-                "UPDATE algorithmentry SET algorithm_name = :new_algorithm_name "
-                        + "WHERE algorithm_name = :old_algorithm_name AND configuration_module = :configuration_module",
-                parameters);
-    }
-
-    @Override
-    public void updateFormatEntry(String moduleClassName,
-            String oldMimeType,
-            String oldSchema,
-            String oldEncoding,
-            String newMimeType,
-            String newSchema,
-            String newEncoding) {
-        LOGGER.debug(
-                "Updating format entry '{}', '{}', '{}' in configuration module '{}' to entry '{}', '{}', '{}' in the database.",
-                oldMimeType, oldSchema, oldEncoding, moduleClassName, newMimeType, newSchema, newEncoding);
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("new_mimetype", newMimeType);
-        parameters.put("new_schema", newSchema);
-        parameters.put("new_encoding", newEncoding);
-        parameters.put("old_mimetype", oldMimeType);
-        parameters.put("old_schema", oldSchema);
-        parameters.put("old_encoding", oldEncoding);
-        parameters.put("configuration_module", moduleClassName);
-        namedParameterJdbcTemplate.update(
-                "UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding "
-                        + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding AND configuration_module = :configuration_module",
-                parameters);
     }
 
     @Override
     public Boolean isConfigurationModulePersistent(String moduleClassName) {
         LOGGER.debug("Getting configuration module '{}' from the database.", moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("module_class_name", moduleClassName);
+        parameters.put(MODULE_CLASS_NAME, moduleClassName);
         String sql = "SELECT * FROM configurationmodule WHERE module_class_name = :module_class_name";
 
         Boolean isModulePersistent =

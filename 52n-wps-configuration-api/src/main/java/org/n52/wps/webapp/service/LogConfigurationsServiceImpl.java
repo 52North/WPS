@@ -43,10 +43,10 @@ import org.springframework.stereotype.Service;
 @Service("logConfigurationsService")
 public class LogConfigurationsServiceImpl implements LogConfigurationsService {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
+
     @Autowired
     private LogConfigurationsDAO logConfigurationsDAO;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
 
     @Override
     public LogConfigurations getLogConfigurations() {

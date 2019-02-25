@@ -35,9 +35,9 @@ import com.google.common.base.Joiner;
  */
 public class PropertyUtil {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(PropertyUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyUtil.class);
 
-    private final static Joiner JOINER = Joiner.on(".");
+    private static final Joiner JOINER = Joiner.on(".");
 
     private final String systemPropertyRoot;
 

@@ -27,9 +27,9 @@ public class OutputTypeWrapper {
 
     private List<? extends net.opengis.wps.x20.OutputDefinitionType> wps200OutputDefinitionTypes = new ArrayList<>();
 
-    private boolean isWPS100Execution = false;
+    private boolean isWPS100Execution;
 
-    private boolean isWPS200Execution = false;
+    private boolean isWPS200Execution;
 
     public List<? extends OutputDefinitionType> getWps100OutputDefinitionTypes() {
         return wps100OutputDefinitionTypes;
