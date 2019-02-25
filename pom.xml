@@ -71,6 +71,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>boundless</id>
+			<name>Geotools Repo</name>
+			<url>http://repo.boundlessgeo.com/main/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 	<build>
 		<pluginManagement>
@@ -174,33 +185,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jasig.maven</groupId>
-				<artifactId>maven-notice-plugin</artifactId>
-				<configuration>
-					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
-					<licenseMapping>
-						<param>http://52north.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
-					</licenseMapping>
-					<generateChildNotices>false</generateChildNotices>
-				</configuration>
-				<executions>
-					<execution>
-						<id>check-licenses</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>javax.annotation</groupId>
-						<artifactId>javax.annotation-api</artifactId>
-						<version>1.3.2</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 		<extensions>
