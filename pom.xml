@@ -1,8 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-        <groupId>org.n52</groupId>
-        <artifactId>parent</artifactId>
-        <version>14</version>
+		<groupId>org.n52</groupId>
+		<artifactId>parent</artifactId>
+		<version>14</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
@@ -29,25 +31,25 @@
 	</licenses>
 	<inceptionYear>2007</inceptionYear>
 	<scm>
-<!-- 		 Specification of the Source-Content-Managementsystem -->
+		<!-- Specification of the Source-Content-Managementsystem -->
 		<connection>scm:git:git://github.com/52North/WPS.git</connection>
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
-    <distributionManagement>
-        <repository>
-            <id>n52-releases-dist</id>
-            <url>dav:https://52north.org/maven/repo/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>n52-snapshots-dist</id>
-            <url>dav:https://52north.org/maven/repo/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-	<repositories>		
-	    <repository>
+	<distributionManagement>
+		<repository>
+			<id>n52-releases-dist</id>
+			<url>dav:https://52north.org/maven/repo/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>n52-snapshots-dist</id>
+			<url>dav:https://52north.org/maven/repo/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<repositories>
+		<repository>
 			<id>n52-releases</id>
 			<name>52n Releases</name>
 			<url>http://52north.org/maven/repo/releases</url>
@@ -57,7 +59,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-        </repository>
+		</repository>
 		<repository>
 			<id>geotools</id>
 			<name>Geotools Repo</name>
@@ -85,30 +87,30 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>            
-		    <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                               <requireNoRepositories>
-                                   <banRepositories>false</banRepositories>
-                                   <allowSnapshotRepositories>true</allowSnapshotRepositories>
-                                   <!-- Define allowed repositories, use repo id -->
-                                   <allowedRepositories>
-                                        <id>52n Releases, geotools</id>
-                                   </allowedRepositories>
-                               </requireNoRepositories>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireNoRepositories>
+									<banRepositories>false</banRepositories>
+									<allowSnapshotRepositories>true</allowSnapshotRepositories>
+									<!-- Define allowed repositories, use repo id -->
+									<allowedRepositories>
+										<id>52n Releases, geotools</id>
+									</allowedRepositories>
+								</requireNoRepositories>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -122,7 +124,7 @@
 					<connectionType>connection</connectionType>
 					<runChangeLog>true</runChangeLog>
 					<goalsDirectory>./..</goalsDirectory>
-					<!--checkoutDirectory>${basedir}/src</checkoutDirectory-->
+					<!--checkoutDirectory>${basedir}/src</checkoutDirectory -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -155,7 +157,7 @@
 					<properties>
 						<inceptionYear>${project.inceptionYear}</inceptionYear>
 						<latestYearOfContribution>${currentYear}</latestYearOfContribution>
-						 <!--<latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>-->
+						<!--<latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution> -->
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
@@ -193,11 +195,11 @@
 					</execution>
 				</executions>
 				<dependencies>
-				    <dependency>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>javax.annotation-api</artifactId>
-                        <version>1.3.2</version>
-                    </dependency>
+					<dependency>
+						<groupId>javax.annotation</groupId>
+						<artifactId>javax.annotation-api</artifactId>
+						<version>1.3.2</version>
+					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
@@ -207,7 +209,7 @@
 				<artifactId>wagon-webdav-jackrabbit</artifactId>
 				<version>1.0-beta-7</version>
 			</extension>
-        </extensions>
+		</extensions>
 	</build>
 
 	<modules>
@@ -223,7 +225,7 @@
 		<module>52n-wps-database</module>
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
-<!-- 		<module>52n-wps-sextante</module> -->
+		<!-- <module>52n-wps-sextante</module> -->
 		<module>52n-wps-grass</module>
 		<module>52n-wps-r</module>
 	</modules>
@@ -238,13 +240,13 @@
 		<jackson.version>2.1.2</jackson.version>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
-        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-        <currentYear>2018</currentYear>
-        <!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>-->
+		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+		<currentYear>2018</currentYear>
+		<!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic> -->
 	</properties>
 	<dependencyManagement>
-        <dependencies>
-		    <!-- testing -->
+		<dependencies>
+			<!-- testing -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -312,17 +314,17 @@
 				<!-- provided due to use of slf4j bridge -->
 				<scope>provided</scope>
 			</dependency>
-            <dependency>
-                <groupId>org.jdom</groupId>
-                <artifactId>jdom</artifactId>
-                <version>1.1.3</version>
-            </dependency>
+			<dependency>
+				<groupId>org.jdom</groupId>
+				<artifactId>jdom</artifactId>
+				<version>1.1.3</version>
+			</dependency>
 			<!-- START import geotools dependencies -->
-		<dependency>
-			<groupId>org.locationtech.jts</groupId>
-			<artifactId>jts-core</artifactId>
-			<version>1.16.0</version>
-		</dependency>
+			<dependency>
+				<groupId>org.locationtech.jts</groupId>
+				<artifactId>jts-core</artifactId>
+				<version>1.16.0</version>
+			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
 				<artifactId>geotools</artifactId>
@@ -349,6 +351,31 @@
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-coverage</artifactId>
 				<version>${geotools.version}</version>
+			    <exclusions>
+			    	<exclusion>
+			    		<groupId>*</groupId>
+			    		<artifactId>*</artifactId>
+			    	</exclusion>
+			    </exclusions>
+			</dependency>
+			<!-- add necessary dependencies for gt-coverage -->
+			<dependency>
+				<groupId>it.geosolutions.jaiext.utilities</groupId>
+				<artifactId>jt-utilities</artifactId>
+				<version>1.1.6</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>it.geosolutions.jaiext.colorconvert</groupId>
+				<artifactId>jt-colorconvert</artifactId>
+				<version>1.1.6</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>it.geosolutions.jaiext.vectorbin</groupId>
+				<artifactId>jt-vectorbin</artifactId>
+				<version>1.1.6</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
@@ -469,7 +496,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<!--<version>1.3.1</version>-->
+				<!--<version>1.3.1</version> -->
 				<version>2.0</version>
 			</dependency>
 			<dependency>
@@ -667,51 +694,51 @@
 				<version>${org.springframework.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring-oxm</artifactId>
-			    <version>${org.springframework.version}</version>
-		    </dependency>
-		    <dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring-orm</artifactId>
-			    <version>${org.springframework.version}</version>
-		    </dependency>
-		    <dependency>
-            	<groupId>org.springframework</groupId>
-            	<artifactId>spring-jdbc</artifactId>
-            	<version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-            	<groupId>org.springframework</groupId>
-            	<artifactId>spring-test</artifactId>
-            	<version>${org.springframework.version}</version>
-            	<scope>test</scope>
-            </dependency>
-            <dependency>
-            	<groupId>org.springframework.security</groupId>
-            	<artifactId>spring-security-core</artifactId>
-            	<version>${org.spring-security.version}</version>
-            </dependency>
-            <dependency>
-            	<groupId>org.springframework.security</groupId>
-            	<artifactId>spring-security-config</artifactId>
-            	<version>${org.spring-security.version}</version>
-            </dependency>
-            <dependency>
-            	<groupId>org.springframework.security</groupId>
-            	<artifactId>spring-security-web</artifactId>
-            	<version>${org.spring-security.version}</version>
-            </dependency>
-            <dependency>
-            	<groupId>org.springframework.security</groupId>
-            	<artifactId>spring-security-taglibs</artifactId>
-            	<version>${org.spring-security.version}</version>
-            </dependency>
-		    <dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring-tx</artifactId>
-			    <version>${org.springframework.version}</version>
-		    </dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${org.springframework.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${org.spring-security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${org.spring-security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${org.spring-security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${org.spring-security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
 			<!-- end spring dependencies -->
 			<dependency>
 				<groupId>com.sun.jersey</groupId>
@@ -719,67 +746,67 @@
 				<version>1.18.1</version>
 			</dependency>
 			<dependency>
-		    	<groupId>commons-configuration</groupId>
-		    	<artifactId>commons-configuration</artifactId>
-		    	<version>1.9</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>jstl</groupId>
-		    	<artifactId>jstl</artifactId>
-		    	<version>1.2</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>taglibs</groupId>
-		    	<artifactId>standard</artifactId>
-		    	<version>1.1.2</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>com.fasterxml.jackson.core</groupId>
-		    	<artifactId>jackson-core</artifactId>
-		    	<version>${jackson.version}</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>com.fasterxml.jackson.core</groupId>
-		    	<artifactId>jackson-databind</artifactId>
-		    	<version>${jackson.version}</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>org.mockito</groupId>
-		    	<artifactId>mockito-core</artifactId>
-		    	<version>1.9.5</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>org.apache.tiles</groupId>
-		    	<artifactId>tiles-extras</artifactId>
-		    	<version>3.0.0</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>commons-fileupload</groupId>
-		    	<artifactId>commons-fileupload</artifactId>
-		    	<version>1.3</version>
-		    </dependency>
-		    <!-- Database dependencies -->
-		    <dependency>
-		    	<groupId>org.hibernate</groupId>
-		    	<artifactId>hibernate-validator</artifactId>
-		    	<version>5.0.1.Final</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>org.hsqldb</groupId>
-		    	<artifactId>hsqldb</artifactId>
-		    	<version>2.2.9</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>commons-pool</groupId>
-		    	<artifactId>commons-pool</artifactId>
-		    	<version>1.5.4</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>commons-dbcp</groupId>
-		    	<artifactId>commons-dbcp</artifactId>
-		    	<version>1.3</version>
-		    </dependency>
-		    <!-- End of database dependencies -->
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.9</version>
+			</dependency>
+			<dependency>
+				<groupId>jstl</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>taglibs</groupId>
+				<artifactId>standard</artifactId>
+				<version>1.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>1.9.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.tiles</groupId>
+				<artifactId>tiles-extras</artifactId>
+				<version>3.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<!-- Database dependencies -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>5.0.1.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>2.2.9</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.5.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<!-- End of database dependencies -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io-geotools</artifactId>
@@ -847,11 +874,11 @@
 				<artifactId>52n-wps-client-lib</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>${project.groupId}</groupId> -->
-<!-- 				<artifactId>52n-wps-sextante</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>${project.groupId}</groupId> -->
+			<!-- <artifactId>52n-wps-sextante</artifactId> -->
+			<!-- <version>${project.version}</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>
@@ -889,15 +916,15 @@
 				<version>2.2.0</version>
 			</dependency>
 			<dependency>
-		    	<groupId>org.n52.sensorweb</groupId>
-		    	<artifactId>52n-xml-ows-v110</artifactId>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-xml-ows-v110</artifactId>
 				<version>2.2.0</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>org.n52.sensorweb</groupId>
-		    	<artifactId>52n-xml-ows-v20</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.sensorweb</groupId>
+				<artifactId>52n-xml-ows-v20</artifactId>
 				<version>2.2.0</version>
-		    </dependency>
+			</dependency>
 			<!-- START Sextante dependencies -->
 			<dependency>
 				<groupId>es.unex.sextante</groupId>
@@ -979,57 +1006,57 @@
 				<version>1.7-3</version>
 			</dependency>
 			<!-- END R dependencies -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>com.thetransactioncompany</groupId>
-                <artifactId>cors-filter</artifactId>
-                <version>1.9.3</version>
-            </dependency>
-		    <dependency>
-			    <groupId>javax.validation</groupId>
-			    <artifactId>validation-api</artifactId>
-			    <version>1.1.0.Final</version>
-		    </dependency>
-            <dependency>
-                <groupId>org.jmock</groupId>
-                <artifactId>jmock-junit4</artifactId>
-                <version>2.6.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-                <scope>test</scope>
-            </dependency>
-            <!-- new dependencies for GeoTools update -->
-<!--             <dependency> -->
-<!--                 <groupId>jdom</groupId> -->
-<!--                 <artifactId>jdom</artifactId> -->
-<!--                 <version>1.0</version> -->
-<!--             </dependency> -->
-            <dependency>
-                <groupId>org.mvel</groupId>
-                <artifactId>mvel2</artifactId>
-                <version>2.0.11</version>
-            </dependency>
-            <dependency>
-                <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
-                <artifactId>classloader-leak-prevention-servlet3</artifactId>
-                <version>2.5.0</version>
-                <scope>runtime</scope>
-            </dependency>
-		    <dependency>
-			    <groupId>javax.annotation</groupId>
-			    <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.2</version>
-		    </dependency>
-        </dependencies>
-    </dependencyManagement>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.thetransactioncompany</groupId>
+				<artifactId>cors-filter</artifactId>
+				<version>1.9.3</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.1.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jmock</groupId>
+				<artifactId>jmock-junit4</artifactId>
+				<version>2.6.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.hamcrest</groupId>
+						<artifactId>hamcrest-core</artifactId>
+					</exclusion>
+				</exclusions>
+				<scope>test</scope>
+			</dependency>
+			<!-- new dependencies for GeoTools update -->
+			<!-- <dependency> -->
+			<!-- <groupId>jdom</groupId> -->
+			<!-- <artifactId>jdom</artifactId> -->
+			<!-- <version>1.0</version> -->
+			<!-- </dependency> -->
+			<dependency>
+				<groupId>org.mvel</groupId>
+				<artifactId>mvel2</artifactId>
+				<version>2.0.11</version>
+			</dependency>
+			<dependency>
+				<groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+				<artifactId>classloader-leak-prevention-servlet3</artifactId>
+				<version>2.5.0</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.annotation</groupId>
+				<artifactId>javax.annotation-api</artifactId>
+				<version>1.3.2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<reporting>
 		<plugins>
 			<plugin>
@@ -1048,69 +1075,69 @@
 	</reporting>
 
 	<profiles>
-			<profile>
-					<id>create-license-list</id>
-					<build>
-							<plugins>
-							 <plugin>
-									<groupId>org.codehaus.mojo</groupId>
-									<artifactId>license-maven-plugin</artifactId>
-									<version>1.5</version>
-									<configuration>
-											<useMissingFile>true</useMissingFile>
-											<!--<fileTemplate>misc/licenses/license-as-csv.ftl</fileTemplate>-->
-									</configuration>
-									<executions>
-									 <execution>
-											<id>first</id>
-											<goals>
-											 <goal>aggregate-add-third-party</goal>
-											</goals>
-											<phase>generate-resources</phase>
-									 </execution>
-									</executions>
-							 </plugin>
-							</plugins>
-					</build>
-			</profile>
-			<profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jasig.maven</groupId>
-                        <artifactId>maven-notice-plugin</artifactId>
-                        <configuration>
-                            <licenseMapping>
-                                <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
-                            </licenseMapping>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>since-jdk9</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jasig.maven</groupId>
-                        <artifactId>maven-notice-plugin</artifactId>
-                        <configuration>
-                            <licenseMapping>
-                                <param>http://52north.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
-                            </licenseMapping>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+		<profile>
+			<id>create-license-list</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>1.5</version>
+						<configuration>
+							<useMissingFile>true</useMissingFile>
+							<!--<fileTemplate>misc/licenses/license-as-csv.ftl</fileTemplate> -->
+						</configuration>
+						<executions>
+							<execution>
+								<id>first</id>
+								<goals>
+									<goal>aggregate-add-third-party</goal>
+								</goals>
+								<phase>generate-resources</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jdk8</id>
+			<activation>
+				<jdk>1.8</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jasig.maven</groupId>
+						<artifactId>maven-notice-plugin</artifactId>
+						<configuration>
+							<licenseMapping>
+								<param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+							</licenseMapping>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>since-jdk9</id>
+			<activation>
+				<jdk>[9,)</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jasig.maven</groupId>
+						<artifactId>maven-notice-plugin</artifactId>
+						<configuration>
+							<licenseMapping>
+								<param>http://52north.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
+							</licenseMapping>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
 	</profiles>
 </project>

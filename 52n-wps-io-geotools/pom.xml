@@ -84,6 +84,18 @@
 			<artifactId>gt-coverage</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>it.geosolutions.jaiext.utilities</groupId>
+			<artifactId>jt-utilities</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.geosolutions.jaiext.colorconvert</groupId>
+			<artifactId>jt-colorconvert</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.geosolutions.jaiext.vectorbin</groupId>
+			<artifactId>jt-vectorbin</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-referencing</artifactId>
 		</dependency>
