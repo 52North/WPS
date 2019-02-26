@@ -60,7 +60,7 @@ import org.n52.wps.io.LargeBufferStream;
  * This class measures the payload of the post data
  *
  * TODO seems to be not used
- * 
+ *
  * @author foerster
  *
  */
@@ -208,7 +208,7 @@ public final class CommunicationSizeLogFilter implements Filter {
          * byte[8096]; int length = buStream.read(bytes, 0 , 8096); while(length
          * != -1) { length = buStream.read(bytes, 0 , 8096); streamSize =
          * streamSize + length; }
-         * 
+         *
          * }
          */
 

@@ -71,7 +71,7 @@ import com.google.common.base.Joiner;
 
 /**
  * Uses the Postgres database to store and retrieve data.
- * 
+ *
  * @author isuftin (Ivan Suftin, USGS)
  */
 public class PostgresDatabase extends AbstractDatabase {

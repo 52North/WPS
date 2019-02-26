@@ -84,7 +84,7 @@ import org.locationtech.jts.geom.Polygon;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
- * 
+ *
  * @author foerster
  *
  */
@@ -253,7 +253,7 @@ public class SimpleGMLParser extends AbstractParser {
 
     /**
      * expects Coordinates with X & Y or X & Y & Z
-     * 
+     *
      * @param coords
      * @return
      */

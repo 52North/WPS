@@ -45,7 +45,7 @@ public interface IGenerator extends IOHandler {
      *             returns an InputStream for subsequent access.
      *
      */
-    public InputStream generateStream(IData data,
+    InputStream generateStream(IData data,
             String mimeType,
             String schema) throws IOException;
 
@@ -66,7 +66,7 @@ public interface IGenerator extends IOHandler {
      *             subsequent access.
      *
      */
-    public InputStream generateBase64Stream(IData data,
+    InputStream generateBase64Stream(IData data,
             String mimeType,
             String schema) throws IOException;
 

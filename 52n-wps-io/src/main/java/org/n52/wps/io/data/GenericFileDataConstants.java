@@ -26,8 +26,6 @@ import org.n52.wps.io.IOHandler;
 
 public final class GenericFileDataConstants {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(GenericFileDataConstants.class);
-
     public static final String MIME_TYPE_ZIPPED_SHP = IOHandler.MIME_TYPE_ZIPPED_SHP;
 
     public static final String MIME_TYPE_SHP = "application/shp";
@@ -46,14 +44,7 @@ public final class GenericFileDataConstants {
 
     public static final String MIME_TYPE_TEXT_XML = "text/xml";
 
-    public static final String MIME_TYPE_IMAGE_GEOTIFF = "image/geotiff";// TODO:
-                                                                         // this
-                                                                         // could
-                                                                         // not
-                                                                         // work
-                                                                         // due
-                                                                         // to
-                                                                         // geotiffparser...
+    public static final String MIME_TYPE_IMAGE_GEOTIFF = "image/geotiff";
 
     public static final String MIME_TYPE_X_GEOTIFF = "application/x-geotiff";
 
@@ -93,25 +84,15 @@ public final class GenericFileDataConstants {
 
     public static final String MIME_TYPE_GML321 = "text/xml; subtype=gml/3.2.1";
 
-    private static final String[] additionalSHPFileItems = { "shx", "dbf", "prj", "sbn", "sbx", "shp.xml" };
+    private static final String[] ADDITIONAL_SHP_FILE_ITEMS = { "shx", "dbf", "prj", "sbn", "sbx", "shp.xml" };
 
-    private static final String[] additionalDBFFileItems = { "dbf.xml" }; // e.g.
-                                                                          // ArcGIS
-                                                                          // backend
-                                                                          // returns
-                                                                          // shape
-                                                                          // and
-                                                                          // a
-                                                                          // metadata
-                                                                          // xml
-                                                                          // file
-                                                                          // (e.g.
-                                                                          // process
-                                                                          // pointdistance)
+    private static final String[] ADDITIONAL_DBF_FILE_ITEMS = { "dbf.xml" };
+
+    private static Logger LOGGER = LoggerFactory.getLogger(GenericFileDataConstants.class);
 
     private static HashMap<String, String> lut;
 
-    public static final HashMap<String, String> mimeTypeFileTypeLUT() {
+    public static HashMap<String, String> mimeTypeFileTypeLUT() {
 
         if (lut == null) {
 
@@ -138,23 +119,24 @@ public final class GenericFileDataConstants {
         return lut;
     }
 
-    public static final String[] getMimeTypes() {
+    public static String[] getMimeTypes() {
         return mimeTypeFileTypeLUT().keySet().toArray(new String[0]);
     }
 
-    public static final String[] getIncludeFilesByMimeType(String mimeType) {
+    public static String[] getIncludeFilesByMimeType(String mimeType) {
 
         String[] returnValue = null;
 
-        if (mimeType != null && mimeType.equalsIgnoreCase("application/x-zipped-shp")) {
-            returnValue = additionalSHPFileItems;
+        if (mimeType != null && mimeType.equalsIgnoreCase(MIME_TYPE_ZIPPED_SHP)) {
+            returnValue = ADDITIONAL_SHP_FILE_ITEMS;
         }
-        if (mimeType != null && mimeType.equalsIgnoreCase("application/dbase")) {
-            returnValue = additionalDBFFileItems;
+        if (mimeType != null && mimeType.equalsIgnoreCase(MIME_TYPE_DBASE)) {
+            returnValue = ADDITIONAL_DBF_FILE_ITEMS;
         }
 
         return returnValue;
 
     }
+
 
 }

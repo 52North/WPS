@@ -63,7 +63,7 @@ import org.locationtech.jts.geom.Geometry;
 
 /**
  * This class generates a GeoJSON String representation out of a JTS Geometry.
- * 
+ *
  * @author BenjaminPross(bpross-52n)
  *
  */

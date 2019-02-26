@@ -65,7 +65,7 @@ import org.xml.sax.SAXException;
  * in a very generic way.
  *
  * This is implemented as a singleton.
- * 
+ *
  * @author foerster
  */
 public class WPSClientSession {
@@ -119,7 +119,7 @@ public class WPSClientSession {
     /**
      * Connects to a WPS and retrieves Capabilities plus puts all available
      * Descriptions into cache.
-     * 
+     *
      * @param url
      *            the entry point for the service. This is used as id for
      *            further identification of the service.
@@ -148,7 +148,7 @@ public class WPSClientSession {
 
     /**
      * removes a service from the session
-     * 
+     *
      * @param url
      *            the url of the service that should be disconnected
      */
@@ -162,7 +162,7 @@ public class WPSClientSession {
 
     /**
      * returns the serverIDs of all loggedServices
-     * 
+     *
      * @return a list of logged service URLs
      */
     public List<String> getLoggedServices() {
@@ -172,7 +172,7 @@ public class WPSClientSession {
     /**
      * informs you if the descriptions for the specified service is already in
      * the session. in normal case it should return true :)
-     * 
+     *
      * @param serverID
      *            the URL of the WPS server
      * @return success if process descriptions are cached for the WPS server
@@ -183,7 +183,7 @@ public class WPSClientSession {
 
     /**
      * returns the cached processdescriptions of a service.
-     * 
+     *
      * @param serverID
      *            the URL of the WPS server
      * @return success if process descriptions are cached for the WPS server
@@ -203,7 +203,7 @@ public class WPSClientSession {
 
     /**
      * return the processDescription for a specific process from Cache.
-     * 
+     *
      * @param serverID
      *            the URL of the WPS server
      * @param processID
@@ -239,7 +239,7 @@ public class WPSClientSession {
 
     /**
      * looks up, if the service exists already in session.
-     * 
+     *
      * @param serverID
      *            the URL of the WPS
      * @return true if the WPS was already connected
@@ -250,7 +250,7 @@ public class WPSClientSession {
 
     /**
      * provides you the cached capabilities for a specified service.
-     * 
+     *
      * @param url
      *            the URL of the WPS
      * @return the <code>CapabilitiesDocument</code> of the WPS
@@ -264,7 +264,7 @@ public class WPSClientSession {
      * get the current list of all processes, which will be requested, the
      * cached capabilities will be used. Please keep that in mind. the retrieved
      * descriptions will not be cached, so only transient information!
-     * 
+     *
      * @param url
      *            the URL of the WPS
      * @return a process descriptions document containing all process
@@ -290,7 +290,7 @@ public class WPSClientSession {
     /**
      * retrieves the desired description for a service. the retrieved
      * information will not be held in cache!
-     * 
+     *
      * @param processIDs
      *            one or more processIDs
      * @param serverID
@@ -472,7 +472,7 @@ public class WPSClientSession {
     /**
      * either an ExecuteResponseDocument or an InputStream if asked for RawData
      * or an Exception Report
-     * 
+     *
      * @param url
      *            the URL of the WPS server
      * @param doc

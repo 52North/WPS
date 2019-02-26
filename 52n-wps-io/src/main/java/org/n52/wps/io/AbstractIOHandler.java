@@ -89,22 +89,7 @@ public abstract class AbstractIOHandler implements IOHandler {
     public boolean isSupportedSchema(String schema) {
         // no schema given. assuming no schema required. therefore accept all
         // schemas
-        if (supportedSchemas.size() == 0 && (schema == null || schema.isEmpty())) { // test
-                                                                                    // whether
-                                                                                    // schema
-                                                                                    // is
-                                                                                    // empty,
-                                                                                    // because
-                                                                                    // in
-                                                                                    // ArcToolbox
-                                                                                    // process
-                                                                                    // descriptions,
-                                                                                    // there
-                                                                                    // is
-                                                                                    // empty
-                                                                                    // elements
-                                                                                    // for
-                                                                                    // schemas
+        if (supportedSchemas.size() == 0 && (schema == null || schema.isEmpty())) {
             return true;
         }
         for (String supportedSchema : supportedSchemas) {
@@ -131,7 +116,6 @@ public abstract class AbstractIOHandler implements IOHandler {
     public String[] getSupportedEncodings() {
         String[] resultArray = supportedEncodings.toArray(new String[supportedEncodings.size()]);
         return resultArray;
-        // return IOHandler.SUPPORTED_ENCODINGS;
     }
 
     public List<FormatEntry> getSupportedFullFormats() {

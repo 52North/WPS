@@ -59,7 +59,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
- * 
+ *
  * @author schaeffer
  *
  */

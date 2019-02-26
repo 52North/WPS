@@ -146,7 +146,7 @@ public class InputHandler {
     /**
      * Initializes a parser that handles each (line of) input based on the type
      * of input.
-     * 
+     *
      * @see #handleComplexData(IOValueType)
      * @see #handleComplexValueReference(IOValueType)
      * @see #handleLiteralData(IOValueType)
@@ -344,7 +344,7 @@ public class InputHandler {
     /**
      * Handles the complexValue, which in this case should always include XML
      * which can be parsed into a FeatureCollection.
-     * 
+     *
      * @param input
      *            The client input
      * @param inputId
@@ -473,7 +473,7 @@ public class InputHandler {
                          * if(defaultSchema != null &&
                          * defaultSchema.equalsIgnoreCase(data.getSchema())){
                          * ... }
-                         * 
+                         *
                          */
                         if (!StringUtils.isBlank(defaultSchema) && defaultSchema.equalsIgnoreCase(data.getSchema())) {
                             foundSchema = inputReferenceDesc.getComplexData().getDefault().getFormat().getSchema();
@@ -493,7 +493,7 @@ public class InputHandler {
                                  * data.getSchema())){ foundSchema =
                                  * tempFormat.getSchema(); schemaFormat
                                  * =tempFormat; found = found +1; }
-                                 * 
+                                 *
                                  */
                                 if (tempFormat.isSetSchema()
                                         && tempFormat.getSchema().equalsIgnoreCase(data.getSchema())) {
@@ -1554,7 +1554,7 @@ public class InputHandler {
 
     /**
      * Handles the literalData
-     * 
+     *
      * @param input
      *            The client's input
      * @throws ExceptionReport
@@ -1645,7 +1645,7 @@ public class InputHandler {
 
     /**
      * Handles the literalData
-     * 
+     *
      * @param input
      *            The client's input
      * @throws ExceptionReport
@@ -1872,7 +1872,7 @@ public class InputHandler {
 
     /**
      * Handles the ComplexValueReference
-     * 
+     *
      * @param input
      *            The client input
      * @throws ExceptionReport
@@ -2348,7 +2348,7 @@ public class InputHandler {
 
     /**
      * Handles BBoxValue
-     * 
+     *
      * @param input
      *            The client input
      */
@@ -2404,7 +2404,7 @@ public class InputHandler {
 
     /**
      * Handles BBoxValue
-     * 
+     *
      * @param input
      *            The client input
      */
@@ -2492,7 +2492,7 @@ public class InputHandler {
 
     /**
      * Gets the resulting InputLayers from the parser
-     * 
+     *
      * @return A map with the parsed input
      */
     public Map<String, List<IData>> getParsedInputData() {

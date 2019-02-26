@@ -34,7 +34,7 @@ import org.n52.wps.io.data.IBBOXData;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann
  */
 public class BoundingBoxData implements IBBOXData {

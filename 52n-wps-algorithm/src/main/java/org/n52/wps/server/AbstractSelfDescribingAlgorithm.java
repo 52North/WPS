@@ -239,7 +239,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
     /**
      * Override this class for BBOX input data to set supported mime types. The
      * first one in the resulting array will be the default one.
-     * 
+     *
      * @param identifier
      *            ID of the input BBOXType
      * @return an array containing Strings representing the supported CRSs for
@@ -252,7 +252,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
     /**
      * Override this class for BBOX output data to set supported mime types. The
      * first one in the resulting array will be the default one.
-     * 
+     *
      * @param identifier
      *            ID of the input BBOXType
      * @return an array containing Strings representing the supported CRSs for

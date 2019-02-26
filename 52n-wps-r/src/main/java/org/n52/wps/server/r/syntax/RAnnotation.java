@@ -199,7 +199,7 @@ public class RAnnotation {
 
     /**
      * Checks if the type - argument of an annotation refers to complex data
-     * 
+     *
      * @param rClass
      *            the R type to check
      * @return it given R type is complex

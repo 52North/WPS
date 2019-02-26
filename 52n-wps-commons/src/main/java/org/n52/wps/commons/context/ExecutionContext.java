@@ -16,11 +16,7 @@
  */
 package org.n52.wps.commons.context;
 
-import java.io.File;
-
 public class ExecutionContext {
-
-    private String tempFolderName;
 
     private OutputTypeWrapper outputDefinitionTypes;
 
@@ -30,11 +26,6 @@ public class ExecutionContext {
 
     public ExecutionContext(OutputTypeWrapper output) {
         outputDefinitionTypes = output == null ? new OutputTypeWrapper() : output;
-    }
-
-    public String getTempDirectoryPath() {
-
-        return System.getProperty("java.io.tmpdir") + File.separatorChar + this.tempFolderName;
     }
 
     public OutputTypeWrapper getOutputs() {

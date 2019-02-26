@@ -54,6 +54,7 @@ public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
         try {
             uri = new URI((String) oos.readObject());
         } catch (URISyntaxException ex) {
+            // do nothing
         }
     }
 

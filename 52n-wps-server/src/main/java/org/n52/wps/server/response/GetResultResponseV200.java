@@ -42,7 +42,7 @@ public class GetResultResponseV200 extends Response {
 
     /**
      * Serves the Request with a Response
-     * 
+     *
      * @param request
      *            The GetCapabilities request
      */
@@ -52,7 +52,7 @@ public class GetResultResponseV200 extends Response {
 
     /**
      * Save this Response to an InputStream
-     * 
+     *
      * @throws ExceptionReport
      *             if an exception occurred while creating the response
      *             <code>InputStream</code>

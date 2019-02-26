@@ -555,7 +555,7 @@ public class CapabilitiesConfigurationV200 {
             XmlCursor c = instance.newCursor();
             c.toFirstChild();
             c.toLastAttribute();
-            c.setAttributeText(new QName(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"),
+            c.setAttributeText(new QName(XMLBeansHelper.NS_XSI, "schemaLocation"),
                     "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 
             wpsCapabilities.addNewService().setStringValue("WPS");// Fixed to

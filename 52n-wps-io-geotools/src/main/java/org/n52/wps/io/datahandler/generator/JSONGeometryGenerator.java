@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  * This generator generates JSON Geometries (points, polylines, polygons, see
  * this website:
  * http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm)
- * 
+ *
  * @author Merret Buurman, 52 North / ifgi June 2012
  *
  *         So far, only one Geometry can be handled at a time (no collections).
@@ -181,7 +181,7 @@ public class JSONGeometryGenerator extends AbstractGenerator {
 
     /**
      * Get and return a feature's geometry.
-     * 
+     *
      * @param SimpleFeature
      * @return Geometry
      * @throws IOException
@@ -519,7 +519,7 @@ public class JSONGeometryGenerator extends AbstractGenerator {
          * Lines are like this: {"paths":[[[-122.68,45.53],
          * [-122.58,45.55],[-122.57,45.58],[-122.53,45.6]]],
          * "spatialReference":{"wkid":4326}}
-         * 
+         *
          * We will assemble it in several parts: (a) {"paths":[ (b) either a
          * path or several paths (comma separated) (c) ], (d)
          * "spatialReference":{"wkid":4326} (e) }

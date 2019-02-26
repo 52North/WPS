@@ -48,6 +48,10 @@ public final class SpringIntegrationHelper {
 
     public void init() {
         LOGGER.info("Init {} with {}", getClass().toString(), beanFactory);
+        setFactory(beanFactory);
+    }
+
+    public static synchronized void setFactory(AutowireCapableBeanFactory beanFactory) {
         factory = beanFactory;
     }
 

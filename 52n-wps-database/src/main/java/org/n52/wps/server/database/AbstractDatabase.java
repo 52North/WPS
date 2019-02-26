@@ -172,7 +172,7 @@ public abstract class AbstractDatabase implements IDatabase {
 
     /**
      * Inserts any result, which has to be stored in the DB.
-     * 
+     *
      * @param stream
      *            <code>InputStream</code> containing the data
      * @param id
@@ -319,7 +319,7 @@ public abstract class AbstractDatabase implements IDatabase {
      * ProcessStartedType interim results. When the process has succeeded, the
      * ExecuteResponse found at this URL shall contain the output values or
      * references to them.
-     * 
+     *
      * @return
      */
     @Override

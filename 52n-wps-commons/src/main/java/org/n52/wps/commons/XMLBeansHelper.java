@@ -41,7 +41,47 @@ import net.opengis.wps.x20.ProcessDescriptionType;
  */
 public class XMLBeansHelper {
 
-    public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI = "http://www.w3.org/2001/XMLSchema-instance";
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_WPS_1_0_0 = "http://www.opengis.net/wps/1.0.0";
+
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_WPS_2_0 = "http://www.opengis.net/wps/2.0";
+
+    /**
+     * The prefix for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_WPS_PREFIX = "wps";
+
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_OWS_1_1 = "http://www.opengis.net/ows/1.1";
+
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_OWS_2_0 = "http://www.opengis.net/ows/2.0";
+
+    /**
+     * The prefix for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_OWS_PREFIX = "ows";
+
+    /**
+     * The namespace for XSI: {@value}.
+     */
+    public static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+
+    /**
+     * The prefix for XSI: {@value}.
+     */
+    public static final String NS_XSI_PREFIX = "xsi";
+
+    private static final ConcurrentMap<String, String> PREFIXES;
 
     public static OutputDescriptionType findOutputByID(String outputID,
             OutputDescriptionType[] outputDescs) {
@@ -53,9 +93,9 @@ public class XMLBeansHelper {
         return null;
     }
 
-    public static InputDescriptionType findInputByID(String outputID,
-            DataInputs inputs) {
-        for (InputDescriptionType desc : inputs.getInputArray()) {
+    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID,
+            net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
+        for (net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
             if (desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
@@ -63,9 +103,9 @@ public class XMLBeansHelper {
         return null;
     }
 
-    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID,
-            net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
-        for (net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
+    public static InputDescriptionType findInputByID(String outputID,
+            DataInputs inputs) {
+        for (InputDescriptionType desc : inputs.getInputArray()) {
             if (desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
@@ -119,51 +159,9 @@ public class XMLBeansHelper {
         XmlCursor c = object.newCursor();
         c.toFirstChild();
         c.toLastAttribute();
-        c.setAttributeText(new QName(W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+        c.setAttributeText(new QName(NS_XSI, "schemaLocation"), schemaLocation);
 
     }
-
-    /**
-     * The namespace for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_WPS_1_0_0 = "http://www.opengis.net/wps/1.0.0";
-
-    /**
-     * The namespace for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_WPS_2_0 = "http://www.opengis.net/wps/2.0";
-
-    /**
-     * The prefix for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_WPS_PREFIX = "wps";
-
-    /**
-     * The namespace for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_OWS_1_1 = "http://www.opengis.net/ows/1.1";
-
-    /**
-     * The namespace for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_OWS_2_0 = "http://www.opengis.net/ows/2.0";
-
-    /**
-     * The prefix for WPS 1.0.0: {@value}.
-     */
-    public static final String NS_OWS_PREFIX = "ows";
-
-    /**
-     * The namespace for XSI: {@value}.
-     */
-    public static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-
-    /**
-     * The prefix for XSI: {@value}.
-     */
-    public static final String NS_XSI_PREFIX = "xsi";
-
-    private static final ConcurrentMap<String, String> PREFIXES;
 
     static {
         PREFIXES = Maps.newConcurrentMap();

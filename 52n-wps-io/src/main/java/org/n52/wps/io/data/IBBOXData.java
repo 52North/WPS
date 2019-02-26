@@ -17,11 +17,12 @@
 package org.n52.wps.io.data;
 
 public interface IBBOXData extends IData {
-    public String getCRS();
 
-    public int getDimension();
+    String getCRS();
 
-    public double[] getLowerCorner();
+    int getDimension();
 
-    public double[] getUpperCorner();
+    double[] getLowerCorner();
+
+    double[] getUpperCorner();
 }

@@ -40,7 +40,7 @@ import org.locationtech.jts.io.WKTWriter;
 
 /**
  * This class generates a String representation out of a JTS Geometry.
- * 
+ *
  * @author Benjamin Pross
  *
  */

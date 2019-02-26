@@ -31,15 +31,11 @@ import net.opengis.ows.x11.ExceptionType;
 /**
  * encapsulates a exception, which occured by service execution and which has to
  * lead to a service Exception as specified in the spec.
- * 
+ *
  * @author foerster
  *
  */
 public class ExceptionReport extends Exception {
-    // Universal version identifier for a Serializable class.
-    // Should be used here, because HttpServlet implements the
-    // java.io.Serializable
-    private static final long serialVersionUID = 5784360334341938021L;
 
     /*
      * Error Codes specified by the OGC Common Document.
@@ -85,6 +81,15 @@ public class ExceptionReport extends Exception {
      * JobID doesn't exist at all.
      */
     public static final String NO_SUCH_JOB = "NoSuchJob";
+
+    // Universal version identifier for a Serializable class.
+    // Should be used here, because HttpServlet implements the
+    // java.io.Serializable
+    private static final long serialVersionUID = 5784360334341938021L;
+
+    private static final String EXCEPTION_CODE_JAVA_STACKTRACE = "JAVA_StackTrace";
+
+    private static final String EXCEPTION_CODE_JAVA_ROOTCAUSE = "JAVA_RootCause";
 
     protected String errorKey;
 
@@ -150,14 +155,14 @@ public class ExceptionReport extends Exception {
         // Adding additional Java exception
         net.opengis.ows.x20.ExceptionType stackTraceV200 = exceptionReportV200.addNewException();
         stackTraceV200.addExceptionText(encodeStackTrace(this));
-        stackTraceV200.setExceptionCode("JAVA_StackTrace");
+        stackTraceV200.setExceptionCode(EXCEPTION_CODE_JAVA_STACKTRACE);
         // adding Rootcause
         net.opengis.ows.x20.ExceptionType stackTraceRootExceptionV200 = exceptionReportV200.addNewException();
         if (getCause() != null) {
             stackTraceRootExceptionV200.addExceptionText(getCause().getMessage());
             stackTraceRootExceptionV200.addExceptionText(encodeStackTrace(getCause()));
         }
-        stackTraceRootExceptionV200.setExceptionCode("JAVA_RootCause");
+        stackTraceRootExceptionV200.setExceptionCode(EXCEPTION_CODE_JAVA_ROOTCAUSE);
         if (locator != null) {
             exV200.setLocator(locator);
         }
@@ -178,14 +183,14 @@ public class ExceptionReport extends Exception {
         // Adding additional Java exception
         ExceptionType stackTrace = exceptionReport.addNewException();
         stackTrace.addExceptionText(encodeStackTrace(this));
-        stackTrace.setExceptionCode("JAVA_StackTrace");
+        stackTrace.setExceptionCode(EXCEPTION_CODE_JAVA_STACKTRACE);
         // adding Rootcause
         ExceptionType stackTraceRootException = exceptionReport.addNewException();
         if (getCause() != null) {
             stackTraceRootException.addExceptionText(getCause().getMessage());
             stackTraceRootException.addExceptionText(encodeStackTrace(getCause()));
         }
-        stackTraceRootException.setExceptionCode("JAVA_RootCause");
+        stackTraceRootException.setExceptionCode(EXCEPTION_CODE_JAVA_ROOTCAUSE);
         if (locator != null) {
             ex.setLocator(locator);
         }

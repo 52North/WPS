@@ -40,7 +40,7 @@ import org.locationtech.jts.geom.Geometry;
 /**
  * This algorithm creates a convex hull of a JTS geometry using build the in
  * method.
- * 
+ *
  * @author BenjaminPross
  *
  */

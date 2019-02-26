@@ -37,7 +37,7 @@ import org.n52.wps.server.ExceptionReport;
  * An interface-layer to the databases.
  *
  * <b>Note:</b> All implementing classes have to be singletons!
- * 
+ *
  * @author Janne Kovanen
  *
  */

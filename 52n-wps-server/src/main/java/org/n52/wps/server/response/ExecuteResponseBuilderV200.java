@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * special case, the normal ExecuteResponse shall be sent, with the error
  * condition indicated. This option is provided to simplify the programming
  * required for simple clients and for service chaining.
- * 
+ *
  * @author Timon ter Braak, Benjamin Pross
  *
  */

@@ -18,6 +18,7 @@ package org.n52.wps.io;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -40,9 +41,7 @@ import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
-public class BasicXMLTypeFactory {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(BasicXMLTypeFactory.class);
+public final class BasicXMLTypeFactory {
 
     // List of supported basic XML datatypes.
     public static final String DOUBLE_URI = "xs:double";
@@ -71,7 +70,9 @@ public class BasicXMLTypeFactory {
 
     public static final String ANYURI_URI = "xs:anyURI";
 
-    private final static DatatypeFactory DATATYPE_FACTORY;
+    private static final DatatypeFactory DATATYPE_FACTORY;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicXMLTypeFactory.class);
 
     static {
         DatatypeFactory datatypeFactory = null;
@@ -93,7 +94,7 @@ public class BasicXMLTypeFactory {
      * This is a helper method to create always the correct Java Type out of a
      * string. It is based on the basic schema datatypes. If xmlDataTypeURI is
      * null, string dataType will be assumed.
-     * 
+     *
      * @param xmlDataTypeURI
      *            the expected XML basicDataType
      * @param obj
@@ -102,38 +103,38 @@ public class BasicXMLTypeFactory {
      */
     public static IData getBasicJavaObject(String xmlDataTypeURI,
             String obj) {
-        obj = obj.replace('\n', ' ').replace('\t', ' ').trim();
+        String obj2 = obj.replace('\n', ' ').replace('\t', ' ').trim();
         if (xmlDataTypeURI == null) {
-            return new LiteralStringBinding(obj);
+            return new LiteralStringBinding(obj2);
         } else if (xmlDataTypeURI.equalsIgnoreCase(FLOAT_URI)) {
-            return new LiteralFloatBinding(Float.parseFloat(obj));
+            return new LiteralFloatBinding(Float.parseFloat(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(DOUBLE_URI)) {
-            return new LiteralDoubleBinding(Double.parseDouble(obj));
+            return new LiteralDoubleBinding(Double.parseDouble(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(LONG_URI)) {
-            return new LiteralLongBinding(Long.parseLong(obj));
+            return new LiteralLongBinding(Long.parseLong(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(INT_URI) || xmlDataTypeURI.equalsIgnoreCase(INTEGER_URI)) {
-            return new LiteralIntBinding(Integer.parseInt(obj));
+            return new LiteralIntBinding(Integer.parseInt(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(SHORT_URI)) {
-            return new LiteralShortBinding(Short.parseShort(obj));
+            return new LiteralShortBinding(Short.parseShort(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(BYTE_URI)) {
-            return new LiteralByteBinding(Byte.parseByte(obj));
+            return new LiteralByteBinding(Byte.parseByte(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(BOOLEAN_URI)) {
-            return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
+            return new LiteralBooleanBinding(Boolean.parseBoolean(obj2));
         } else if (xmlDataTypeURI.equalsIgnoreCase(STRING_URI)) {
-            return new LiteralStringBinding(obj);
+            return new LiteralStringBinding(obj2);
         } else if (xmlDataTypeURI.equalsIgnoreCase(DATETIME_URI) || xmlDataTypeURI.equalsIgnoreCase(DATE_URI)) {
             try {
                 return new LiteralDateTimeBinding(
-                        DATATYPE_FACTORY.newXMLGregorianCalendar(obj).toGregorianCalendar().getTime());
+                        DATATYPE_FACTORY.newXMLGregorianCalendar(obj2).toGregorianCalendar().getTime());
             } catch (Exception e) {
                 LOGGER.error("Could not parse xs:dateTime or xs:date data", e);
                 return null;
             }
         } else if (xmlDataTypeURI.equalsIgnoreCase(BASE64BINARY_URI)) {
-            return new LiteralBase64BinaryBinding(Base64.decode(obj.getBytes()));
+            return new LiteralBase64BinaryBinding(Base64.decode(obj2.getBytes(StandardCharsets.UTF_8)));
         } else if (xmlDataTypeURI.equalsIgnoreCase(ANYURI_URI)) {
             try {
-                return new LiteralAnyURIBinding(new URI(obj));
+                return new LiteralAnyURIBinding(new URI(obj2));
             } catch (URISyntaxException e) {
                 LOGGER.error("Could not parse anyURI data", e);
                 return null;

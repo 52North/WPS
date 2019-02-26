@@ -172,7 +172,7 @@ public class DerbyDatabase extends AbstractDatabase {
      * Shutdown the database in a clean, safe way.
      */
     /*
-     * 
+     *
      * public void shutdown() { boolean gotSQLExc = false; try {
      * HSQLDatabase.conn.close();
      * DriverManager.getConnection(HSQLDatabase.connectionURL); HSQLDatabase.db

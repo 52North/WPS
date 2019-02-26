@@ -49,7 +49,7 @@ public class RetrieveResultRequest extends Request {
 
     /**
      * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
-     * 
+     *
      * @param ciMap
      *            The Map which holds the client input.
      * @throws ExceptionReport
@@ -61,7 +61,7 @@ public class RetrieveResultRequest extends Request {
 
     /**
      * Actually serves the Request.
-     * 
+     *
      * @throws ExceptionReport
      *             if an exception occurred during construction
      */
@@ -74,7 +74,7 @@ public class RetrieveResultRequest extends Request {
 
     /**
      * Validates the client input
-     * 
+     *
      * @return True if the input is valid, False otherwise
      * @throws ExceptionReport
      *             if an exception occurred during validation

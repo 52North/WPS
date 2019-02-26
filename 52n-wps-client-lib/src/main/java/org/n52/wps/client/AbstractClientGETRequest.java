@@ -58,7 +58,7 @@ public abstract class AbstractClientGETRequest {
     /**
      * adds to the url the designated parameter names and values, as configured
      * before.
-     * 
+     *
      * @param url
      *            enriches the given URL with additional parameters
      * @return the URL enriched with additional parameters

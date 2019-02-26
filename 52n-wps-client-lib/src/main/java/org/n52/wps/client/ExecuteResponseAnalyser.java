@@ -81,7 +81,7 @@ public class ExecuteResponseAnalyser {
 
     /**
      * delivers the parsed ComplexData by name
-     * 
+     *
      * @param outputID
      *            id of the output element
      * @param binding
@@ -99,7 +99,7 @@ public class ExecuteResponseAnalyser {
 
     /**
      * delivers the parsed ComplexData by index
-     * 
+     *
      * @param index
      *            index of the output element starting with 0
      * @param binding
@@ -133,7 +133,7 @@ public class ExecuteResponseAnalyser {
 
     /**
      * delivers just the URL of a referenced output identified by index
-     * 
+     *
      * @param index
      *            index of the output
      * @return URL of the stored output

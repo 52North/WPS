@@ -141,7 +141,7 @@ public class OutputDataItemTest extends AbstractITClass{
         c.toFirstChild();
         c.toLastAttribute();
         c.setAttributeText(
-                new QName(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                new QName(XMLBeansHelper.NS_XSI,
                         "schemaLocation"),
                 "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
         responseElem.setServiceInstance(WPSConfig.getInstance().getServiceEndpoint()

@@ -34,7 +34,7 @@ import org.locationtech.jts.geom.Geometry;
 
 /**
  * This class wraps a JTS Geometry.
- * 
+ *
  * @author Benjamin Pross
  *
  */

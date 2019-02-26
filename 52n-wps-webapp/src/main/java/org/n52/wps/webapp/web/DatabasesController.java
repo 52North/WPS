@@ -46,7 +46,7 @@ public class DatabasesController extends BaseConfigurationsController {
 
     /**
      * Display databases configuration modules
-     * 
+     *
      * @param model
      *            the model
      * @return The databases view

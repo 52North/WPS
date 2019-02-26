@@ -51,7 +51,7 @@ import org.n52.wps.server.ExceptionReport;
  * special case, the normal ExecuteResponse shall be sent, with the error
  * condition indicated. This option is provided to simplify the programming
  * required for simple clients and for service chaining.
- * 
+ *
  * @author Timon ter Braak
  *
  */

@@ -48,7 +48,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 /**
  * Handles a DescribeProcessRequest
- * 
+ *
  * @see Request
  */
 public class DescribeProcessRequest extends Request {
@@ -57,7 +57,7 @@ public class DescribeProcessRequest extends Request {
 
     /**
      * Creates a DescribeProcessRequest based on a Map (HTTP_GET)
-     * 
+     *
      * @param ciMap
      *            The client input
      * @throws ExceptionReport
@@ -69,7 +69,7 @@ public class DescribeProcessRequest extends Request {
 
     /**
      * Creates a DescribeProcessRequest based on a Document (SOAP?)
-     * 
+     *
      * @param doc
      *            The client input
      * @throws ExceptionReport
@@ -116,7 +116,7 @@ public class DescribeProcessRequest extends Request {
 
     /**
      * Validates the client input
-     * 
+     *
      * @throws ExceptionReport
      *             if an exception occurred during validation
      * @return True if the input is valid, False otherwise
@@ -133,7 +133,7 @@ public class DescribeProcessRequest extends Request {
 
     /**
      * Actually serves the Request.
-     * 
+     *
      * @throws ExceptionReport
      *             if an exception occurred while handling the request
      * @return Response The result of the computation

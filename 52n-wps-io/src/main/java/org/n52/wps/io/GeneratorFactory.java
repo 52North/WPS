@@ -29,9 +29,7 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GeneratorFactory {
-
-    public static String PROPERTY_NAME_REGISTERED_GENERATORS = "registeredGenerators";
+public final class GeneratorFactory {
 
     private static GeneratorFactory factory;
 
@@ -39,20 +37,6 @@ public class GeneratorFactory {
 
     private List<IGenerator> registeredGenerators;
 
-    /**
-     * This factory provides all available Generator
-     * {@link ConfigurationModule}s to WPS.
-     * 
-     * @param generatorMap
-     *            a map of class names and generator configuration modules
-     */
-    public static void initialize(Map<String, ConfigurationModule> generatorMap) {
-        if (factory == null) {
-            factory = new GeneratorFactory(generatorMap);
-        } else {
-            LOGGER.warn("Factory already initialized");
-        }
-    }
 
     private GeneratorFactory(Map<String, ConfigurationModule> generatorMap) {
         loadAllGenerators(generatorMap);
@@ -70,21 +54,24 @@ public class GeneratorFactory {
                 });
     }
 
+    /**
+     * This factory provides all available Generator
+     * {@link ConfigurationModule}s to WPS.
+     *
+     * @param generatorMap
+     *            a map of class names and generator configuration modules
+     */
+    public static void initialize(Map<String, ConfigurationModule> generatorMap) {
+        if (factory == null) {
+            factory = new GeneratorFactory(generatorMap);
+        } else {
+            LOGGER.warn("Factory already initialized");
+        }
+    }
+
     private void loadAllGenerators(Map<String, ConfigurationModule> generatorMap) {
         registeredGenerators = new ArrayList<IGenerator>();
-        for (String currentGeneratorName : generatorMap.keySet()) {
-
-            // // remove inactive properties
-            // Property[] activeProperties = {};
-            // ArrayList<Property> activeProps = new ArrayList<Property>();
-            // for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
-            // if(currentGenerator.getPropertyArray()[i].getActive()){
-            // activeProps.add(currentGenerator.getPropertyArray()[i]);
-            // }
-            // }
-            // currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
-
-            ConfigurationModule currentGenerator = generatorMap.get(currentGeneratorName);
+        for (ConfigurationModule currentGenerator : generatorMap.values()) {
 
             String generatorClass = "";
 
@@ -95,11 +82,7 @@ public class GeneratorFactory {
             IGenerator generator = null;
             try {
                 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
-            } catch (ClassNotFoundException e) {
-                LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
-            } catch (IllegalAccessException e) {
-                LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
-            } catch (InstantiationException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
             }
             if (generator != null) {
@@ -124,16 +107,17 @@ public class GeneratorFactory {
             String encoding,
             Class<?> outputInternalClass) {
 
+        String newEncoding = encoding;
         // dealing with NULL encoding
-        if (encoding == null || encoding.isEmpty()) {
-            encoding = IOHandler.DEFAULT_ENCODING;
+        if (newEncoding == null || newEncoding.isEmpty()) {
+            newEncoding = IOHandler.DEFAULT_ENCODING;
         }
 
         for (IGenerator generator : registeredGenerators) {
             Class<?>[] supportedBindings = generator.getSupportedDataBindings();
             for (Class<?> clazz : supportedBindings) {
                 if (clazz.equals(outputInternalClass)) {
-                    if (generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding)
+                    if (generator.isSupportedSchema(schema) && generator.isSupportedEncoding(newEncoding)
                             && generator.isSupportedFormat(format)) {
                         return generator;
                     }

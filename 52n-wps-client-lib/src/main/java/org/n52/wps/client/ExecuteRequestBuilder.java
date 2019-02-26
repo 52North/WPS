@@ -280,7 +280,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * Add literal data to the request
-     * 
+     *
      * @param parameterID
      *            the ID of the input paramter according to the describe process
      * @param value
@@ -352,7 +352,7 @@ public class ExecuteRequestBuilder {
     /**
      * checks, if the execute, which has been build is valid according to the
      * process description.
-     * 
+     *
      * @return always true
      */
     public boolean isExecuteValid() {
@@ -362,7 +362,7 @@ public class ExecuteRequestBuilder {
     /**
      * this sets the storeExecuteResponse attribute for the specific output.
      * TODO false name of method, should be setStoreExecuteResponse
-     * 
+     *
      * @param outputName
      *            the name of the output
      * @param storeSupport
@@ -404,7 +404,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * this sets the asReference attribute for the specific output.
-     * 
+     *
      * @param outputName
      *            the name of the output
      * @param asReference
@@ -440,7 +440,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * this sets the status attribute for the specific output.
-     * 
+     *
      * @param outputName
      *            the name of the output
      * @param status
@@ -469,7 +469,7 @@ public class ExecuteRequestBuilder {
     /**
      * Set this if you want the data to a schema offered in the process
      * description
-     * 
+     *
      * @param schema
      *            the desired schema
      * @param outputName
@@ -511,7 +511,7 @@ public class ExecuteRequestBuilder {
     /**
      * sets the desired mimetype of the output. if not set, the default mimetype
      * will be used as stated in the process description
-     * 
+     *
      * @param mimeType
      *            the name of the mimetype as announced in the
      *            processdescription
@@ -558,7 +558,7 @@ public class ExecuteRequestBuilder {
      * sets the encoding. necessary if data should not be retrieved in the
      * default encoding (i.e. binary data in XML responses not raw data
      * responses)
-     * 
+     *
      * @param encoding
      *            use base64
      * @param outputName
@@ -656,7 +656,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * Asks for data as raw data, i.e. without WPS XML wrapping
-     * 
+     *
      * @param outputIdentifier
      *            the id of the output
      * @param schema
@@ -690,7 +690,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * XML representation of the created request.
-     * 
+     *
      * @return the execute document created by this request builder
      */
     public ExecuteDocument getExecute() {
@@ -699,7 +699,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * return a KVP representation for the created execute document.
-     * 
+     *
      * @return KVP request string
      * @throws UnsupportedEncodingException
      *             if the URL encoding using UTF-8 fails

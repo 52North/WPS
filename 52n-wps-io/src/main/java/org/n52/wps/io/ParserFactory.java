@@ -31,35 +31,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  * XMLParserFactory. Will be initialized within each Framework.
- * 
+ *
  * @author foerster
  *
  */
 
-public class ParserFactory {
-
-    public static String PROPERTY_NAME_REGISTERED_PARSERS = "registeredParsers";
+public final class ParserFactory {
 
     private static ParserFactory factory;
 
     private static Logger LOGGER = LoggerFactory.getLogger(ParserFactory.class);
 
     private List<IParser> registeredParsers;
-
-    /**
-     * This factory provides all available {@link IParser} to WPS.
-     * 
-     * @param parserMap
-     *            a map containing parser class names and parser configuration
-     *            modules
-     */
-    public static void initialize(Map<String, ConfigurationModule> parserMap) {
-        if (factory == null) {
-            factory = new ParserFactory(parserMap);
-        } else {
-            LOGGER.warn("Factory already initialized");
-        }
-    }
 
     private ParserFactory(Map<String, ConfigurationModule> parserMap) {
         loadAllParsers(parserMap);
@@ -76,21 +59,24 @@ public class ParserFactory {
                 });
     }
 
+    /**
+     * This factory provides all available {@link IParser} to WPS.
+     *
+     * @param parserMap
+     *            a map containing parser class names and parser configuration
+     *            modules
+     */
+    public static void initialize(Map<String, ConfigurationModule> parserMap) {
+        if (factory == null) {
+            factory = new ParserFactory(parserMap);
+        } else {
+            LOGGER.warn("Factory already initialized");
+        }
+    }
+
     private void loadAllParsers(Map<String, ConfigurationModule> parserMap) {
         registeredParsers = new ArrayList<IParser>();
-        for (String currentParserName : parserMap.keySet()) {
-
-            ConfigurationModule currentParser = parserMap.get(currentParserName);
-
-            // // remove inactive parser
-            // Property[] activeProperties = {};
-            // ArrayList<Property> activePars = new ArrayList<Property>();
-            // for(int i=0; i<currentParser.getPropertyArray().length; i++){
-            // if(currentParser.getPropertyArray()[i].getActive()){
-            // activePars.add(currentParser.getPropertyArray()[i]);
-            // }
-            // }
-            // currentParser.setPropertyArray(activePars.toArray(activeProperties));
+        for (ConfigurationModule currentParser : parserMap.values()) {
 
             String parserClass = "";
 
@@ -102,11 +88,7 @@ public class ParserFactory {
             try {
                 parser = (IParser) this.getClass().getClassLoader().loadClass(parserClass).newInstance();
 
-            } catch (ClassNotFoundException e) {
-                LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
-            } catch (IllegalAccessException e) {
-                LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
-            } catch (InstantiationException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
             }
 
@@ -132,9 +114,11 @@ public class ParserFactory {
             String encoding,
             Class<?> requiredInputClass) {
 
+        String newEncoding = encoding;
+
         // dealing with NULL encoding
-        if (encoding == null || encoding.isEmpty()) {
-            encoding = IOHandler.DEFAULT_ENCODING;
+        if (newEncoding == null || newEncoding.isEmpty()) {
+            newEncoding = IOHandler.DEFAULT_ENCODING;
         }
 
         // first, look if we can find a direct way
@@ -142,7 +126,7 @@ public class ParserFactory {
             Class<?>[] supportedClasses = parser.getSupportedDataBindings();
             for (Class<?> clazz : supportedClasses) {
                 if (clazz.equals(requiredInputClass)) {
-                    if (parser.isSupportedSchema(schema) && parser.isSupportedEncoding(encoding)
+                    if (parser.isSupportedSchema(schema) && parser.isSupportedEncoding(newEncoding)
                             && parser.isSupportedFormat(format)) {
                         LOGGER.info("Matching parser found: " + parser);
                         return parser;

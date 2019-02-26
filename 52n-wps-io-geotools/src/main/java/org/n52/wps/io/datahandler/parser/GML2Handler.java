@@ -89,7 +89,7 @@ public class GML2Handler extends DefaultHandler {
         }
         rootVisited = true;
         String schemaLocationAttr =
-                attributes.getValue(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
+                attributes.getValue(XMLBeansHelper.NS_XSI, "schemaLocation");
         if (schemaLocationAttr == null) {
             LOGGER.debug("schemaLocation attribute is not set correctly with namespace");
             schemaLocationAttr = attributes.getValue("xsi:schemaLocation");

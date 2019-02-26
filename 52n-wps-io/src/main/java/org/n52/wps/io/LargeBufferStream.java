@@ -110,8 +110,10 @@ public class LargeBufferStream extends OutputStream {
     public void write(final byte[] b,
             int off,
             int len) throws IOException {
+        int newOff = off;
+        int newLen = len;
         if (blocks != null) {
-            while (len > 0) {
+            while (newLen > 0) {
                 Block s = last();
                 if (s.isFull()) {
                     if (reachedInCoreLimit()) {
@@ -122,16 +124,16 @@ public class LargeBufferStream extends OutputStream {
                     blocks.add(s);
                 }
 
-                final int n = Math.min(Block.SZ - s.count, len);
-                System.arraycopy(b, off, s.buffer, s.count, n);
+                final int n = Math.min(Block.SZ - s.count, newLen);
+                System.arraycopy(b, newOff, s.buffer, s.count, n);
                 s.count += n;
-                len -= n;
-                off += n;
+                newLen -= n;
+                newOff += n;
             }
         }
 
-        if (len > 0) {
-            diskOut.write(b, off, len);
+        if (newLen > 0) {
+            diskOut.write(b, newOff, newLen);
         }
     }
 
@@ -247,9 +249,9 @@ public class LargeBufferStream extends OutputStream {
     private static class Block {
         static final int SZ = 8 * 1024 * 1024;
 
-        final byte[] buffer = new byte[SZ];
+        private final byte[] buffer = new byte[SZ];
 
-        int count;
+        private int count;
 
         boolean isFull() {
             return count == SZ;

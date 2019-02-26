@@ -47,7 +47,7 @@ public class CapabilitiesResponse extends Response {
 
     /**
      * Serves the Request with a Response
-     * 
+     *
      * @param request
      *            The GetCapabilities request
      */
@@ -57,7 +57,7 @@ public class CapabilitiesResponse extends Response {
 
     /**
      * Save this Response to an InputStream
-     * 
+     *
      * @throws ExceptionReport
      *             if an exception occurred while creating the response
      *             <code>InputStream</code>

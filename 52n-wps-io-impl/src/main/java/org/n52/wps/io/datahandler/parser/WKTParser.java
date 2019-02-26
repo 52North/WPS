@@ -44,7 +44,7 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
 
 /**
  * This class parses String representations out of JTS Geometries.
- * 
+ *
  * @author Benjamin Pross
  *
  */

@@ -233,7 +233,7 @@ public class GenericFileDataWithGT {
 
                 /*
                  * seems like the geometries must always be the first property..
-                 * 
+                 *
                  * @see also ShapeFileDataStore.java getSchema() method
                  */
                 Property geomProperty = sf.getDefaultGeometryProperty();

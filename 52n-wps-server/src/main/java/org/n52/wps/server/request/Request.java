@@ -43,7 +43,7 @@ import org.w3c.dom.Document;
  * The client requests some operation from the server. The request generates a
  * unique reference based on the client, time and a count. Not secure! Upcoming
  * references are easily guessed or altered.
- * 
+ *
  * @see java.rmi.server.UID
  */
 abstract public class Request implements Callable<Response> {
@@ -60,7 +60,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
-     * 
+     *
      * @param map
      *            The Map which holds the client input.
      * @throws ExceptionReport
@@ -73,7 +73,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Create a Request based on a Document as input (HTTP POST)
-     * 
+     *
      * @param doc
      *            The Document which holds the client input.
      * @throws ExceptionReport
@@ -86,7 +86,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Returns the user input in Document form
-     * 
+     *
      * @return Document || null if Request(Map, outputstream) was used
      */
     public Document getDocument() {
@@ -95,7 +95,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Returns the user input in Map form
-     * 
+     *
      * @return Map || null if Request(Document, OutputStream) was used
      */
     public CaseInsensitiveMap getMap() {
@@ -104,7 +104,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve a value from an input-map with a lookup-key
-     * 
+     *
      * @param key
      *            The lookup-key
      * @param map
@@ -132,7 +132,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve a value from an input-map with a lookup-key
-     * 
+     *
      * @param key
      *            The lookup-key
      * @param map
@@ -172,7 +172,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve an array of values from an input-map with a lookup-key
-     * 
+     *
      * @param key
      *            The lookup-key
      * @param map
@@ -200,7 +200,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve a value from the client-input-map with a lookup-key
-     * 
+     *
      * @param key
      *            the lookup-key
      * @param required
@@ -216,7 +216,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve a value from the client-input-map with a lookup-key
-     * 
+     *
      * @param key
      *            the lookup-key
      * @param required
@@ -235,7 +235,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Retrieve an array of values from the client-input-map with a lookup-key
-     * 
+     *
      * @param key
      *            the lookup-key
      * @param required
@@ -251,7 +251,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Returns the version that the client requested.
-     * 
+     *
      * @param mandatory
      *            If the version pair must be part of the request
      * @return An array of versions that are compatible with the client
@@ -265,7 +265,7 @@ abstract public class Request implements Callable<Response> {
     /**
      * The process (request) on the server could require a specific version on
      * the client
-     * 
+     *
      * @param supportedVersions
      *            a list of supported versions as Strings
      * @param mandatory
@@ -295,7 +295,7 @@ abstract public class Request implements Callable<Response> {
 
     /**
      * Accumulates the Strings in an array, separated by ", " (without quotes).
-     * 
+     *
      * @param strings
      *            The array to accumulate
      * @return The accumulated String
@@ -350,7 +350,7 @@ abstract public class Request implements Callable<Response> {
      * After creation a Request is handled. This is done by calling this method.
      * This handling could contain a lot of computations. These computations
      * should be called from within this method.
-     * 
+     *
      * @return A Response to the client Request
      * @see java.util.concurrent.Callable#call()
      */
@@ -359,7 +359,7 @@ abstract public class Request implements Callable<Response> {
     /**
      * There should be some validation required on the (input of the) clients
      * Request.
-     * 
+     *
      * @return True if the clients Request can be handled without problems,
      *         False otherwise
      * @throws ExceptionReport

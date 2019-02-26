@@ -85,7 +85,7 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
      * In detail it looks for a xml descfile, which is located in the same
      * directory as the implementing class and has the same name as the class,
      * but with the extension XML.
-     * 
+     *
      * @return the process description
      */
     protected ProcessDescription initializeDescription() {

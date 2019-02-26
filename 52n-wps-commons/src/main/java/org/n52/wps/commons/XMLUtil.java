@@ -58,36 +58,40 @@ public class XMLUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLUtil.class);
 
-    private final static XMLOutputFactory xmlOutputFactory;
+    private static final XMLOutputFactory XML_OUTPUT_FACTORY;
 
-    private final static XMLInputFactory xmlInputFactory;
+    private static final XMLInputFactory XML_INPUT_FACTORY;
+
+    private static final String ERROR_COPYING_XML = "Error copying XML";
+
+    private static final String UTF8 = "UTF-8";
 
     static {
-        xmlInputFactory = new WstxInputFactory();
-        xmlOutputFactory = new WstxOutputFactory();
+        XML_INPUT_FACTORY = new WstxInputFactory();
+        XML_OUTPUT_FACTORY = new WstxOutputFactory();
         // necessary for writing XML with no namespace prefix
-        ((WstxOutputFactory) xmlOutputFactory).getConfig().enableAutomaticNamespaces(true);
-        ((WstxOutputFactory) xmlOutputFactory).getConfig().setAutomaticNsPrefix("ns");
+        ((WstxOutputFactory) XML_OUTPUT_FACTORY).getConfig().enableAutomaticNamespaces(true);
+        ((WstxOutputFactory) XML_OUTPUT_FACTORY).getConfig().setAutomaticNsPrefix("ns");
     }
 
     public static XMLInputFactory getInputFactory() {
-        return xmlInputFactory;
+        return XML_INPUT_FACTORY;
     }
 
     public static XMLOutputFactory getOutputFactory() {
-        return xmlOutputFactory;
+        return XML_OUTPUT_FACTORY;
     }
 
     public static void copyXML(InputStream input,
             OutputStream output,
             boolean indent) throws XMLStreamException {
         try {
-            copyXML(xmlInputFactory.createXMLStreamReader(input, "UTF-8"),
-                    xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"), indent);
+            copyXML(XML_INPUT_FACTORY.createXMLStreamReader(input, UTF8),
+                    XML_OUTPUT_FACTORY.createXMLStreamWriter(output, UTF8), indent);
         } catch (XMLStreamException e) {
-            LOGGER.info("Error copying XML");
+            LOGGER.info(ERROR_COPYING_XML);
             LOGGER.trace(e.getMessage());
-            throw new XMLStreamException("Error copying XML", e);
+            throw new XMLStreamException(ERROR_COPYING_XML, e);
         }
     }
 
@@ -95,12 +99,12 @@ public class XMLUtil {
             OutputStream output,
             boolean indent) throws XMLStreamException {
         try {
-            copyXML(xmlInputFactory.createXMLStreamReader(input),
-                    xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"), indent);
+            copyXML(XML_INPUT_FACTORY.createXMLStreamReader(input),
+                    XML_OUTPUT_FACTORY.createXMLStreamWriter(output, UTF8), indent);
         } catch (XMLStreamException e) {
-            LOGGER.info("Error copying XML");
+            LOGGER.info(ERROR_COPYING_XML);
             LOGGER.trace(e.getMessage());
-            throw new XMLStreamException("Error copying XML", e);
+            throw new XMLStreamException(ERROR_COPYING_XML, e);
         }
 
     }
@@ -119,32 +123,17 @@ public class XMLUtil {
             if (xmlStreamReader != null) {
                 try {
                     xmlStreamReader.close();
-                } catch (XMLStreamException e) { /* ignore */
+                } catch (XMLStreamException e) {
+                    /* ignore */
                 }
             }
             if (xmlStreamWriter != null) {
                 try {
                     xmlStreamWriter.close();
-                } catch (XMLStreamException e) { /* ignore */
+                } catch (XMLStreamException e) {
+                    /* ignore */
                 }
             }
-        }
-    }
-
-    public static class WhiteSpaceRemovingDelegate extends StreamReaderDelegate {
-        WhiteSpaceRemovingDelegate(XMLStreamReader reader) {
-            super(reader);
-        }
-
-        @Override
-        public int next() throws XMLStreamException {
-            int eventType;
-            do {
-                eventType = super.next();
-            } while ((eventType == XMLStreamConstants.CHARACTERS && isWhiteSpace())
-                    || (eventType == XMLStreamConstants.CDATA && isWhiteSpace())
-                    || eventType == XMLStreamConstants.SPACE);
-            return eventType;
         }
     }
 
@@ -176,5 +165,22 @@ public class XMLUtil {
         cursor.dispose();
 
         return null;
+    }
+
+    public static class WhiteSpaceRemovingDelegate extends StreamReaderDelegate {
+        WhiteSpaceRemovingDelegate(XMLStreamReader reader) {
+            super(reader);
+        }
+
+        @Override
+        public int next() throws XMLStreamException {
+            int eventType;
+            do {
+                eventType = super.next();
+            } while ((eventType == XMLStreamConstants.CHARACTERS && isWhiteSpace())
+                    || (eventType == XMLStreamConstants.CDATA && isWhiteSpace())
+                    || eventType == XMLStreamConstants.SPACE);
+            return eventType;
+        }
     }
 }

@@ -404,6 +404,10 @@
             <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
             <artifactId>classloader-leak-prevention-servlet3</artifactId>
          </dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+         </dependency>
 	</dependencies>
 
 	<properties>
@@ -690,7 +694,7 @@
 								</goals>
 								<configuration>
 									<excludes>
-										<exclude>**/Wps4r*IT*</exclude>
+<!-- 										<exclude>**/Wps4r*IT*</exclude> -->
 										<exclude>**/GrassIT*</exclude>
 									</excludes>
 

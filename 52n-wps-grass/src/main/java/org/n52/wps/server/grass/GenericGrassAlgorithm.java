@@ -65,7 +65,7 @@ public abstract class GenericGrassAlgorithm extends AbstractAlgorithm {
      * In detail it looks for a xml descfile, which is located in the same
      * directory as the implementing class and has the same name as the class,
      * but with the extension XML.
-     * 
+     *
      * @return
      */
     protected ProcessDescription initializeDescription() {

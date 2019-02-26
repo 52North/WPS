@@ -89,7 +89,7 @@ import org.locationtech.jts.geom.Geometry;
 
 /**
  * This parser handles xml files compliant to gmlpacket.xsd
- * 
+ *
  * @author schaeffer
  *
  */

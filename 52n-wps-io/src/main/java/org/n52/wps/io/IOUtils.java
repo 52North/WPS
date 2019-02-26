@@ -16,20 +16,17 @@
  */
 package org.n52.wps.io;
 
-import static org.apache.commons.io.IOUtils.closeQuietly;
-import static org.apache.commons.io.IOUtils.copyLarge;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,21 +34,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.apache.xpath.XPathAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-public class IOUtils {
+import com.google.common.io.ByteStreams;
+
+public final class IOUtils {
 
     private static final int BUFFER_SIZE = 4096;
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
+    private static final String FILE = "file";
+    private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String DOT_ZIP = ".zip";
+
+    private IOUtils() {
+    }
 
     /**
      * Reads the given input stream as a string and decodes that base64 string
@@ -62,66 +60,46 @@ public class IOUtils {
      * @param extension
      *            the extension of the result file (without the '.' at the
      *            beginning)
+     *
      * @return the decoded base64 file written to disk
+     *
      * @throws IOException
      *             if an error occurs while writing the contents to disk
      */
-
-    private static Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
-
     public static File writeBase64ToFile(InputStream input,
             String extension) throws IOException {
-
-        File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension,
-                new File(System.getProperty("java.io.tmpdir")));
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
-            copyLarge(new Base64InputStream(input), outputStream);
-        } finally {
-            closeQuietly(outputStream);
-        }
-
-        return file;
+        return writeBase64(extension, input).toFile();
     }
 
     public static File writeStreamToFile(InputStream inputStream,
             String extension) throws IOException {
-        File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension);
+        File file = File.createTempFile(FILE + UUID.randomUUID(), "." + extension);
         return writeStreamToFile(inputStream, extension, file);
     }
 
+    /**
+     * Copies the input stream to the specified file.
+     *
+     * @param inputStream
+     *            the input stream
+     * @param extension
+     *            the file extension (ignored)
+     * @param file
+     *            the file
+     *
+     * @return the file
+     *
+     * @throws java.io.IOException
+     *             if an error occurs
+     * @deprecated use
+     *             {@link Files#copy(java.io.InputStream, java.nio.file.Path, java.nio.file.CopyOption...) }
+     */
+    @Deprecated
     public static File writeStreamToFile(InputStream inputStream,
             String extension,
             File file) throws IOException {
-        FileOutputStream output = new FileOutputStream(file);
-
-        byte buf[] = new byte[1024];
-        int len;
-        while ((len = inputStream.read(buf)) > 0) {
-            output.write(buf, 0, len);
-        }
-        output.close();
-        inputStream.close();
-
+        Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return file;
-    }
-
-    public static File writeBase64XMLToFile(InputStream stream,
-            String extension)
-            throws SAXException, IOException, ParserConfigurationException, DOMException, TransformerException {
-
-        // ToDo: look at StAX to stream XML parsing instead of in memory DOM
-        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
-        String binaryContent = XPathAPI.selectSingleNode(document.getFirstChild(), "text()").getTextContent();
-
-        InputStream byteStream = null;
-        try {
-            byteStream = new ByteArrayInputStream(binaryContent.getBytes());
-            return writeBase64ToFile(byteStream, extension);
-        } finally {
-            closeQuietly(byteStream);
-        }
     }
 
     /**
@@ -129,44 +107,36 @@ public class IOUtils {
      *
      * @param files
      *            files to zipped
+     *
      * @return the zipped file
+     *
      * @throws IOException
      *             if the zipping process fails.
      */
     public static File zip(File... files) throws IOException {
-        return zipIt(true, files);
-    }
+        File zip = File.createTempFile("zip" + UUID.randomUUID(), DOT_ZIP);
 
-    private static File zipIt(boolean deleteAfterwards,
-            File... files) throws IOException, FileNotFoundException {
-        File zip = File.createTempFile("zip" + UUID.randomUUID(), ".zip");
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
+            byte[] buffer = new byte[4096];
+            for (File file : files) {
+                if (!file.exists()) {
+                    LOGGER.debug("Could not zip " + file.getAbsolutePath());
+                    continue;
+                }
 
-        ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
+                out.putNextEntry(new ZipEntry(file.getName()));
+                try (FileInputStream in = new FileInputStream(file)) {
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
 
-        byte[] buffer = new byte[BUFFER_SIZE];
-        for (File file : files) {
-            if (!file.exists()) {
-                LOGGER.debug("Could not zip " + file.getAbsolutePath());
-                continue;
+                    out.closeEntry();
+                }
             }
 
-            out.putNextEntry(new ZipEntry(file.getName()));
-            FileInputStream in = new FileInputStream(file);
-
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
-
-            out.closeEntry();
-            in.close();
-        }
-
-        if (deleteAfterwards) {
             deleteResources(files);
         }
-
-        out.close();
 
         return zip;
     }
@@ -178,10 +148,10 @@ public class IOUtils {
     public static File zipDirectory(String targetFileName,
             File directory) throws IOException {
         String filename = targetFileName;
-        if (targetFileName.endsWith(".zip")) {
-            filename = targetFileName.replace(".zip", "");
+        if (targetFileName.endsWith(DOT_ZIP)) {
+            filename = targetFileName.replace(DOT_ZIP, "");
         }
-        File zip = File.createTempFile(filename, ".zip");
+        File zip = File.createTempFile(filename, DOT_ZIP);
 
         return zipDirectory(zip, directory);
     }
@@ -232,7 +202,9 @@ public class IOUtils {
      *            the file to unzip
      * @param extension
      *            the extension to search in the content files
+     *
      * @return the file with the specified extension
+     *
      * @throws IOException
      *             if the unzipping process fails
      */
@@ -244,70 +216,39 @@ public class IOUtils {
     public static List<File> unzip(File file,
             String extension,
             File directory) throws IOException {
-        int bufferLength = 2048;
-        byte buffer[] = new byte[bufferLength];
-        List<File> foundFiles = new ArrayList<File>();
-        ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
-        ZipEntry entry;
-        File tempDir = directory;
-        if (tempDir == null || !directory.isDirectory()) {
-            tempDir = File.createTempFile("unzipped" + UUID.randomUUID(), "",
-                    new File(System.getProperty("java.io.tmpdir")));
-            tempDir.delete();
-            tempDir.mkdir();
-        }
-        while ((entry = zipInputStream.getNextEntry()) != null) {
-            int count;
-            File entryFile = new File(tempDir, entry.getName());
-            entryFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(entryFile);
-            BufferedOutputStream dest = new BufferedOutputStream(fos, bufferLength);
-            while ((count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
-                dest.write(buffer, 0, count);
-            }
-            dest.flush();
-            dest.close();
-
-            if (entry.getName().endsWith("." + extension)) {
-                foundFiles.add(entryFile);
-
-            }
-        }
-
-        zipInputStream.close();
-
-        deleteResources(file);
-
-        return foundFiles;
+        return unzipAll(file).stream().filter(f -> f.getName().
+                endsWith("." + extension)).collect(java.util.stream.Collectors.toList());
     }
 
     public static List<File> unzipAll(File file) throws IOException {
-        int bufferLength = 2048;
-        byte buffer[] = new byte[bufferLength];
-        List<File> foundFiles = new ArrayList<File>();
-        ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));
+
+        byte[] buffer = new byte[2048];
+        List<File> foundFiles = new ArrayList<>();
+
+        File tempDir = Files.createTempDirectory("unzipped").toFile();
+
         ZipEntry entry;
-        File tempDir =
-                File.createTempFile("unzipped" + UUID.randomUUID(), "", new File(System.getProperty("java.io.tmpdir")));
-        tempDir.delete();
-        tempDir.mkdir();
-        while ((entry = zipInputStream.getNextEntry()) != null) {
-            int count;
-            File entryFile = new File(tempDir, entry.getName());
-            entryFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(entryFile);
-            BufferedOutputStream dest = new BufferedOutputStream(fos, bufferLength);
-            while ((count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
-                dest.write(buffer, 0, count);
+        int count;
+        File entryFile;
+
+        try (ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                entryFile = new File(tempDir, entry.getName());
+                boolean created = entryFile.createNewFile();
+                if (!created) {
+                    LOGGER.info("File already exists: " + entryFile.getAbsolutePath());
+                    continue;
+                }
+                try (BufferedOutputStream dest = new BufferedOutputStream(new FileOutputStream(entryFile),
+                        buffer.length)) {
+                    while ((count = zipInputStream.read(buffer)) != -1) {
+                        dest.write(buffer, 0, count);
+                    }
+                    dest.flush();
+                }
+                foundFiles.add(entryFile);
             }
-            dest.flush();
-            dest.close();
-
-            foundFiles.add(entryFile);
-
         }
-
-        zipInputStream.close();
 
         deleteResources(file);
 
@@ -325,10 +266,10 @@ public class IOUtils {
     public static void deleteResources(File... files) {
         for (File file : files) {
             if (file != null) {
-                if (file.getAbsolutePath().startsWith(System.getProperty("java.io.tmpdir"))) {
+                if (file.getAbsolutePath().startsWith(TMP_DIR)) {
                     delete(file);
                     File parent = file.getAbsoluteFile().getParentFile();
-                    if (parent != null && !(parent.getAbsolutePath().equals(System.getProperty("java.io.tmpdir")))) {
+                    if (parent != null && !(parent.getAbsolutePath().equals(TMP_DIR))) {
                         parent.deleteOnExit();
                     }
                 }
@@ -347,19 +288,26 @@ public class IOUtils {
     private static void delete(File... files) {
         for (File file : files) {
             if (file != null) {
-                final String baseName = file.getName().substring(0, file.getName().lastIndexOf("."));
-                File[] list = file.getAbsoluteFile().getParentFile().listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.getName().startsWith(baseName);
+                final String baseName = file.getName().substring(0, file.getName().lastIndexOf('.'));
+                File[] list = file.getAbsoluteFile().getParentFile().listFiles(pathname -> pathname.getName()
+                        .startsWith(baseName));
+                if (list != null) {
+                    for (File f : list) {
+                        f.deleteOnExit();
                     }
-                });
-                for (File f : list) {
-                    f.deleteOnExit();
                 }
-
                 file.deleteOnExit();
             }
         }
+    }
+
+    public static Path writeBase64(String extension,
+            InputStream input) throws IOException {
+        Path file = Files.createTempFile(FILE, ".".concat(extension));
+        try (InputStream in = new Base64InputStream(new BufferedInputStream(input), true);
+                OutputStream out = new BufferedOutputStream(Files.newOutputStream(file))) {
+            ByteStreams.copy(in, out);
+        }
+        return file;
     }
 }

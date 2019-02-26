@@ -55,7 +55,7 @@ public interface DataInputInterceptors {
 
         /**
          * applies the actual interception
-         * 
+         *
          * @param inputObject
          *            the input as provided in the Execute request
          *

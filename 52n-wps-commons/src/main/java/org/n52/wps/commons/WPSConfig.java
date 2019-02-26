@@ -48,12 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class WPSConfig implements Serializable {
 
-    private static final long serialVersionUID = 3198223084611936675L;
-
-    private static transient WPSConfig wpsConfig;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
-
     // constants for the Property change event names
     public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
 
@@ -62,13 +56,6 @@ public class WPSConfig implements Serializable {
     public static final String CONFIG_FILE_PROPERTY = "wps.config.file";
 
     public static final String CONFIG_FILE_NAME = "wps_config.xml";
-
-    private static final String CONFIG_FILE_DIR = "WEB-INF" + File.separator + "config";
-
-    private static final String URL_DECODE_ENCODING = "UTF-8";
-
-    // FvK: added Property Change support
-    protected final PropertyChangeSupport propertyChangeSupport = null;
 
     public static final String SERVLET_PATH = "WebProcessingService";
 
@@ -90,10 +77,24 @@ public class WPSConfig implements Serializable {
 
     public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
 
-    @Autowired // allow tests autowiring cm
-    private ConfigurationManager configurationManager;
+    private static final long serialVersionUID = 3198223084611936675L;
 
-    private Server serverConfigurationModule;
+    private static final Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
+
+    private static final String CONFIG_FILE_DIR = "WEB-INF" + File.separator + "config";
+
+    private static final String URL_DECODE_ENCODING = "UTF-8";
+
+    private static transient WPSConfig wpsConfig;
+
+    // FvK: added Property Change support
+    protected final PropertyChangeSupport propertyChangeSupport = null;
+
+    // allow tests autowiring cm
+    @Autowired
+    private transient ConfigurationManager configurationManager;
+
+    private transient Server serverConfigurationModule;
 
     public Server getServerConfigurationModule() {
 
@@ -223,9 +224,7 @@ public class WPSConfig implements Serializable {
 
         Map<String, ConfigurationModule> activeModules = getActiveConfigurationModules(moduleCategorie);
 
-        for (String moduleName : activeModules.keySet()) {
-
-            ConfigurationModule tmpModule = activeModules.get(moduleName);
+        for (ConfigurationModule tmpModule : activeModules.values()) {
 
             if (!(tmpModule instanceof ClassKnowingModule)) {
                 continue;
