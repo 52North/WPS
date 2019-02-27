@@ -2,12 +2,5 @@ sudo: false
 language: java
 script: "mvn clean install -Pintegration-test"
 jdk:
-  - oraclejdk8
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#52north"
-    on_success: always
-    on_failure: always
-    use_notice: true
-    skip_join: false
+  - openjdk8
+  - openjdk11
