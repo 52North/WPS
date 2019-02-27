@@ -3,4 +3,4 @@ language: java
 script: "mvn clean install -Pintegration-test"
 jdk:
   - openjdk8
-  - openjdk11
+  - openjdk10
