@@ -4,3 +4,4 @@ script: "mvn clean install -Pintegration-test"
 jdk:
   - openjdk8
   - openjdk10
+  - openjdk11
