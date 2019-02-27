@@ -85,7 +85,9 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
     protected void finalize() throws Throwable {
 
         for (File currentFile : finalizeFiles) {
-            currentFile.delete();
+            if (!currentFile.delete()) {
+                continue;
+            }
         }
 
         super.finalize();

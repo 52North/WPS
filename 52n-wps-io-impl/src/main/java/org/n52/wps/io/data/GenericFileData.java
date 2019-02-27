@@ -50,6 +50,12 @@ import org.slf4j.LoggerFactory;
  */
 public class GenericFileData {
 
+    private static final String ZIP = "zip";
+
+    private static final String COULD_NOT_CREATE_FILE = "Could not create file: ";
+
+    private static final String COULD_NOT_CREATE_DIRECTORY = "Could not create directory: ";
+
     private static Logger LOGGER = LoggerFactory.getLogger(GenericFileData.class);
 
     protected final InputStream dataStream;
@@ -89,7 +95,6 @@ public class GenericFileData {
             for (int i = 0; i < extensions.length; i++) {
                 allFiles[i] = new File(directory, baseFile + "." + extensions[i]);
             }
-
             allFiles[extensions.length] = primaryFile;
 
             // Handling the case if the files don't exist
@@ -99,8 +104,8 @@ public class GenericFileData {
             int numberOfMissing = 0;
             for (int i = 0; i < numberOfFiles; i++) {
                 if (!allFiles[i].exists()) {
-                    LOGGER.info(
-                            "File " + (i + 1) + " of " + numberOfFiles + " missing (" + allFiles[i].getName() + ").");
+                    LOGGER.info("File " + (i + 1) + " of " + numberOfFiles + " missing (" + allFiles[i].getName()
+                            + ").");
                     numberOfMissing++;
                 }
             }
@@ -108,7 +113,7 @@ public class GenericFileData {
                 String message = "There is no files to generate data from!";
                 LOGGER.error(message);
                 throw new FileNotFoundException(message);
-            } else if ((numberOfMissing > 0)) {
+            } else if (numberOfMissing > 0) {
                 LOGGER.info("Not all files are available, but the available ones are zipped.");
             }
 
@@ -161,9 +166,18 @@ public class GenericFileData {
             String fileName = baseFileName + "." + currentExtension;
             File currentFile = new File(writeDirectory, fileName);
             if (!writeDirectory.exists()) {
-                writeDirectory.mkdir();
+                if (!writeDirectory.mkdir()) {
+                    String message = COULD_NOT_CREATE_DIRECTORY + writeDirectory.getAbsolutePath();
+                    LOGGER.error(message);
+                    throw new RuntimeException(message);
+                }
             }
-            currentFile.createNewFile();
+
+            if (!currentFile.createNewFile()) {
+                String message = COULD_NOT_CREATE_FILE + currentFile.getAbsolutePath();
+                LOGGER.error(message);
+                throw new RuntimeException(message);
+            }
             FileOutputStream fos = new FileOutputStream(currentFile);
 
             IOUtils.copy(zipInputStream, fos);
@@ -188,9 +202,18 @@ public class GenericFileData {
         fileName = baseFileName + "." + extension;
         File currentFile = new File(writeDirectory, fileName);
         if (!writeDirectory.exists()) {
-            writeDirectory.mkdir();
+            if (!writeDirectory.mkdir()) {
+                String message = COULD_NOT_CREATE_DIRECTORY + writeDirectory.getAbsolutePath();
+                LOGGER.error(message);
+                throw new RuntimeException(message);
+            }
         }
-        currentFile.createNewFile();
+
+        if (!currentFile.createNewFile()) {
+            String message = COULD_NOT_CREATE_FILE + currentFile.getAbsolutePath();
+            LOGGER.error(message);
+            throw new RuntimeException(message);
+        }
 
         // alter FileName for return
         fileName = currentFile.getAbsolutePath();
@@ -201,7 +224,6 @@ public class GenericFileData {
 
         fos.close();
         is.close();
-        System.gc();
 
         return fileName;
     }
@@ -210,13 +232,12 @@ public class GenericFileData {
         String extension = fileExtension;
         if (primaryFile == null && dataStream != null) {
             try {
-
                 if (fileExtension.equals("shp")) {
-                    extension = "zip";
+                    extension = ZIP;
                 }
                 primaryFile = File.createTempFile(UUID.randomUUID().toString(), "." + extension);
                 OutputStream out = new FileOutputStream(primaryFile);
-                byte buf[] = new byte[1024];
+                byte[] buf = new byte[1024];
                 int len;
                 while ((len = dataStream.read(buf)) > 0) {
                     out.write(buf, 0, len);
@@ -228,11 +249,15 @@ public class GenericFileData {
             }
 
         }
-        if (unzipIfPossible && extension.contains("zip")) {
+        if (unzipIfPossible && extension.contains(ZIP)) {
             try {
                 File tempFile1 = File.createTempFile(UUID.randomUUID().toString(), "");
                 File dir = new File(tempFile1.getParentFile() + "/" + UUID.randomUUID().toString());
-                dir.mkdir();
+                if (!dir.mkdir()) {
+                    String message = COULD_NOT_CREATE_DIRECTORY + dir.getAbsolutePath();
+                    LOGGER.error(message);
+                    throw new RuntimeException(message);
+                }
                 FileInputStream fis = new FileInputStream(primaryFile);
                 ZipInputStream zis = new ZipInputStream(fis);
                 ZipEntry entry;
@@ -247,9 +272,11 @@ public class GenericFileData {
                 zis.close();
 
                 File[] files = dir.listFiles();
-                for (File file : files) {
-                    if (file.getName().contains(".shp") || file.getName().contains(".SHP")) {
-                        primaryFile = file;
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.getName().contains(".shp") || file.getName().contains(".SHP")) {
+                            primaryFile = file;
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -263,10 +290,13 @@ public class GenericFileData {
     @Override
     protected void finalize() {
         try {
+            super.finalize();
             if (primaryFile != null) {
-                primaryFile.delete();
+                if (!primaryFile.delete()) {
+                    LOGGER.info("Could not delete file: " + primaryFile.getAbsolutePath());
+                }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
         }
     }

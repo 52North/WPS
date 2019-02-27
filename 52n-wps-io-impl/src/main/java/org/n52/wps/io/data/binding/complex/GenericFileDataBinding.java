@@ -41,7 +41,7 @@ public class GenericFileDataBinding implements IComplexData {
      */
     private static final long serialVersionUID = 625383192227478620L;
 
-    protected GenericFileData payload;
+    protected transient GenericFileData payload;
 
     public GenericFileDataBinding(GenericFileData fileData) {
         this.payload = fileData;

@@ -43,7 +43,7 @@ public class GenericXMLDataBinding implements IComplexData {
 
     private static final long serialVersionUID = -6875103125533078664L;
 
-    private XmlObject payload;
+    private transient XmlObject payload;
 
     public GenericXMLDataBinding(XmlObject payload) {
         this.payload = payload;

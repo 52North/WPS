@@ -42,8 +42,8 @@ public class LiteralIntBinding extends AbstractLiteralDataBinding {
         oos.writeObject(payload.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = new Integer((String) oos.readObject());
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+        payload = Integer.valueOf((String) oos.readObject());
     }
 
 }

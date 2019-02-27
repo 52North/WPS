@@ -42,7 +42,7 @@ public class LiteralFloatBinding extends AbstractLiteralDataBinding {
         oos.writeObject(payload.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         payload = new Float((String) oos.readObject());
     }
 }

@@ -50,7 +50,7 @@ public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
         oos.writeObject(uri.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         try {
             uri = new URI((String) oos.readObject());
         } catch (URISyntaxException ex) {

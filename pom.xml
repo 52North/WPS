@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52</groupId>
 		<artifactId>parent</artifactId>
-		<version>14</version>
+		<version>5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
@@ -99,6 +99,18 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+		   <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <compilerArgument>-Xlint:all</compilerArgument>
+                        <showWarnings>true</showWarnings>
+                        <showDeprecation>true</showDeprecation>
+                        <compilerVersion>${maven.compiler.version}</compilerVersion>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -225,7 +237,11 @@
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
 		<maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-		<currentYear>2018</currentYear>
+		<currentYear>2018</currentYear>        
+		<version.java>8</version.java>
+        <maven.compiler.source>${version.java}</maven.compiler.source>
+        <maven.compiler.target>${version.java}</maven.compiler.target>
+        <maven.compiler.version>${version.java}</maven.compiler.version>
 		<!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic> -->
 	</properties>
 	<dependencyManagement>

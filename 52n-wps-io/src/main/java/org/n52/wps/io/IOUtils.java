@@ -47,6 +47,7 @@ public final class IOUtils {
     private static final String FILE = "file";
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
     private static final String DOT_ZIP = ".zip";
+    private static final String NO_FILES_IN_DIRECTORY = "No files in directory: ";
 
     private IOUtils() {
     }
@@ -171,25 +172,40 @@ public final class IOUtils {
 
     private static void zipSubDirectory(String basePath,
             File dir,
-            ZipOutputStream zout) throws IOException {
+            ZipOutputStream zout) {
         byte[] buffer = new byte[BUFFER_SIZE];
         File[] files = dir.listFiles();
 
-        for (File file : files) {
-            if (file.isDirectory()) {
-                String path = basePath + file.getName() + "/";
-                zout.putNextEntry(new ZipEntry(path));
-                zipSubDirectory(path, file, zout);
-                zout.closeEntry();
-            } else {
-                FileInputStream fin = new FileInputStream(file);
-                zout.putNextEntry(new ZipEntry(basePath + file.getName()));
-                int length;
-                while ((length = fin.read(buffer)) > 0) {
-                    zout.write(buffer, 0, length);
+        if (files == null) {
+            LOGGER.info(NO_FILES_IN_DIRECTORY + dir.getAbsolutePath());
+            return;
+        }
+        try {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String path = basePath + file.getName() + "/";
+                    zout.putNextEntry(new ZipEntry(path));
+                    zipSubDirectory(path, file, zout);
+                } else {
+                    FileInputStream fin = new FileInputStream(file);
+                    try {
+                        zout.putNextEntry(new ZipEntry(basePath + file.getName()));
+                        int length;
+                        while ((length = fin.read(buffer)) > 0) {
+                            zout.write(buffer, 0, length);
+                        }
+                    } finally {
+                        fin.close();
+                    }
                 }
+            }
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
+        } finally {
+            try {
                 zout.closeEntry();
-                fin.close();
+            } catch (IOException e) {
+                // ignore
             }
         }
     }

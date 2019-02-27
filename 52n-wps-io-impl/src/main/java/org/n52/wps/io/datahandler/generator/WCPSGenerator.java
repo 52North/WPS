@@ -56,24 +56,18 @@ public class WCPSGenerator extends AbstractGenerator {
             String mimeType,
             String schema) throws IOException {
 
-        // // check for correct request before returning the stream
-        // if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType,
-        // schema))){
-        // throw new IOException("I don't support the incoming datatype");
-        // }
-
         List<byte[]> wcpsoutput = ((ArrayDataBinding) data).getPayload();
 
         File tempFile = File.createTempFile("wcps", ".bin");
         this.finalizeFiles.add(tempFile);
-        FileOutputStream fos = new FileOutputStream(tempFile);
 
-        for (byte[] currentArray : wcpsoutput) {
-            fos.write(currentArray);
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+
+            for (byte[] currentArray : wcpsoutput) {
+                fos.write(currentArray);
+            }
+            fos.flush();
         }
-
-        fos.flush();
-        fos.close();
 
         InputStream stream = new FileInputStream(tempFile);
 

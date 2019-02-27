@@ -68,7 +68,6 @@ import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
@@ -78,6 +77,15 @@ import org.geotools.feature.type.GeometryDescriptorImpl;
 import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.n52.wps.io.GTHelper;
+import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
+import org.n52.wps.io.datahandler.parser.GML2BasicParser;
+import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
@@ -90,16 +98,6 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.io.GTHelper;
-import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
-import org.n52.wps.io.datahandler.parser.GML2BasicParser;
-import org.n52.wps.io.datahandler.parser.GML3BasicParser;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.MultiPolygon;
 
 /**
  *

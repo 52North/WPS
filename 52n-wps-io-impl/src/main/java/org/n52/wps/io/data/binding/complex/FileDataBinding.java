@@ -58,7 +58,7 @@ public class FileDataBinding implements IComplexData {
         throw new RuntimeException("Serialization of 'FileDataBinding' data type not implemented yet.");
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         throw new RuntimeException("Deserialization of 'FileDataBinding' data type not implemented yet.");
     }
 

@@ -17,6 +17,8 @@
 package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class LiteralBase64BinaryBinding extends AbstractLiteralDataBinding {
     /**
@@ -27,16 +29,16 @@ public class LiteralBase64BinaryBinding extends AbstractLiteralDataBinding {
     private transient byte[] binary;
 
     public LiteralBase64BinaryBinding(byte[] binary) {
-        this.binary = binary;
+        this.binary = Arrays.copyOf(binary, binary.length);
     }
 
     public byte[] getBinary() {
-        return binary;
+        return Arrays.copyOf(binary, binary.length);
     }
 
     @Override
     public byte[] getPayload() {
-        return binary;
+        return Arrays.copyOf(binary, binary.length);
     }
 
     @Override
@@ -45,10 +47,10 @@ public class LiteralBase64BinaryBinding extends AbstractLiteralDataBinding {
     }
 
     private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(new String(binary));
+        oos.writeObject(new String(binary, StandardCharsets.UTF_8));
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        binary = ((String) oos.readObject()).getBytes();
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+        binary = ((String) oos.readObject()).getBytes(StandardCharsets.UTF_8);
     }
 }

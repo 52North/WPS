@@ -42,7 +42,7 @@ public class LiteralBooleanBinding extends AbstractLiteralDataBinding {
         oos.writeObject(Boolean.toString(payload));
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         payload = Boolean.parseBoolean((String) oos.readObject());
     }
 

@@ -85,7 +85,9 @@ public abstract class AbstractGenerator extends AbstractIOHandler implements IGe
     protected void finalize() throws Throwable {
 
         for (File currentFile : finalizeFiles) {
-            currentFile.delete();
+            if (!currentFile.delete()) {
+                continue;
+            }
         }
 
         super.finalize();

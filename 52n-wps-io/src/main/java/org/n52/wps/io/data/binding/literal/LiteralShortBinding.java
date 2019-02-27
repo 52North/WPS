@@ -42,7 +42,7 @@ public class LiteralShortBinding extends AbstractLiteralDataBinding {
         oos.writeObject(payload.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = new Short((String) oos.readObject());
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+        payload = Short.valueOf((String) oos.readObject());
     }
 }

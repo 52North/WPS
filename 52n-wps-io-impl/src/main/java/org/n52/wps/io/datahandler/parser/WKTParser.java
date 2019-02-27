@@ -31,6 +31,7 @@ package org.n52.wps.io.datahandler.parser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,6 @@ import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-
-import org.n52.wps.io.datahandler.parser.AbstractParser;
 
 /**
  * This class parses String representations out of JTS Geometries.
@@ -63,7 +62,7 @@ public class WKTParser extends AbstractParser {
             String schema) {
 
         try {
-            Geometry g = new WKTReader().read(new InputStreamReader(input));
+            Geometry g = new WKTReader().read(new InputStreamReader(input, StandardCharsets.UTF_8));
 
             return new JTSGeometryBinding(g);
 

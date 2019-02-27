@@ -31,6 +31,7 @@ package org.n52.wps.io.datahandler.generator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
@@ -61,7 +62,7 @@ public class WKTGenerator extends AbstractGenerator {
 
             String wktString = new WKTWriter().write(g);
 
-            InputStream is = new ByteArrayInputStream(wktString.getBytes());
+            InputStream is = new ByteArrayInputStream(wktString.getBytes(StandardCharsets.UTF_8));
 
             return is;
         }

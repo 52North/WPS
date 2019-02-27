@@ -28,7 +28,7 @@
  */
 package org.n52.wps.io.data.binding.bbox;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import java.util.Arrays;
 
 import org.n52.wps.io.data.IBBOXData;
 
@@ -49,9 +49,9 @@ public class BoundingBoxData implements IBBOXData {
     private final String crs;
 
     public BoundingBoxData(double[] lowerCorner, double[] upperCorner, String crs) {
-        checkArgument(lowerCorner.length == upperCorner.length);
-        this.lowerCorner = lowerCorner;
-        this.upperCorner = upperCorner;
+        com.google.common.base.Preconditions.checkArgument(lowerCorner.length == upperCorner.length);
+        this.lowerCorner = Arrays.copyOf(lowerCorner, lowerCorner.length);
+        this.upperCorner = Arrays.copyOf(upperCorner, upperCorner.length);
         this.dimensions = lowerCorner.length;
         this.crs = crs;
     }
@@ -68,12 +68,12 @@ public class BoundingBoxData implements IBBOXData {
 
     @Override
     public double[] getLowerCorner() {
-        return lowerCorner;
+        return Arrays.copyOf(lowerCorner, lowerCorner.length);
     }
 
     @Override
     public double[] getUpperCorner() {
-        return upperCorner;
+        return Arrays.copyOf(upperCorner, upperCorner.length);
     }
 
     @Override

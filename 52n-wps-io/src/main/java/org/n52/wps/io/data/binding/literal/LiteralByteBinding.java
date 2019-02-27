@@ -42,7 +42,7 @@ public class LiteralByteBinding extends AbstractLiteralDataBinding {
         oos.writeObject(payload.toString());
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = new Byte((String) oos.readObject());
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+        payload = Byte.valueOf((String) oos.readObject());
     }
 }

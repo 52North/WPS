@@ -30,11 +30,11 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
     private transient Date date;
 
     public LiteralDateTimeBinding(Date date) {
-        this.date = date;
+        this.date = new Date(date.getTime());
     }
 
     public Date getDate() {
-        return date;
+        return new Date(date.getTime());
     }
 
     public Time getTime() {
@@ -47,7 +47,7 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
 
     @Override
     public Date getPayload() {
-        return date;
+        return new Date(date.getTime());
     }
 
     @Override
@@ -56,10 +56,10 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
     }
 
     private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(new Long(date.getTime()).toString());
+        oos.writeObject(String.valueOf(date.getTime()));
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         date = new Date(((Long) oos.readObject()).longValue());
     }
 

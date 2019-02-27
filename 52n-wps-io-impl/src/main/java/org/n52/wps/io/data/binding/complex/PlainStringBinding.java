@@ -54,7 +54,7 @@ public class PlainStringBinding implements IComplexData {
         oos.writeObject(payload);
     }
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
+    private void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
         payload = (String) oos.readObject();
     }
 

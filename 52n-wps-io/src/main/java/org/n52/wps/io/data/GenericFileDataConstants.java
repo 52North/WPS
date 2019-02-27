@@ -16,6 +16,7 @@
  */
 package org.n52.wps.io.data;
 
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
@@ -94,25 +95,28 @@ public final class GenericFileDataConstants {
 
     public static HashMap<String, String> mimeTypeFileTypeLUT() {
 
-        if (lut == null) {
+        synchronized (GenericFileDataConstants.class) {
+            if (lut == null) {
 
-            lut = new HashMap<String, String>();
+                lut = new HashMap<String, String>();
 
-            Properties ioProperties = new Properties();
+                Properties ioProperties = new Properties();
 
-            try {
+                try (InputStream in = GenericFileDataConstants.class.
+                        getResourceAsStream("/org/n52/wps/io/io.properties")) {
 
-                ioProperties.load(GenericFileDataConstants.class.getResourceAsStream("/org/n52/wps/io/io.properties"));
+                    ioProperties.load(in);
 
-                Enumeration<Object> en = ioProperties.keys();
+                    Enumeration<Object> en = ioProperties.keys();
 
-                while (en.hasMoreElements()) {
-                    String type = (String) en.nextElement();
-                    lut.put(type, ioProperties.getProperty(type));
+                    while (en.hasMoreElements()) {
+                        String type = (String) en.nextElement();
+                        lut.put(type, ioProperties.getProperty(type));
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error("Exception while setting up Look up table.", e);
                 }
-
-            } catch (Exception e) {
-                LOGGER.error("Exception while setting up Look up table.", e);
             }
         }
 

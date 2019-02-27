@@ -150,4 +150,8 @@ public abstract class AbstractIOHandler implements IOHandler {
         return true;
     }
 
+    public List<? extends ConfigurationEntry<?>> getProperties() {
+        return properties;
+    }
+
 }
