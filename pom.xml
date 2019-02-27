@@ -1071,11 +1071,15 @@
 				<version>2.1</version>
 			</plugin>
 			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <configuration>
+                        <show>package</show>
+                        <author>false</author>
+                        <quiet>true</quiet>
+                        <nohelp>true</nohelp>
+                    </configuration>
 			</plugin>
 		</plugins>
 	</reporting>
