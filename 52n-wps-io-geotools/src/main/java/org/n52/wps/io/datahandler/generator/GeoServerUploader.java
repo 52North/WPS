@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -60,6 +61,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.io.FileUtils;
 
 public class GeoServerUploader {
 
@@ -78,18 +80,22 @@ public class GeoServerUploader {
 
     public String uploadGeotiff(File file, String storeName)
             throws HttpException, IOException {
-        String target = "http://" + host + ":" + port
-                + "/geoserver/rest/workspaces/N52/coveragestores/" + storeName
-                + "/external.geotiff?configure=first&coverageName=" + storeName;
-        String request;
-        if (file.getAbsolutePath().startsWith("/")) { // tried with
+
+        File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + UUID.randomUUID().toString().substring(0, 5) + file.getName());
+
+        FileUtils.copyFile(file, copyOfFile);
+
+          String target = "http://" + host + ":" + port + "/geoserver/rest/workspaces/N52/coveragestores/" + storeName
+                  + "/external.geotiff?configure=first&coverageName=" + storeName;
+          String request;
+          if (copyOfFile.getAbsolutePath().startsWith("/")) { // tried with
                                                         // request.replaceAll("//","/");
                                                         // but didn't seem to
                                                         // work...
-            request = "file:" + file.getAbsolutePath();
-        } else {
-            request = "file:/" + file.getAbsolutePath();
-        }
+              request = "file:" + copyOfFile.getAbsolutePath();
+          } else {
+              request = "file:/" + copyOfFile.getAbsolutePath();
+          }
         String result = sendRasterRequest(target, request, "PUT", username,
                 password);
         return result;

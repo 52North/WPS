@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -412,13 +413,17 @@ public class RIOHandler {
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
+            File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + UUID.randomUUID().toString().substring(0, 5) + outputFile.getName());
+
+            FileUtils.copyFile(outputFile, copyOfFile);
+
             if(iClass.equals(GenericFileDataBinding.class)){
-                GenericFileData out = new GenericFileData(outputFile, mimeType);
+                GenericFileData out = new GenericFileData(copyOfFile, mimeType);
 
                 return new GenericFileDataBinding(out);
 
             }else if(iClass.equals(GenericFileDataWithGTBinding.class)){
-                GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
+                GenericFileDataWithGT out = new GenericFileDataWithGT(copyOfFile, mimeType);
 
                 return new GenericFileDataWithGTBinding(out);
             }
