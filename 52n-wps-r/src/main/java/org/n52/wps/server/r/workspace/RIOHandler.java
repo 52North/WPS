@@ -374,15 +374,16 @@ public class RIOHandler {
 
         RAnnotation currentAnnotation = list.get(0);
         log.debug("Current annotation: {}", currentAnnotation);
-        // extract filename from R
 
-        String filename = new File(result.asString()).getName();
+        // extract filename from R
+        String resultString = result.asString();
+        File resultFile = new File(resultString);
+        String filename = resultFile.getName();
 
         if (iClass.equals(GenericFileDataBinding.class) || iClass.equals(GenericFileDataWithGTBinding.class)) {
-            log.debug("Creating output with {} for file {}", iClass.getName(), filename);
+            log.debug("Creating output with {} for file {}", iClass.getName(), resultString);
             String mimeType = "application/unknown";
 
-            File resultFile = new File(filename);
             log.debug("Loading file " + resultFile.getAbsolutePath());
 
             if ( !resultFile.isAbsolute()) {
