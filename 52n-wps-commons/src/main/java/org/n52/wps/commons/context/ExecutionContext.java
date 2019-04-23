@@ -17,22 +17,32 @@
 package org.n52.wps.commons.context;
 
 import java.io.File;
+import java.util.UUID;
 
 public class ExecutionContext {
 
+    private UUID jobId;
+    private final OutputTypeWrapper outputDefinitionTypes;
     private String tempFolderName;
-    private OutputTypeWrapper outputDefinitionTypes;
 
     public ExecutionContext() {
-        this(new OutputTypeWrapper());
+        this(new OutputTypeWrapper(), null);
     }
 
-    public ExecutionContext(OutputTypeWrapper output) {
-        outputDefinitionTypes = output == null ? new OutputTypeWrapper() : output;
+    public ExecutionContext(UUID jobId) {
+        this(new OutputTypeWrapper(), jobId);
+    }
+
+    public ExecutionContext(OutputTypeWrapper output, UUID jobId) {
+        this.outputDefinitionTypes = output == null ? new OutputTypeWrapper() : output;
+        this.jobId = jobId;
+    }
+
+    public UUID getJobId() {
+        return jobId;
     }
 
     public String getTempDirectoryPath() {
-
         return System.getProperty("java.io.tmpdir") + File.separatorChar + this.tempFolderName;
     }
 

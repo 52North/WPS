@@ -36,6 +36,7 @@ public class ExecutionContextFactory {
         synchronized (threadContexts) {
             executionContext = threadContexts.get();
             if (executionContext == null && fallBackToDefault) {
+                log.debug("No execution context bound to thread. Returning default context.");
                 executionContext = getDefault();
             }
         }

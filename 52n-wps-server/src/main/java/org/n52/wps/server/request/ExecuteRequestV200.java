@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
@@ -179,14 +180,14 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
             OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
             outputTypeWrapper.setWps200OutputDefinitionTypes(Arrays.asList(getExecute().getOutputArray()));
 
-            ExecutionContext context = new ExecutionContext(outputTypeWrapper);
+            UUID jobId = getUniqueId();
+            LOGGER.debug("Starting execution of job with id {}", jobId.toString());
 
-            // register so that any function that calls
-            // ExecuteContextFactory.getContext() gets the instance registered
-            // with this thread
+            // Create and register context so that any function that calls
+            // ExecuteContextFactory.getContext() gets the instance bound
+            // to this thread
+            ExecutionContext context = new ExecutionContext(outputTypeWrapper, jobId);
             ExecutionContextFactory.registerContext(context);
-
-            LOGGER.debug("started with execution");
 
             updateStatusStarted();
 
@@ -362,8 +363,9 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         InputStream is = null;
         try {
             is = executeDocument.newInputStream();
-            DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, true);
+            String jobId = getUniqueId().toString();
+            LOGGER.debug("Storing request with jobID {}", jobId);
+            DatabaseFactory.getDatabase().insertRequest(jobId, is, true);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {

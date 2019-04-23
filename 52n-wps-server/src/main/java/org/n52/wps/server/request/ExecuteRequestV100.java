@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -622,6 +623,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         Map<String, List<IData>> inputMap = null;
         try {
             ExecutionContext context;
+            UUID jobId = getUniqueId();
             if (getExecute().isSetResponseForm()) {
 
                 OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
@@ -632,10 +634,11 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                     outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
                 }
 
-                context =  new ExecutionContext(outputTypeWrapper);
+
+                context =  new ExecutionContext(outputTypeWrapper, jobId);
             }
             else {
-                context = new ExecutionContext();
+                context = new ExecutionContext(jobId);
             }
 
             // register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread

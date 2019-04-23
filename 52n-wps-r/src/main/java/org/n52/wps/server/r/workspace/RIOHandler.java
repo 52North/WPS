@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.n52.wps.commons.context.ExecutionContext;
+import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -388,7 +390,7 @@ public class RIOHandler {
 
             if ( !resultFile.isAbsolute()) {
                 // relative path names are relative to R work directory
-                resultFile = new File(connection.eval("getwd()").asString(), resultFile.getName());
+                resultFile = new File(connection.eval("getwd()").asString(), filename);
             }
 
             if (resultFile.exists()) {
@@ -414,8 +416,14 @@ public class RIOHandler {
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
-            File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + UUID.randomUUID().toString().substring(0, 5) + outputFile.getName());
+            ExecutionContext execCtx = ExecutionContextFactory.getContext();
+            UUID jobId = execCtx.getJobId();
+            String pathname = jobId != null
+                ? jobId.toString().substring(0, 5) + "_" + outputFile.getName()
+                : outputFile.getName();
 
+            File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + pathname);
+            log.debug("Copy {} -> {}", resultFile.getAbsoluteFile(), copyOfFile.getAbsoluteFile());
             FileUtils.copyFile(outputFile, copyOfFile);
 
             if(iClass.equals(GenericFileDataBinding.class)){

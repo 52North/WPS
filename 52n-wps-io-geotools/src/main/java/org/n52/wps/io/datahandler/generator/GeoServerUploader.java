@@ -62,8 +62,12 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GeoServerUploader {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GeoServerUploader.class);
 
     private String username;
     private String password;
@@ -78,27 +82,43 @@ public class GeoServerUploader {
         this.port = port;
     }
 
-    public String uploadGeotiff(File file, String storeName)
-            throws HttpException, IOException {
+    public String uploadGeotiff(File file, String storeName) throws HttpException, IOException {
 
-        File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + UUID.randomUUID().toString().substring(0, 5) + file.getName());
-
+        String fileName = file.getName();
+        String newFileName = makeUniqueFileName(fileName);
+        File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + newFileName);
+        LOG.debug("Copy {} -> {}", file.getAbsoluteFile(), copyOfFile.getAbsoluteFile());
         FileUtils.copyFile(file, copyOfFile);
 
-          String target = "http://" + host + ":" + port + "/geoserver/rest/workspaces/N52/coveragestores/" + storeName
-                  + "/external.geotiff?configure=first&coverageName=" + storeName;
-          String request;
-          if (copyOfFile.getAbsolutePath().startsWith("/")) { // tried with
-                                                        // request.replaceAll("//","/");
-                                                        // but didn't seem to
-                                                        // work...
-              request = "file:" + copyOfFile.getAbsolutePath();
-          } else {
-              request = "file:/" + copyOfFile.getAbsolutePath();
-          }
-        String result = sendRasterRequest(target, request, "PUT", username,
-                password);
-        return result;
+        String target = "http://" + host + ":" + port + "/geoserver/rest/workspaces/N52/coveragestores/" + storeName
+                + "/external.geotiff?configure=first&coverageName=" + fileName;
+        LOG.debug("Uploading GeoTiff {} via {}", copyOfFile.getAbsoluteFile(), target);
+
+        // request.replaceAll("//", "/") but does not seem to work
+        String request = copyOfFile.getAbsolutePath().startsWith("/")
+            ? "file:" + copyOfFile.getAbsolutePath()
+            : "file:/" + copyOfFile.getAbsolutePath();
+
+        return sendRasterRequest(target, request, "PUT", username, password);
+    }
+
+    /**
+     * Inserts a random string between file name and suffix.
+     *
+     * @param fileName the file name to make unique
+     * @return a uniqe file name
+     */
+    private String makeUniqueFileName(String fileName) {
+        int suffixStartIdx = fileName.lastIndexOf(".");
+        boolean hasSuffix = suffixStartIdx >= 0;
+        String suffix = hasSuffix
+                ? fileName.substring(suffixStartIdx)
+                : "";
+        String rawName = hasSuffix
+                ? fileName.substring(0, suffixStartIdx)
+                : fileName;
+        String uniquePart = UUID.randomUUID().toString().substring(0, 5);
+        return rawName + "_" + uniquePart + suffix;
     }
 
     public String uploadShp(File file, String storeName) throws HttpException,

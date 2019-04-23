@@ -22,10 +22,12 @@ package org.n52.wps.commons.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -71,21 +73,25 @@ public class ExecutionContextTest {
 
         OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
 
-        ec = new ExecutionContext((OutputTypeWrapper)null);
+
+        ec = new ExecutionContext((OutputTypeWrapper)null, null);
         assertNotNull(ec.getOutputs());
         assertEquals(0, ec.getOutputs().getWps100OutputDefinitionTypes().size());
+        assertNull(ec.getJobId());
 
         outputTypeWrapper.setWps100OutputDefinitionTypes(new ArrayList<>(0));
 
-        ec = new ExecutionContext(outputTypeWrapper);
+        UUID jobId = UUID.randomUUID();
+        ec = new ExecutionContext(outputTypeWrapper, jobId);
         assertNotNull(ec.getOutputs());
         assertEquals(0, ec.getOutputs().getWps100OutputDefinitionTypes().size());
+        assertEquals(jobId, ec.getJobId());
 
         outputTypeWrapper = new OutputTypeWrapper();
 
         outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(new OutputDefinitionType[1]));
 
-        ec = new ExecutionContext(outputTypeWrapper);
+        ec = new ExecutionContext(outputTypeWrapper, jobId);
         assertNotNull(ec.getOutputs());
         assertEquals(1, ec.getOutputs().getWps100OutputDefinitionTypes().size());
 
