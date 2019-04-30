@@ -82,16 +82,14 @@ public class GeoServerUploader {
         this.port = port;
     }
 
-    public String uploadGeotiff(File file, String storeName) throws HttpException, IOException {
+    public String uploadGeotiff(File file, String layerName) throws HttpException, IOException {
 
-        String fileName = file.getName();
-        String newFileName = makeUniqueFileName(fileName);
-        File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + newFileName);
+        File copyOfFile = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + layerName);
         LOG.debug("Copy {} -> {}", file.getAbsoluteFile(), copyOfFile.getAbsoluteFile());
         FileUtils.copyFile(file, copyOfFile);
 
-        String target = "http://" + host + ":" + port + "/geoserver/rest/workspaces/N52/coveragestores/" + storeName
-                + "/external.geotiff?configure=first&coverageName=" + fileName;
+        String target = "http://" + host + ":" + port + "/geoserver/rest/workspaces/N52/coveragestores/" + layerName
+                + "/external.geotiff?configure=first&coverageName=" + layerName;
         LOG.debug("Uploading GeoTiff {} via {}", copyOfFile.getAbsoluteFile(), target);
 
         // request.replaceAll("//", "/") but does not seem to work
@@ -100,25 +98,6 @@ public class GeoServerUploader {
             : "file:/" + copyOfFile.getAbsolutePath();
 
         return sendRasterRequest(target, request, "PUT", username, password);
-    }
-
-    /**
-     * Inserts a random string between file name and suffix.
-     *
-     * @param fileName the file name to make unique
-     * @return a uniqe file name
-     */
-    private String makeUniqueFileName(String fileName) {
-        int suffixStartIdx = fileName.lastIndexOf(".");
-        boolean hasSuffix = suffixStartIdx >= 0;
-        String suffix = hasSuffix
-                ? fileName.substring(suffixStartIdx)
-                : "";
-        String rawName = hasSuffix
-                ? fileName.substring(0, suffixStartIdx)
-                : fileName;
-        String uniquePart = UUID.randomUUID().toString().substring(0, 5);
-        return rawName + "_" + uniquePart + suffix;
     }
 
     public String uploadShp(File file, String storeName) throws HttpException,

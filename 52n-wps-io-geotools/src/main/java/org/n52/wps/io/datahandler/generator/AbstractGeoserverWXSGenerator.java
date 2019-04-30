@@ -49,6 +49,7 @@ package org.n52.wps.io.datahandler.generator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
@@ -92,6 +93,25 @@ public class AbstractGeoserverWXSGenerator extends AbstractGenerator {
             }
         }
 
+    }
+
+    /**
+     * Inserts a random string between file name and suffix.
+     *
+     * @param fileName the file name to make unique
+     * @return a unique file name
+     */
+    protected String makeUniqueFileName(String fileName) {
+        int suffixStartIdx = fileName.lastIndexOf(".");
+        boolean hasSuffix = suffixStartIdx >= 0;
+        String suffix = hasSuffix
+                ? fileName.substring(suffixStartIdx)
+                : "";
+        String rawName = hasSuffix
+                ? fileName.substring(0, suffixStartIdx)
+                : fileName;
+        String uniquePart = UUID.randomUUID().toString().substring(0, 5);
+        return rawName + "_" + uniquePart + suffix;
     }
 
     @Override

@@ -51,7 +51,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -118,9 +117,7 @@ public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
             file = (File) data.getPayload();
         }
 
-        storeName = file.getName();
-
-        storeName = storeName +"_" + UUID.randomUUID();
+        storeName = makeUniqueFileName(file.getName());
         GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 
         String result = geoserverUploader.createWorkspace();
