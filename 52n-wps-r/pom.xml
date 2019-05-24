@@ -89,11 +89,6 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <artifactId>xmlbeans</artifactId>
@@ -241,4 +236,18 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>since-jdk11</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
