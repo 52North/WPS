@@ -483,7 +483,6 @@ INSERT INTO ALGORITHMENTRY VALUES('rgb2his','org.n52.wps.server.sextante.configu
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.GeoserverWMSGeneratorCM', FALSE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.GeoserverWFSGeneratorCM', FALSE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.GeoserverWCSGeneratorCM', FALSE);
-INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.MapserverWMSGeneratorCM', FALSE);
 
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
