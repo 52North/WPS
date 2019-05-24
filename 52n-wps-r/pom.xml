@@ -1,67 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.n52.wps</groupId>
-		<artifactId>52n-wps-parent</artifactId>
-		<version>4.0.0-beta.7-SNAPSHOT</version>
-	</parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.n52.wps</groupId>
+        <artifactId>52n-wps-parent</artifactId>
+        <version>4.0.0-beta.7-SNAPSHOT</version>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>52n-wps-r</artifactId>
+    <artifactId>52n-wps-r</artifactId>
 
-	<packaging>jar</packaging>
-	<name>52North WPS R Processing Backend</name>
-	<description>The project WPS4R provides R scripts as WPS processes</description>
+    <packaging>jar</packaging>
+    <name>52North WPS R Processing Backend</name>
+    <description>The project WPS4R provides R scripts as WPS processes</description>
 
-	<inceptionYear>2010</inceptionYear>
+    <inceptionYear>2010</inceptionYear>
 
-	<mailingLists>
-		<mailingList>
-			<name>Geoprocessing</name>
-			<archive>http://list.52north.org/pipermail/geoprocessingservices/</archive>
-			<post>geoprocessingservices@52north.org</post>
-			<subscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
-			<unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
-		</mailingList>
-	</mailingLists>
-	<developers>
-		<developer>
-			<id>MatthiasHinz</id>
-			<name>Matthias Hinz</name>
-			<email>m.hinz@52north.org</email>
-			<timezone>+2</timezone>
-			<organization>52°North GmbH</organization>
-			<organizationUrl>http://52north.org</organizationUrl>
-			<roles>
-				<role>Member of Geoprocessing community</role>
-				<role>Leader in WPS4R development</role>
-				<role>Java Developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>DanielNuest</id>
-			<name>Daniel Nüst</name>
-			<email>d.nuest@52north.org</email>
-			<timezone>+2</timezone>
-			<organization>52°North GmbH</organization>
-			<organizationUrl>http://52north.org</organizationUrl>
-			<roles>
-				<role>Member of Geoprocessing community</role>
-				<role>Java Developer</role>
-			</roles>
-		</developer>
-	</developers>
+    <mailingLists>
+        <mailingList>
+            <name>Geoprocessing</name>
+            <archive>http://list.52north.org/pipermail/geoprocessingservices/</archive>
+            <post>geoprocessingservices@52north.org</post>
+            <subscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+            <unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <id>MatthiasHinz</id>
+            <name>Matthias Hinz</name>
+            <email>m.hinz@52north.org</email>
+            <timezone>+2</timezone>
+            <organization>52°North GmbH</organization>
+            <organizationUrl>http://52north.org</organizationUrl>
+            <roles>
+                <role>Member of Geoprocessing community</role>
+                <role>Leader in WPS4R development</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>DanielNuest</id>
+            <name>Daniel Nüst</name>
+            <email>d.nuest@52north.org</email>
+            <timezone>+2</timezone>
+            <organization>52°North GmbH</organization>
+            <organizationUrl>http://52north.org</organizationUrl>
+            <roles>
+                <role>Member of Geoprocessing community</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<header>../misc/licenses/license_header.txt</header>
-				</configuration>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <header>../misc/licenses/license_header.txt</header>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -74,169 +76,169 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.jasig.maven</groupId>
-				<artifactId>maven-notice-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>check-licenses</id>
-						<phase />
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>check-licenses</id>
+                        <phase />
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<profiles>
-		<profile>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+        </profile>
+    </profiles>
 
-	<dependencies>
-		<dependency>
-			<artifactId>xmlbeans</artifactId>
-			<groupId>org.apache.xmlbeans</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>guava</artifactId>
-			<groupId>com.google.guava</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>52n-xml-ows-v110</artifactId>
-			<groupId>org.n52.sensorweb</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>52n-xml-wps-v100</artifactId>
-			<groupId>org.n52.sensorweb</groupId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-configuration-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-io-impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <artifactId>xmlbeans</artifactId>
+            <groupId>org.apache.xmlbeans</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>guava</artifactId>
+            <groupId>com.google.guava</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>52n-xml-ows-v110</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+        </dependency>
+        <dependency>
+            <artifactId>52n-xml-wps-v100</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-configuration-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-io-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-algorithm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-io-geotools</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-commons</artifactId>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-algorithm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-io-geotools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-commons</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-configuration-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-configuration-api</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.nuiton.thirdparty</groupId>
-			<artifactId>REngine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.nuiton.thirdparty</groupId>
-			<artifactId>Rserve</artifactId>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.nuiton.thirdparty</groupId>
+            <artifactId>REngine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.nuiton.thirdparty</groupId>
+            <artifactId>Rserve</artifactId>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 </project>
