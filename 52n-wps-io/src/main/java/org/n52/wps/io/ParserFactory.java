@@ -25,7 +25,9 @@ import java.util.Map;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.service.ConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,10 +119,16 @@ public class ParserFactory {
 
     public static ParserFactory getInstance() {
         if(factory == null){
-            Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
-            initialize(parserMap);
+            initialize(getConfiguredParsers());
         }
         return factory;
+    }
+
+    private static Map<String, ConfigurationModule> getConfiguredParsers() {
+        WPSConfig wpsConfig = WPSConfig.getInstance();
+        ConfigurationManager configurationManager = wpsConfig.getConfigurationManager();
+        ConfigurationService configurationServices = configurationManager.getConfigurationServices();
+        return configurationServices.getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
     }
 
     public IParser getParser(String schema, String format, String encoding, Class<?> requiredInputClass) {
