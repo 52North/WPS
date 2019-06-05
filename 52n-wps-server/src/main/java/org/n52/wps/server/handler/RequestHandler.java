@@ -417,24 +417,23 @@ public class RequestHandler {
                 throw new ExceptionReport(
                         "The requested process was rejected. Maybe the server is flooded with requests.",
                         ExceptionReport.SERVER_BUSY);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.error("exception handling ExecuteRequest.", e);
                 if (e instanceof ExceptionReport) {
                     throw (ExceptionReport)e;
                 }
-                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
+                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE, e);
             }
         } else {
             // for GetCapabilities and DescribeProcess:
             resp = req.call();
-            try {
-                InputStream is = resp.getAsStream();
+            try(InputStream is = resp.getAsStream()) {
                 IOUtils.copy(is, os);
-                is.close();
             } catch (IOException e) {
-                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
+                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE, e);
+            } catch (Throwable e) {
+                throw new ExceptionReport("Could not handle request.", ExceptionReport.NO_APPLICABLE_CODE, e);
             }
-
         }
     }
 

@@ -29,6 +29,7 @@
 package org.n52.wps.server.request;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlException;
@@ -80,7 +81,8 @@ public class GetResultRequestV200 extends Request {
     @Override
     public Response call() throws ExceptionReport {
         try {
-            document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
+            InputStream xml = DatabaseFactory.getDatabase().lookupResponse(jobID);
+            document = XmlObject.Factory.parse(xml);
 
             if(document instanceof StatusInfoDocument){
                 StatusInfoDocument statusInfoDocument = (StatusInfoDocument)document;
@@ -91,7 +93,7 @@ public class GetResultRequestV200 extends Request {
             }
 
         } catch (XmlException | IOException e) {
-            LOGGER.error("Could not parse result looked up in database.");
+            LOGGER.error("Could not parse result looked up in database.", e);
         }
 
         return new GetResultResponseV200(this);
