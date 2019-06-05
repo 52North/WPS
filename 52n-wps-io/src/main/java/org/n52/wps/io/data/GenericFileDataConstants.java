@@ -49,6 +49,7 @@ public final class GenericFileDataConstants {
     public static final String MIME_TYPE_X_NETCDF = "application/x-netcdf";
     public static final String MIME_TYPE_DGN = "application/dgn";
     public static final String MIME_TYPE_KML = "application/vnd.google-earth.kml+xml";
+    public static final String MIME_TYPE_GEOJSON = "application/vnd.geo+json";
     public static final String MIME_TYPE_HDF4EOS = "application/hdf4-eos";
     public static final String MIME_TYPE_GML200 = "text/xml; subtype=gml/2.0.0";
     public static final String MIME_TYPE_GML211 = "text/xml; subtype=gml/2.1.1";

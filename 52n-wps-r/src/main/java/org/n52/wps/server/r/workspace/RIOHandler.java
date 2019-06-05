@@ -54,6 +54,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
@@ -81,6 +82,9 @@ import org.rosuda.REngine.Rserve.RFileOutputStream;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 
 public class RIOHandler {
 
@@ -242,6 +246,24 @@ public class RIOHandler {
         Class< ? extends IData> iclass = ivalue.getClass();
         if (ivalue instanceof ILiteralData) {
             return parseLiteralInput(iclass, ivalue.getPayload());
+        }
+
+        if (ivalue instanceof JTSGeometryBinding) {
+            JTSGeometryBinding geometry = (JTSGeometryBinding) ivalue;
+            Geometry envelope = geometry.getPayload().getEnvelope();
+//            if (envelope.getBoundaryDimension() == 1) {
+//                Coordinate coordinate = envelope.getCoordinate();
+//                String x = Double.toString(coordinate.getOrdinate(0));
+//                String y = Double.toString(coordinate.getOrdinate(1));
+//                return "\"" + x + "," + x + "," + y + "," + y + "\"";
+//            } else {
+                Coordinate[] coordinates = envelope.getCoordinates();
+                String min_x = Double.toString(coordinates[0].getOrdinate(Coordinate.X));
+                String min_y = Double.toString(coordinates[0].getOrdinate(Coordinate.Y));
+                String max_x = Double.toString(coordinates[2].getOrdinate(Coordinate.X));
+                String max_y = Double.toString(coordinates[2].getOrdinate(Coordinate.Y));
+                return "\"" + min_x + "," + max_x + "," + min_y + "," + max_y + "\"";
+//            }
         }
 
         if (ivalue instanceof GenericFileDataWithGTBinding) {
