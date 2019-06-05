@@ -189,8 +189,7 @@ public class InputHandler {
                 handleComplexValueReference(input);
             }
             else {
-                throw new ExceptionReport("Error while accessing the inputValue: " + inputId,
-                        ExceptionReport.INVALID_PARAMETER_VALUE);
+                throwInvalidInputIdException(inputId);
             }
         }
         }else if(inputsV200 != null){
@@ -210,7 +209,9 @@ public class InputHandler {
                 if(input.getData() != null) {
 
                     net.opengis.wps.x20.InputDescriptionType inputDescription = XMLBeansHelper.findInputByID(inputId, processOffering.getProcess());
-
+                    if (inputDescription == null) {
+                        throwInvalidInputIdException(inputId);
+                    }
                     DataDescriptionType dataDesc = inputDescription.getDataDescription();
 
                     if(dataDesc instanceof net.opengis.wps.x20.ComplexDataType) {
@@ -227,12 +228,16 @@ public class InputHandler {
                     handleComplexValueReference(input);
                 }
                 else {
-                    throw new ExceptionReport("Error while accessing the inputValue: " + inputId,
-                            ExceptionReport.INVALID_PARAMETER_VALUE);
+                    throwInvalidInputIdException(inputId);
                 }
             }
         }
 
+    }
+
+    private void throwInvalidInputIdException(String inputId) throws ExceptionReport {
+        throw new ExceptionReport("Error while accessing the inputValue: " + inputId,
+                ExceptionReport.INVALID_PARAMETER_VALUE);
     }
 
     Map<String, InterceptorInstance> resolveInputInterceptors(String algorithmClassName) {
