@@ -120,6 +120,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
         }
         catch(IOException e) {
              String inputID = input.getIdentifier();
+             logger.error("Could not resolve url for input '{}': {}", inputID, href, e);
              throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + href,
                                      ExceptionReport.INVALID_PARAMETER_VALUE );
         }
