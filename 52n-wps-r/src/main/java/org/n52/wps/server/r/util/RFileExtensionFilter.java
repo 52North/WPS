@@ -30,18 +30,28 @@ package org.n52.wps.server.r.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 
 import org.n52.wps.server.r.R_Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RFileExtensionFilter implements FileFilter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RFileExtensionFilter.class);
+
     @Override
     public boolean accept(File f) {
-        if (f.isFile() && f.canRead()) {
-            String name = f.getName();
-            if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX)) {
-                return true;
+        try {
+            File file = f.getCanonicalFile();
+            if (file.isFile() && file.canRead()) {
+                String name = file.getName();
+                if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX)) {
+                    return true;
+                }
             }
+        } catch (IOException e) {
+            LOGGER.error("Could not access file {}", f, e);
         }
         return false;
     }

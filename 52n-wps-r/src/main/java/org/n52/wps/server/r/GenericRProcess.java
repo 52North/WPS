@@ -34,14 +34,12 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
@@ -55,8 +53,10 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.util.InvalidRScriptException;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.n52.wps.server.r.workspace.RIOHandler;
 import org.n52.wps.server.r.workspace.RSessionManager;
 import org.n52.wps.server.r.workspace.RWorkspaceManager;
@@ -65,11 +65,12 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
-import org.n52.wps.server.r.util.InvalidRScriptException;
-import org.n52.wps.server.r.util.ResourceUrlGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
@@ -194,9 +195,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         FilteredRConnection rCon = null;
         try {
             rCon = config.openRConnection();
-            RLogger.logGenericRProcess(rCon,
-                                       "Running algorithm with input "
-                                               + Arrays.deepToString(inputData.entrySet().toArray()));
+            String inputs = Arrays.deepToString(inputData.entrySet().toArray());
+            String msgTemplate = "Running algorithm with input {0}";
+            RLogger.logGenericRProcess(rCon, MessageFormat.format(msgTemplate, inputs));
 
             RSessionManager session = new RSessionManager(rCon, config, this.urlGenerator);
             session.configureSession(getWellKnownName(), executor);
@@ -268,6 +269,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
                         rCon.voidEval(statusScriptString.toString());
 
+                        log.debug("Attempt to create file: {}", tmpStatusFile.getAbsoluteFile());
                         tmpStatusFile.createNewFile();
 
                         startUpdateListener(tmpStatusFile);

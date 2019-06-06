@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -283,12 +284,13 @@ public class RSessionManager {
             ExceptionReport {
         log.debug("Loading {} imports: {}", imports.size(), Arrays.toString(imports.toArray()));
 
-        for (File file : imports) {
-            if (file.exists()) {
+        for (File importedFile : imports) {
+            File file = importedFile.getCanonicalFile();
+            if (Files.exists(file.toPath())) {
                 executor.executeScript(file, this.connection);
             }
             else {
-                log.warn("Imported script does not exist: {}", file);
+                log.warn("Imported script does not exist: {}", importedFile);
             }
         }
 
