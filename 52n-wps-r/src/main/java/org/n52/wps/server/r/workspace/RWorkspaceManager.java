@@ -39,7 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
+import org.n52.wps.commons.context.ExecutionContext;
+import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
@@ -228,26 +231,32 @@ public class RWorkspaceManager {
 
         // assign values to the (clean) workspace:
         log.debug("Assigning values...");
-        Set<Entry<String, String>> inputValues2 = inputValues.entrySet();
 
-        for (Entry<String, String> entry : inputValues2) {
-            // use eval, not assign (assign only parses strings)
-            String statement = entry.getKey() + " <- " + entry.getValue();
-            log.debug("Running statement '{}'", statement);
+        ExecutionContext ctx = ExecutionContextFactory.getContext();
+        UUID jobId = ctx.getJobId();
+        assignValue("wpsJobId", jobId == null ? "NA" : "\"" + jobId.toString() + "\"");
 
-            try {
-                connection.filteredEval(statement);
-            }
-            catch (RserveException e) {
-                log.error("Error executing statement '{}'", statement, e);
-                throw new ExceptionReport("Error executing statement: " + statement + ": " + e.getMessage(),
-                                          ExceptionReport.INVALID_PARAMETER_VALUE,
-                                          e);
-            }
+        for (Entry<String, String> entry : inputValues.entrySet()) {
+            assignValue(entry.getKey(), entry.getValue());
         }
 
         RLogger.log(connection, "Session after loading input values:");
         RLogger.logSessionContent(connection);
+    }
+
+    private void assignValue(String variable, String value) throws ExceptionReport {
+        String statement = variable + " <- " + value;
+        log.debug("Running statement '{}'", statement);
+        try {
+            // use eval, not assign (assign only parses strings)
+            connection.filteredEval(statement);
+        }
+        catch (RserveException e) {
+            log.error("Error executing statement '{}'", statement, e);
+            throw new ExceptionReport("Error executing statement: " + statement + ": " + e.getMessage(),
+                                      ExceptionReport.INVALID_PARAMETER_VALUE,
+                                      e);
+        }
     }
 
     public void loadResources(List<RAnnotation> resources) throws RAnnotationException, ExceptionReport, IOException {
