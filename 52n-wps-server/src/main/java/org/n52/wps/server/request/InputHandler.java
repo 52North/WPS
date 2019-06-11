@@ -218,7 +218,7 @@ public class InputHandler {
                         handleComplexData(input, inputId);
                     }
                     else if(dataDesc instanceof LiteralDataType) {
-                        handleLiteralData(input);
+                        handleLiteralData(input, (LiteralDataType) dataDesc);
                     }
                     else if(dataDesc instanceof net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData) {
                         handleBBoxValue(input);
@@ -1711,31 +1711,33 @@ public class InputHandler {
      * @param input The client's input
      * @throws ExceptionReport If the type of the parameter is invalid.
      */
-    private void handleLiteralData(DataInputType input) throws ExceptionReport {
+    private void handleLiteralData(DataInputType input, LiteralDataType inputDesc) throws ExceptionReport {
         String inputID = input.getId();
         String parameter = "";
-        LiteralValueDocument literalValueDocument = null;
+
+        String inputMimeType = input.getData().getMimeType();
+
+        Format defaultFormat = getDefaultFormat(inputDesc.getFormatArray());
+
+        String defaultMimeType = defaultFormat.getMimeType();
+
+        if (inputMimeType == null || inputMimeType.isEmpty()){
+            inputMimeType = defaultMimeType;
+        }
 
         Node dataNode = input.getData().getDomNode();
 
-        for (int i = 0; i < dataNode.getChildNodes().getLength(); i++) {
-            Node childNode = dataNode.getChildNodes().item(i);
-            String localName = childNode.getLocalName();
-                    if(childNode != null && localName!= null && localName.equals(LOCAL_NAME_LITERAL_VALUE)){
-                        try {
-                            literalValueDocument = LiteralValueDocument.Factory.parse(childNode);
-                            break;
-                        } catch (XmlException e) {
-                            LOGGER.error("Exception while trying to parse LiteralValue.", e);
-                        }
-                    }
-                }
+        if (inputMimeType != null && !inputMimeType.isEmpty()){
+            if (inputMimeType.equals("text/plain")){
+                parameter = getLiteralValueTextPlain(dataNode);
+            } else if (inputMimeType.equals("text/xml")) {
+                parameter = getLiteralValueTextXML(dataNode);
+            }
+        } else {
+            parameter = getLiteralValueTextXML(dataNode);
+        }
 
-        parameter = literalValueDocument.getLiteralValue().getStringValue();
-
-        net.opengis.wps.x20.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
-
-        LiteralDataDomain literalDataDomain = ((LiteralDataType)inputDesc.getDataDescription()).getLiteralDataDomainArray(0);
+        LiteralDataDomain literalDataDomain = inputDesc.getLiteralDataDomainArray(0);
 
         net.opengis.ows.x20.DomainMetadataType dataType = literalDataDomain.getDataType();
 
@@ -1800,6 +1802,31 @@ public class InputHandler {
             inputData.put(inputID, list);
         }
 
+    }
+
+    private String getLiteralValueTextXML(Node dataNode) {
+
+        LiteralValueDocument literalValueDocument = null;
+
+        for (int i = 0; i < dataNode.getChildNodes().getLength(); i++) {
+            Node childNode = dataNode.getChildNodes().item(i);
+            String localName = childNode.getLocalName();
+                    if(childNode != null && localName!= null && localName.equals(LOCAL_NAME_LITERAL_VALUE)){
+                        try {
+                            literalValueDocument = LiteralValueDocument.Factory.parse(childNode);
+                            break;
+                        } catch (XmlException e) {
+                            LOGGER.error("Exception while trying to parse LiteralValue.", e);
+                        }
+                    }
+                }
+
+        return literalValueDocument != null ? literalValueDocument.getLiteralValue().getStringValue() : "";
+
+    }
+
+    private String getLiteralValueTextPlain(Node dataNode) {
+         return dataNode.getChildNodes().item(0).getNodeValue();
     }
 
     private boolean checkRange(IData parameterObj, RangeType allowedRange){
