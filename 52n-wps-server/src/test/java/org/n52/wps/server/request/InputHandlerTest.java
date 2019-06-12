@@ -35,17 +35,14 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-
-import net.opengis.wps.x100.ComplexDataDescriptionType;
-import net.opengis.wps.x100.ExecuteDocument;
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.InputType;
-import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.After;
@@ -54,11 +51,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.webapp.common.AbstractITClass;
+
+import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x20.DataInputType;
 
 /**
  *
@@ -180,4 +186,50 @@ public class InputHandlerTest extends AbstractITClass {
         assertThat(result, containsString("46.75 13.05"));
 
     }
+
+    @Test//TODO check test, why is method getComplexValueNodeString used for bbox data?
+    public void testInputHandlerGetLiteralValueNodeString() throws ExceptionReport, XmlException, IOException {
+        System.out.println("Testing WPS Version 2.0.0, LiteralValue with no format, i.e. default text/plain.");
+
+        InputHandler instance = new InputHandler.Builder(new Input(getSimpleBufferInputsLiteralDataNoFormat()), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
+
+        List<IData> literalDataInput = instance.getParsedInputData().get("width");
+        assertNotNull(literalDataInput);
+        IData literalData = literalDataInput.get(0);
+        assertNotNull(literalData);
+        assertTrue(literalData instanceof LiteralDoubleBinding);
+        assertTrue(((LiteralDoubleBinding)literalData).getPayload().doubleValue() == 0.05);
+
+    }
+
+    @Test//TODO check test, why is method getComplexValueNodeString used for bbox data?
+    public void testInputHandlerGetLiteralValueTextXml() throws ExceptionReport, XmlException, IOException {
+        System.out.println("Testing WPS Version 2.0.0, LiteralValue with no format, i.e. default text/plain.");
+
+        InputHandler instance = new InputHandler.Builder(new Input(getSimpleBufferInputsLiteralDataTextXml()), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
+
+        List<IData> literalDataInput = instance.getParsedInputData().get("width");
+        assertNotNull(literalDataInput);
+        IData literalData = literalDataInput.get(0);
+        assertNotNull(literalData);
+        assertTrue(literalData instanceof LiteralDoubleBinding);
+        assertTrue(((LiteralDoubleBinding)literalData).getPayload().doubleValue() == 0.05);
+
+    }
+
+    private DataInputType[] getSimpleBufferInputsLiteralDataNoFormat() throws XmlException, IOException {
+
+        File simpleBufferAlgorithm200File = new File("src/test/resources/SimpleBufferAlgorithm200NoLiteralDataFormat.xml");
+        net.opengis.wps.x20.ExecuteDocument simpleBufferAlgorithm200ExecDoc = net.opengis.wps.x20.ExecuteDocument.Factory.parse(simpleBufferAlgorithm200File);
+        return simpleBufferAlgorithm200ExecDoc.getExecute().getInputArray();
+    }
+
+    private DataInputType[] getSimpleBufferInputsLiteralDataTextXml() throws XmlException, IOException {
+
+        File simpleBufferAlgorithm200File = new File("src/test/resources/SimpleBufferAlgorithm200LiteralDataTextXml.xml");
+        net.opengis.wps.x20.ExecuteDocument simpleBufferAlgorithm200ExecDoc = net.opengis.wps.x20.ExecuteDocument.Factory.parse(simpleBufferAlgorithm200File);
+        return simpleBufferAlgorithm200ExecDoc.getExecute().getInputArray();
+    }
+
+
 }
