@@ -839,6 +839,8 @@ INSERT INTO FORMATENTRY VALUES('application/WCS', '', '', 'org.n52.wps.io.module
 
 INSERT INTO FORMATENTRY VALUES('application/WMS', '', '', 'org.n52.wps.io.modules.generator.MapserverWMSGeneratorCM', TRUE);
 
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.io.modules.generator.MapserverWMSGeneratorCM', FALSE);
+
 INSERT INTO FORMATENTRY VALUES('application/vnd.google-earth.kml+xml', 'http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd', '', 'org.n52.wps.io.modules.generator.KMLGeneratorCM', TRUE);
 
 DELETE FROM CONFIGURATIONMODULE WHERE MODULE_CLASS_NAME='org.n52.wps.server.database.PostgresDatabaseConfigurationModule';
