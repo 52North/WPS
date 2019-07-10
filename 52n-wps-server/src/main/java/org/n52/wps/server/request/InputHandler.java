@@ -2479,7 +2479,7 @@ public class InputHandler {
 
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node child = childNodes.item(i);
-                if(child.getLocalName().equals("BoundingBox")){
+                if(child.getLocalName() != null && child.getLocalName().equals("BoundingBox")){
                     boundingBoxDocument = BoundingBoxDocument.Factory.parse(child);
                     break;
                 }

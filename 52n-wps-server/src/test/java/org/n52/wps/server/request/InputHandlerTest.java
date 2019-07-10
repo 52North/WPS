@@ -59,6 +59,7 @@ import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.webapp.common.AbstractITClass;
 
+import net.opengis.ows.x20.BoundingBoxDocument;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -74,10 +75,13 @@ public class InputHandlerTest extends AbstractITClass {
 
     private static File simpleBufferAlgorithmFile = null;
     private static File dummyTestClassAlgorithmFile = null;
+    private static File dummyTestClassAlgorithm200File = null;
     private static ExecuteDocument simpleBufferAlgorithmExecDoc = null;
     private static ExecuteDocument dummyTestClassAlgorithmExecDoc = null;
+    private static net.opengis.wps.x20.ExecuteDocument dummyTestClassAlgorithm200ExecDoc = null;
     private static InputType[] simpleBufferAlgorithmInputArray = null;
     private static InputType[] dummyTestClassAlgorithmInputArray = null;
+    private static DataInputType[] dummyTestClassAlgorithm200InputArray = null;
 
     @AfterClass
     public static void tearDownClass() {
@@ -92,6 +96,10 @@ public class InputHandlerTest extends AbstractITClass {
         dummyTestClassAlgorithmFile = new File("src/test/resources/DummyTestClass.xml");
         dummyTestClassAlgorithmExecDoc = ExecuteDocument.Factory.parse(dummyTestClassAlgorithmFile);
         dummyTestClassAlgorithmInputArray = dummyTestClassAlgorithmExecDoc.getExecute().getDataInputs().getInputArray();
+
+        dummyTestClassAlgorithm200File = new File("src/test/resources/DummyTestClass200.xml");
+        dummyTestClassAlgorithm200ExecDoc = net.opengis.wps.x20.ExecuteDocument.Factory.parse(dummyTestClassAlgorithm200File);
+        dummyTestClassAlgorithm200InputArray = dummyTestClassAlgorithm200ExecDoc.getExecute().getInputArray();
 
         RepositoryManager repositoryManager = new RepositoryManager();
         repositoryManager.setApplicationContext(this.wac);
@@ -217,6 +225,29 @@ public class InputHandlerTest extends AbstractITClass {
 
     }
 
+    @Test
+    public void testInputHandlerGetBBoxValueTextXml() throws ExceptionReport, XmlException, IOException {
+
+        System.out.println("Testing WPS Version 2.0.0, BBox with no format, i.e. default text/xml.");
+
+        InputHandler instance = new InputHandler.Builder(new Input(dummyTestClassAlgorithm200InputArray), "org.n52.wps.server.algorithm.test.DummyTestClass").build();
+
+        String result = instance.getComplexValueNodeString(dummyTestClassAlgorithm200InputArray[1].getData().getDomNode());
+        assertThat(result, not(isEmptyOrNullString()));
+
+        BoundingBoxDocument boundingBoxDocument = BoundingBoxDocument.Factory.parse(result);
+
+        Object lowerCornerX = boundingBoxDocument.getBoundingBox().getLowerCorner().get(0);
+
+        assertNotNull(lowerCornerX);
+
+        assertTrue(lowerCornerX instanceof Double);
+
+        double lowerCornerXDouble = ((Double)lowerCornerX).doubleValue();
+
+        assertTrue(lowerCornerXDouble == 51.9d);
+    }
+
     private DataInputType[] getSimpleBufferInputsLiteralDataNoFormat() throws XmlException, IOException {
 
         File simpleBufferAlgorithm200File = new File("src/test/resources/SimpleBufferAlgorithm200NoLiteralDataFormat.xml");
@@ -230,6 +261,5 @@ public class InputHandlerTest extends AbstractITClass {
         net.opengis.wps.x20.ExecuteDocument simpleBufferAlgorithm200ExecDoc = net.opengis.wps.x20.ExecuteDocument.Factory.parse(simpleBufferAlgorithm200File);
         return simpleBufferAlgorithm200ExecDoc.getExecute().getInputArray();
     }
-
 
 }
