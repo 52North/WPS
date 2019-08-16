@@ -90,4 +90,60 @@ public class GetResultKvpIT {
 
     }
 
+    /**
+     * A job that was submitted asynchronously and that failed should return a exception report with the specific HTTP status code after a GetResult request
+     *
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void resultFailed() throws ParserConfigurationException, SAXException, IOException {
+
+        String payload = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                +"<wps:Execute xmlns:xli=\"http://www.w3.org/1999/xlink\" xmlns:ows=\"http://www.opengis.net/ows/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:wps=\"http://www.opengis.net/wps/2.0\" service=\"WPS\" version=\"2.0.0\" mode=\"async\" response=\"document\">"
+                +"  <ows:Identifier>org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</ows:Identifier>"
+                +"  <wps:Input id=\"data\">"
+                +"    <wps:Data>"
+                +"      this request will fail"
+                +"    </wps:Data>"
+                +"  </wps:Input>"
+                +"  <wps:Output mimeType=\"application/wkt\" transmission=\"value\" id=\"result\"/>"
+                +"</wps:Execute>";
+
+        String response = PostClient.sendRequest(url, payload);
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("Status"));
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+
+        String jobId = "";
+
+        try {
+            StatusInfoDocument statusInfoDocument = StatusInfoDocument.Factory.parse(response);
+
+            jobId = statusInfoDocument.getStatusInfo().getJobID();
+        } catch (XmlException e) {
+            fail(e.getMessage());
+        }
+
+        //sleep thread to be sure that result is ready
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            fail(e.getMessage());
+        }
+
+        GetClient.checkForExceptionReport(url, "Service=WPS&Request=GetResult&version=2.0.0&jobID=" + jobId, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ExceptionReport.NO_APPLICABLE_CODE);
+
+    }
+
+    @Test
+    public void noSuchJob() throws IOException, ParserConfigurationException, SAXException {
+
+        String nonExistingJobID = "this-id-doesnt-exist";
+
+        GetClient.checkForExceptionReport(url, "Service=WPS&version=2.0.0&Request=GetResult&jobID=" + nonExistingJobID,
+                HttpServletResponse.SC_BAD_REQUEST, "NoSuchJob", nonExistingJobID);
+    }
+
 }

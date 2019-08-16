@@ -323,11 +323,11 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         res.setContentType(XML_CONTENT_TYPE);
         try {
             LOGGER.debug(exception.toString());
+
+            res.setStatus(exception.getHTTPStatusCode());
             // DO NOT MIX getWriter and getOuputStream!
             exception.getExceptionDocument(version).save(res.getOutputStream(),
                                                   XMLBeansHelper.getXmlOptions());
-
-            res.setStatus(exception.getHTTPStatusCode());
         }
         catch (IOException e) {
             LOGGER.warn("exception occured while writing ExceptionReport to stream");

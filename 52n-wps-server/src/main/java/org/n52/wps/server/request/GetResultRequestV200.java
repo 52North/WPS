@@ -41,6 +41,8 @@ import org.n52.wps.server.response.GetResultResponseV200;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
 
+import net.opengis.ows.x20.ExceptionReportDocument;
+import net.opengis.ows.x20.ExceptionType;
 import net.opengis.wps.x20.GetResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 
@@ -90,10 +92,23 @@ public class GetResultRequestV200 extends Request {
                 if(status.equals(Status.Running.toString()) || status.equals(Status.Accepted.toString())){
                     throw new ExceptionReport("Result not ready.", ExceptionReport.RESULT_NOT_READY, "jobID=" + jobID);
                 }
+
+            } else if (document instanceof ExceptionReportDocument){
+                //execution failed
+                //get details from exception report and throw new one
+                ExceptionReportDocument exceptionReportDocument = (ExceptionReportDocument)document;
+
+                ExceptionType exception = exceptionReportDocument.getExceptionReport().getExceptionArray(0);
+
+                String exceptionCode = exception.getExceptionCode();
+                String exceptionText = exception.getExceptionTextArray(0);
+
+                throw new ExceptionReport(exceptionText, exceptionCode);
             }
 
         } catch (XmlException | IOException e) {
             LOGGER.error("Could not parse result looked up in database.", e);
+            throw new ExceptionReport("Job doesn't exist.", ExceptionReport.NO_SUCH_JOB, "jobID=" + jobID);
         }
 
         return new GetResultResponseV200(this);

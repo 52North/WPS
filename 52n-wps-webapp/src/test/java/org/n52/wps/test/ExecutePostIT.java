@@ -37,6 +37,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
@@ -51,6 +53,7 @@ import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse.ProcessOutputs;
+import net.opengis.wps.x20.StatusInfoDocument;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDataType;
@@ -65,6 +68,7 @@ import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.client.WPSClientSession;
+import org.n52.wps.server.ExceptionReport;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -1900,6 +1904,31 @@ public class ExecutePostIT {
         assertThat(response, response, not(containsString("EPSG")));
         assertThat(response, response, containsString("46.75 13.05"));
     }
+
+    /**
+     * A job that was submitted asynchronously and that failed should return a exception report with the specific HTTP status code after a GetResult request
+     *
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    @Test
+    public void testExecuteFails() throws ParserConfigurationException, SAXException, IOException {
+
+        String payload = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                +"<wps:Execute xmlns:xli=\"http://www.w3.org/1999/xlink\" xmlns:ows=\"http://www.opengis.net/ows/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:wps=\"http://www.opengis.net/wps/2.0\" service=\"WPS\" version=\"2.0.0\" mode=\"sync\" response=\"document\">"
+                +"  <ows:Identifier>org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</ows:Identifier>"
+                +"  <wps:Input id=\"data\">"
+                +"    <wps:Data"
+                +"      this request will fail"
+                +"    </wps:Data"
+                +"  </wps:Input>"
+                +"  <wps:Output mimeType=\"application/wkt\" transmission=\"value\" id=\"result\"/>"
+                +"</wps:Execute>";
+
+        PostClient.checkForExceptionReport(url, payload, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ExceptionReport.NO_APPLICABLE_CODE);
+    }
+
 
     private Object createAndSubmitMultiReferenceBinaryInputAlgorithmExecuteWithResponseDocument(boolean status, boolean storeSupport, boolean asReference, String outputEncoding) throws WPSClientException{
 
