@@ -79,7 +79,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
     private static final String XML_CONTENT_TYPE = "text/xml";
 
-    private static final int MAXIMUM_REQUEST_SIZE = 128 << 20;
+    private static int MAXIMUM_REQUEST_SIZE;
 
     private static final String CAPABILITES_SKELETON_NAME = "wpsCapabilitiesSkeleton.xml";
 
@@ -145,6 +145,16 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         WPSConfig conf = WPSConfig.getInstance(servletContext);
 
         WPSConfig.getInstance().setConfigurationManager(configurationManager);
+
+        //max request size in MB, bit shift to get bytes
+        int maxRequestSizeMB = 0;
+        try {
+            maxRequestSizeMB = WPSConfig.getInstance().getServerConfigurationModule().getMaxRequestSize();
+            MAXIMUM_REQUEST_SIZE = maxRequestSizeMB << 20;
+            LOGGER.info(String.format("Setting max request size to %s bytes.", MAXIMUM_REQUEST_SIZE));
+        } catch (Exception e) {
+            LOGGER.error("Calculating max request size failed. Configured max size: " + maxRequestSizeMB);
+        }
 
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.

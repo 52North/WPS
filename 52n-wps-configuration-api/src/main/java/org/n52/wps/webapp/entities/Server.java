@@ -73,12 +73,14 @@ public class Server implements ConfigurationModule {
             "Maximum time that excess idle threads are kept alive", true, 1000);
     private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
             "Maximum queued tasks of the work queue", true, 100);
+    private ConfigurationEntry<Integer> maxRequestSizeEntry = new IntegerConfigurationEntry("max_request_size", "Maximum request size",
+            "Maximum request size for POST requests", true, 128);
     private ConfigurationEntry<Boolean> addProcessDescriptionLinkToProcessSummaryEntry = new BooleanConfigurationEntry("add_process_description_Link_to_process_summary",
             "Add ProcessDescriptionl ink to ProcessSummary", "Add ProcessDescriptionl ink to ProcessSummary in the Capabilities", false, true);
 
     private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
             computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
-            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry, addProcessDescriptionLinkToProcessSummaryEntry);
+            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry, maxRequestSizeEntry, addProcessDescriptionLinkToProcessSummaryEntry);
 
     private String hostname;
     private String protocol;
@@ -93,6 +95,7 @@ public class Server implements ConfigurationModule {
     private int maxPoolSize;
     private int keepAliveSeconds;
     private int maxQueuedTasks;
+    private int maxRequestSize;
     private boolean addProcessDescriptionLinkToProcessSummary;
 
     public Server() {
@@ -267,6 +270,15 @@ public class Server implements ConfigurationModule {
     @ConfigurationKey(key = "add_process_description_Link_to_process_summary")
     public void setAddProcessDescriptionLinkToProcessSummary(boolean addProcessDescriptionLinkToProcessSummary) {
         this.addProcessDescriptionLinkToProcessSummary = addProcessDescriptionLinkToProcessSummary;
+    }
+
+    public int getMaxRequestSize() {
+        return maxRequestSize;
+    }
+
+    @ConfigurationKey(key = "max_request_size")
+    public void setMaxRequestSize(int maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
     }
 
 }
