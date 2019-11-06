@@ -53,18 +53,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.xml.Configuration;
@@ -72,11 +65,9 @@ import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
-
-import com.vividsolutions.jts.geom.Geometry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GML3BasicGenerator extends AbstractGenerator {
 
@@ -90,7 +81,7 @@ public class GML3BasicGenerator extends AbstractGenerator {
     public void writeToStream(IData coll, OutputStream os) {
         FeatureCollection<?,?> fc = ((GTVectorDataBinding)coll).getPayload();
 
-        FeatureCollection<?,?> correctFeatureCollection = createCorrectFeatureCollection(fc);
+        FeatureCollection<?,?> correctFeatureCollection = GTHelper.createCorrectFeatureCollection(fc);
         //get the namespace from the features to pass into the encoder
         FeatureType schema = correctFeatureCollection.getSchema();
         String namespace = null;
@@ -147,33 +138,6 @@ public class GML3BasicGenerator extends AbstractGenerator {
         FileInputStream inputStream = new FileInputStream(file);
 
         return inputStream;
-
-    }
-
-    private SimpleFeatureCollection createCorrectFeatureCollection(FeatureCollection<?,?> fc) {
-
-        List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
-        SimpleFeatureType featureType = null;
-        FeatureIterator<?> iterator = fc.features();
-        String uuid = UUID.randomUUID().toString();
-        int i = 0;
-        while(iterator.hasNext()){
-            SimpleFeature feature = (SimpleFeature) iterator.next();
-
-            if(i==0){
-                featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
-                QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
-                SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
-            }
-            SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
-
-            simpleFeatureList.add(resultFeature);
-            i++;
-        }
-        iterator.close();
-
-        ListFeatureCollection resultFeatureCollection = new ListFeatureCollection(featureType, simpleFeatureList);
-        return resultFeatureCollection;
 
     }
 

@@ -50,25 +50,35 @@ package org.n52.wps.io;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.geotools.data.DataStoreFactorySpi;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.Transaction;
 import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.webapp.entities.Server;
-import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -78,7 +88,10 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -512,6 +525,78 @@ public class GTHelper {
                 return new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
             }
             return new DefaultFeatureCollection();
+        }
+
+        public static SimpleFeatureCollection createCorrectFeatureCollection(FeatureCollection<?,?> fc) {
+
+            List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+            SimpleFeatureType featureType = null;
+            FeatureIterator<?> iterator = fc.features();
+            String uuid = UUID.randomUUID().toString();
+            int i = 0;
+            while(iterator.hasNext()){
+                SimpleFeature feature = (SimpleFeature) iterator.next();
+
+                if(i==0){
+                    featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
+                    QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+                    SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+                }
+                SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+
+                simpleFeatureList.add(resultFeature);
+                i++;
+            }
+            iterator.close();
+
+            ListFeatureCollection resultFeatureCollection = new ListFeatureCollection(featureType, simpleFeatureList);
+            return resultFeatureCollection;
+
+        }
+
+        public static File createShapeFile(SimpleFeatureCollection collection, File shpBaseDirectory) throws IOException {
+
+            File tempSHPfile = File.createTempFile("shp", ".shp", shpBaseDirectory);
+            tempSHPfile.deleteOnExit();
+            DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
+            Map<String, Serializable> params = new HashMap<String, Serializable>();
+            params.put("url", tempSHPfile.toURI().toURL());
+            params.put("create spatial index", Boolean.TRUE);
+
+            ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
+                    .createNewDataStore(params);
+
+            newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
+            if(collection.getSchema().getCoordinateReferenceSystem()==null){
+                try {
+                    newDataStore.forceSchemaCRS(CRS.decode("EPSG:4326"));
+                } catch (FactoryException e) {
+                    LOGGER.error("Could not decode CRS EPSG:4326.", e);
+                } catch (IOException e) {
+                    LOGGER.error("Could not forceSchemaCRS(CRS.decode(\"EPSG:4326\")", e);
+                }
+            }else{
+                newDataStore.forceSchemaCRS(collection.getSchema()
+                    .getCoordinateReferenceSystem());
+            }
+
+            Transaction transaction = new DefaultTransaction("create");
+
+            String typeName = newDataStore.getTypeNames()[0];
+            FeatureStore<SimpleFeatureType, SimpleFeature> featureStore = (SimpleFeatureStore) newDataStore
+                    .getFeatureSource(typeName);
+            featureStore.setTransaction(transaction);
+            try {
+                featureStore.addFeatures(collection);
+                transaction.commit();
+            } catch (Exception problem) {
+                transaction.rollback();
+            } finally {
+                transaction.close();
+            }
+
+            return tempSHPfile;
+
         }
 
 }
