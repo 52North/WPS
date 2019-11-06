@@ -49,7 +49,6 @@ package org.n52.wps.io.datahandler.generator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,38 +57,24 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.DefaultTransaction;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
-import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.AttributeImpl;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeImpl;
 import org.geotools.feature.type.AttributeDescriptorImpl;
 import org.geotools.feature.type.AttributeTypeImpl;
-import org.geotools.referencing.CRS;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 public class GTBinDirectorySHPGenerator {
 
@@ -109,28 +94,10 @@ public class GTBinDirectorySHPGenerator {
         SimpleFeatureCollection originalCollection = (SimpleFeatureCollection) binding.getPayload();
 
         if(checkIfAttributeNameIsLongerThan10Chars(originalCollection.getSchema())){
-            originalCollection = createCorrectFeatureCollection(originalCollection);
+            originalCollection = GTHelper.createCorrectFeatureCollection(originalCollection);
         }
 
         return createShapefileDirectory(originalCollection, parent);
-    }
-
-    //attribute names have to be truncated or they will not be filled with values
-    private SimpleFeatureCollection createCorrectFeatureCollection(
-            SimpleFeatureCollection fc) {
-
-        List<SimpleFeature> featureList = new ArrayList<>();
-        SimpleFeatureType featureType = truncateAttributeNames(fc.getSchema());
-        SimpleFeatureIterator iterator = fc.features();
-
-        while(iterator.hasNext()){
-            SimpleFeature feature = (SimpleFeature) iterator.next();
-            SimpleFeature resultFeature = GTHelper.createFeature(feature.getID(), (Geometry)feature.getDefaultGeometry(), featureType, truncatePropertyNames(feature.getProperties()));
-
-            featureList.add(resultFeature);
-        }
-        return GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
-
     }
 
     private boolean checkIfAttributeNameIsLongerThan10Chars(SimpleFeatureType simpleFeatureType){
@@ -276,46 +243,7 @@ public class GTBinDirectorySHPGenerator {
             throw new IllegalStateException("Could not create temporary shp directory.");
         }
 
-        File tempSHPfile = File.createTempFile("shp", ".shp", shpBaseDirectory);
-        tempSHPfile.deleteOnExit();
-        DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
-        Map<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put("url", tempSHPfile.toURI().toURL());
-        params.put("create spatial index", Boolean.TRUE);
-
-        ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
-                .createNewDataStore(params);
-
-        newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
-        if(collection.getSchema().getCoordinateReferenceSystem()==null){
-            try {
-                newDataStore.forceSchemaCRS(CRS.decode("4326"));
-            } catch (NoSuchAuthorityCodeException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (FactoryException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }else{
-            newDataStore.forceSchemaCRS(collection.getSchema()
-                .getCoordinateReferenceSystem());
-        }
-
-        Transaction transaction = new DefaultTransaction("create");
-
-        String typeName = newDataStore.getTypeNames()[0];
-        FeatureStore<SimpleFeatureType, SimpleFeature> featureStore = (SimpleFeatureStore) newDataStore
-                .getFeatureSource(typeName);
-        featureStore.setTransaction(transaction);
-        try {
-            featureStore.addFeatures(collection);
-            transaction.commit();
-        } catch (Exception problem) {
-            transaction.rollback();
-        } finally {
-            transaction.close();
-        }
+        File tempSHPfile = GTHelper.createShapeFile(collection, shpBaseDirectory);
 
         // Zip the shapefile
         String path = tempSHPfile.getAbsolutePath();

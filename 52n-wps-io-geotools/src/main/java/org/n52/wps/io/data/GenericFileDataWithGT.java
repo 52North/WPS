@@ -55,8 +55,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -64,32 +62,9 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
-import org.geotools.data.DefaultTransaction;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.GeometryAttributeImpl;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.feature.type.GeometryDescriptorImpl;
-import org.geotools.feature.type.GeometryTypeImpl;
-import org.geotools.filter.identity.GmlObjectIdImpl;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.IllegalAttributeException;
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.PropertyType;
-import org.opengis.filter.identity.Identifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -97,9 +72,10 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.type.PropertyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -208,119 +184,13 @@ public class GenericFileDataWithGT {
 
     public static File getShpFile(FeatureCollection<?, ?> collection)
             throws IOException, IllegalAttributeException {
-        SimpleFeatureType type = null;
-        SimpleFeatureBuilder build = null;
-        FeatureIterator<?> iterator = collection.features();
-        List<SimpleFeature> featureList = new ArrayList<>();
-        Transaction transaction = new DefaultTransaction("create");
-        FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
         String uuid = UUID.randomUUID().toString();
         File shp = File.createTempFile("Shape_" + uuid, ".shp");
         shp.deleteOnExit();
-        while (iterator.hasNext()) {
-            SimpleFeature sf = (SimpleFeature) iterator.next();
-            // create SimpleFeatureType
-            if (type == null) {
-                SimpleFeatureType inType = (SimpleFeatureType) collection
-                        .getSchema();
-                SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-                builder.setName(inType.getName());
-                builder.setNamespaceURI(inType.getName().getNamespaceURI());
 
-                if (collection.getSchema().getCoordinateReferenceSystem() == null) {
-                    builder.setCRS(DefaultGeographicCRS.WGS84);
-                } else {
-                    builder.setCRS(collection.getSchema()
-                            .getCoordinateReferenceSystem());
-                }
+        SimpleFeatureCollection newCollection = GTHelper.createCorrectFeatureCollection(collection);
 
-                builder.setDefaultGeometry(sf.getDefaultGeometryProperty()
-                        .getName().getLocalPart());
-
-                /*
-                 * seems like the geometries must always be the first property..
-                 * @see also ShapeFileDataStore.java getSchema() method
-                 */
-                Property geomProperty = sf.getDefaultGeometryProperty();
-
-                //TODO: check if that makes any sense at all
-                if(geomProperty.getType().getBinding().getSimpleName().equals("Geometry")){
-                Geometry g = (Geometry)geomProperty.getValue();
-                if(g!=null){
-                    GeometryAttribute geo = null;
-                    if(g instanceof MultiPolygon){
-
-                    GeometryAttribute oldGeometryDescriptor = sf.getDefaultGeometryProperty();
-                    GeometryType type1 = new GeometryTypeImpl(geomProperty.getName(),MultiPolygon.class, oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
-
-                    GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type1,geomProperty.getName(),0,1,true,null);
-                    Identifier identifier = new GmlObjectIdImpl(sf.getID());
-                    geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
-                    sf.setDefaultGeometryProperty(geo);
-                    sf.setDefaultGeometry(g);
-                    }else{
-                        //TODO: implement other cases
-                    }
-                    if(geo != null){
-                    builder.add(geo.getName().getLocalPart(), geo
-                            .getType().getBinding());
-                    }
-                }
-                }else if (isSupportedShapefileType(geomProperty.getType())
-                        && (geomProperty.getValue() != null)) {
-                    builder.add(geomProperty.getName().getLocalPart(), geomProperty
-                            .getType().getBinding());
-                }
-
-                for (Property prop : sf.getProperties()) {
-
-                    if (prop.getType() instanceof GeometryType) {
-                        /*
-                         * skip, was handled before
-                         */
-                    }else if (isSupportedShapefileType(prop.getType())
-                            && (prop.getValue() != null)) {
-                        builder.add(prop.getName().getLocalPart(), prop
-                                .getType().getBinding());
-                    }
-                }
-
-                type = builder.buildFeatureType();
-
-                ShapefileDataStore dataStore = new ShapefileDataStore(shp
-                        .toURI().toURL());
-                dataStore.createSchema(type);
-                dataStore.forceSchemaCRS(type.getCoordinateReferenceSystem());
-
-                String typeName = dataStore.getTypeNames()[0];
-                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore
-                        .getFeatureSource(typeName);
-
-                store.setTransaction(transaction);
-
-                build = new SimpleFeatureBuilder(type);
-            }
-            for (AttributeType attributeType : type.getTypes()) {
-                build.add(sf.getProperty(attributeType.getName()).getValue());
-            }
-
-            SimpleFeature newSf = build.buildFeature(sf.getIdentifier()
-                    .getID());
-
-            featureList.add(newSf);
-        }
-
-        try {
-            store.addFeatures(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList));
-            transaction.commit();
-            return shp;
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            transaction.rollback();
-            throw new IOException(e1.getMessage());
-        } finally {
-            transaction.close();
-        }
+        return GTHelper.createShapeFile(newCollection, null);
     }
 
     private static boolean isSupportedShapefileType(PropertyType type) {
