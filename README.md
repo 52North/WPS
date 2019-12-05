@@ -13,7 +13,7 @@ More information available at the [52°North Geoprocessing Community](http://52n
 * Java-based Open Source implementation.
 * Supports all features and operations of WPS specification version 1.0.0 (document 05-007r7)
 * Pluggable framework for algorithms and XML data handling and processing frameworks
-* Build up on robust libraries (JTS, geotools, XMLBeans, servlet API, derby)
+* Build upon robust libraries (JTS, geotools, XMLBeans, servlet API, derby)
 * Experimental transactional profile (WPS-T)
 * Web GUI to maintain the service
 
@@ -39,13 +39,13 @@ Then just run `mvn clean install` on the repositories root directory.
 
 ### GeoTools
 
-Due to licensing issues all [GeoTools](http://www.geotools.org/) based input/output handlers and algorithms are not included by default. If you want to use them (or any backend relying on them), you have to explicitly enable them with the `with-geotools` profile:
+Due to licensing issues, all [GeoTools](http://www.geotools.org/) based input/output handlers and algorithms are not included by default. If you want to use them (or any backend relying on them), you have to explicitly enable them with the `with-geotools` profile:
 
 ```
 $ mvn clean install -P with-geotools
 ```
 
-To run your project in Eclipse with geotools support using the WTP plug-in (52n-wps-webapp -> Run As -> Run on Server) add the profile to the Active Maven profiles in the project properties of 52n-wps-webapp (right click on the project, select "Maven", add `with-geotools` to the text field). 
+To run your project in Eclipse with geotools support using the WTP plug-in (52n-wps-webapp -> Run As -> Run on Server) add the profile to the Active Maven profiles in the project properties of 52n-wps-webapp (right-click on the project, select "Maven", add `with-geotools` to the text field). 
 
 ### Non-default configuration file
 There are several ways to supply a `wps_config.xml` file:
@@ -111,8 +111,8 @@ Create a file named `wps_config.xml` in the home directory of the user that exec
 
 ## Integration Testing
 
-The WPS comes with a variety of integration tests which are performed using Jetty.
-In order to execute integration tests in a maven build, activate the dedicated profile
+The WPS comes with a variety of integration tests that are performed using Jetty.
+To execute integration tests in a maven build, activate the dedicated profile
 through `mvn clean install -Pwith-geotools,integration-test`.
 
 ## Contributing
@@ -121,7 +121,7 @@ You can find information about how to contribute to this project in the [Geoproc
 
 ## License
 
-This project consists of modules which are published under different licenses.
+This project consists of modules that are published under different licenses.
 
 * **API**: The internal API is published under The Apache Software License, Version 2.0. If you want to build your own algorithms you can depend on these modules alone and release it under any compatible open source license. The API consists of the following modules:
   * 52n-wps-algorithm
@@ -146,4 +146,4 @@ This project consists of modules which are published under different licenses.
   * 52n-wps-webadmin
   * 52n-wps-webapp
   
-For details see the LICENSE and NOTICE files. Be aware that some modules contain their own LICENSE and NOTICE files.
+For details see the LICENSE and NOTICE files. Be aware that some modules contain their LICENSE and NOTICE files.
