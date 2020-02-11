@@ -38,12 +38,12 @@
 		<repository>
 			<id>Apache</id>
 			<name>Apache repository</name>
-			<url>http://repo1.maven.org/maven2</url>
+			<url>https://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
 			<id>n52-releases</id>
 			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases</url>
+			<url>https://52north.org/maven/repo/releases</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -54,7 +54,7 @@
 		<repository>
 			<id>geotools</id>
 			<name>Geotools Repo</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
+			<url>https://download.osgeo.org/webdav/geotools</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
