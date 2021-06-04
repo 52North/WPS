@@ -60,7 +60,7 @@ This project includes:
   Axiom API under The Apache Software License, Version 2.0
   Axiom Impl under The Apache Software License, Version 2.0
   bcprov-jdk15 under Bouncycastle license, http://www.bouncycastle.org/licence.html (MIT-style license)
-  BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
+  BeanShell under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)
   Commons Codec under The Apache Software License, Version 2.0
