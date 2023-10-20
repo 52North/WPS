@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This project is no longer maintained and will not receive any further updates. If you plan to continue using it, please be aware that future security issues will not be addressed.
+
 # 52°North Web Processing Service [![Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)[![Gitter](https://badges.gitter.im/52North/WPS.svg)](https://gitter.im/52North/WPS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in
